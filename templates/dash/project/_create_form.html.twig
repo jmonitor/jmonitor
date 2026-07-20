@@ -1,0 +1,27 @@
+{{ form_start(form) }}
+    {{ form_row(form.name) }}
+
+    <div class="mb-4">
+        <div class="mb-3">
+            {{ form_label(form.components, null, {label_attr: {class: 'pb-0'}}) }}
+            {{ form_help(form.components) }}
+        </div>
+        <div class="row g-3">
+            {% for i, child in form.components %}
+                {% set component = form.components.vars.choices[i].data %}
+                {% set label = ux_icon(component.icon) ~ component.label %}
+                <div class="col-md-4">
+                    {{ form_widget(child, {
+                        label: label,
+                        label_html: true,
+                        attr: {class: 'btn-check'},
+                        label_attr: {class: 'btn btn-outline-primary w-100 d-flex gap-2 align-items-center justify-content-center'},
+                    }) }}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    {{ form_rest(form) }}
+    <button type="submit" class="btn btn-primary">Create</button>
+{{ form_end(form) }}

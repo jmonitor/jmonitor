@@ -1,0 +1,35 @@
+{% extends 'dash/common/_turbo_offcanvas_end.html.twig' %}
+
+{% block title %}<twig:Metric:Help:Title>Slow Queries</twig:Metric:Help:Title>{% endblock %}
+
+{% block body %}
+    <twig:Metric:Help:Section:Definition>
+        <p>A slow query is any SQL query that takes longer than a configurable threshold to execute.</p>
+        <p>MySQL tracks them via the <twig:Html:Badge:Neutral>slow_query_log</twig:Html:Badge:Neutral> and the <twig:Html:Badge:Neutral>long_query_time</twig:Html:Badge:Neutral> variable.</p>
+    </twig:Metric:Help:Section:Definition>
+
+    <twig:Metric:Help:Section:WhyItMatters>
+        <p>Slow queries are one of the most common causes of application performance degradation.</p>
+        <p>
+            A single slow query can block other queries, increase response times, and put pressure on the server
+            even at moderate traffic levels.
+        </p>
+        <p>Monitoring them helps detect missing indexes, inefficient queries, or sudden regressions after a deployment.</p>
+    </twig:Metric:Help:Section:WhyItMatters>
+
+    <twig:Metric:Help:Section title="How it works" icon="material-symbols:play-circle-outline">
+        <p>
+            MySQL measures the execution time of every query.<br>
+            When a query exceeds <twig:Html:Badge:Neutral>long_query_time</twig:Html:Badge:Neutral> (in seconds), it is counted as a slow query.
+        </p>
+        <p>The default threshold is <strong>10 seconds</strong>, but most production setups lower it to <strong>1 second</strong> or less.</p>
+    </twig:Metric:Help:Section>
+
+    <twig:Metric:Help:Section:GoodToKnow>
+        <p>The slow query counter is cumulative since MySQL started. JMonitor tracks the rate (per second) to surface trends over time.</p>
+        <p>
+            A sudden spike in slow queries is often a sign of a missing index, a lock contention issue,
+            or a query that started scanning more rows after data grew.
+        </p>
+    </twig:Metric:Help:Section:GoodToKnow>
+{% endblock %}

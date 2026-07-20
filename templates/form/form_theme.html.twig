@@ -1,0 +1,22 @@
+{% extends 'bootstrap_5_layout.html.twig' %}
+
+{# Change the default mb-3 to mb-4 #}
+{%- block form_row -%}
+    {%- set row_class = row_class|default(row_attr.class|default('mb-4')|trim) -%}
+
+    {{ parent() }}
+{%- endblock form_row %}
+
+{% block byte_unit_widget %}
+    <div class="input-group">
+        {{ form_widget(form.value) }}
+        {{ form_widget(form.unit, {attr: {style: 'max-width: 100px'}}) }}
+    </div>
+{% endblock %}
+
+{% block ms_unit_widget %}
+    <div class="input-group">
+        {{ form_widget(form.value) }}
+        {{ form_widget(form.unit, {attr: {style: 'max-width: 100px'}}) }}
+    </div>
+{% endblock %}

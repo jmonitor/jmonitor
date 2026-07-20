@@ -1,0 +1,18 @@
+{% extends 'dash/common/_turbo_offcanvas_end.html.twig' %}
+
+{% block title %}Embed a metric{% endblock %}
+
+{% block body %}
+    <h6 class="mb-3">Options</h6>
+
+    {{ form_start(form) }}
+    {{ form_rest(form) }}
+    {{ form_end(form) }}
+
+    <hr>
+    <h6 class="mb-3">Preview</h6>
+
+    {{ embed|render_embed }}
+
+    <textarea class="form-control mt-4" rows="4">{{ embed|embed_url }}</textarea>
+{% endblock %}

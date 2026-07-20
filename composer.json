@@ -1,0 +1,169 @@
+{
+    "name": "jmonitor/jmonitor",
+    "description": "Monitoring for PHP web stacks — clear dashboards, alerts and notifications for MySQL, Redis, Apache, Nginx, Caddy, PHP, Symfony and FrankenPHP.",
+    "type": "project",
+    "license": "AGPL-3.0-only",
+    "homepage": "https://jmonitor.io",
+    "authors": [
+        {
+            "name": "Jonathan Plantey",
+            "email": "contact@jmonitor.io"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/jmonitor/jmonitor/issues",
+        "source": "https://github.com/jmonitor/jmonitor"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {
+        "php": ">=8.4",
+        "ext-ctype": "*",
+        "ext-iconv": "*",
+        "doctrine/dbal": "^4.4.3",
+        "doctrine/doctrine-bundle": "^3.2.4",
+        "doctrine/doctrine-migrations-bundle": "^4.0",
+        "doctrine/orm": "^3.6.7",
+        "easycorp/easyadmin-bundle": "^5.2.0",
+        "influxdata/influxdb-client-php": "^3.8",
+        "jmonitor/collector": "^1.4.0",
+        "jmonitor/jmonitor-bundle": "^1.4.0",
+        "knpuniversity/oauth2-client-bundle": "^2.20.2",
+        "league/commonmark": "^2.8.3",
+        "league/html-to-markdown": "^5.1.1",
+        "league/oauth2-github": "^3.1.1",
+        "league/oauth2-google": "^4.2",
+        "phpdocumentor/reflection-docblock": "^5.6.7",
+        "phpstan/phpdoc-parser": "^2.3.3",
+        "sentry/sentry-symfony": "^5.11",
+        "stripe/stripe-php": "^19.4.1",
+        "symfony/apache-pack": "^1.0.1",
+        "symfony/asset": "8.0.*",
+        "symfony/asset-mapper": "8.0.*",
+        "symfony/console": "8.0.*",
+        "symfony/doctrine-messenger": "8.0.*",
+        "symfony/dotenv": "8.0.*",
+        "symfony/expression-language": "8.0.*",
+        "symfony/flex": "^2.11.0",
+        "symfony/form": "8.0.*",
+        "symfony/framework-bundle": "8.0.*",
+        "symfony/http-client": "8.0.*",
+        "symfony/intl": "8.0.*",
+        "symfony/mailer": "8.0.*",
+        "symfony/mercure-bundle": "^0.4.2",
+        "symfony/mime": "8.0.*",
+        "symfony/monolog-bundle": "^4.0.2",
+        "symfony/notifier": "8.0.*",
+        "symfony/process": "8.0.*",
+        "symfony/property-access": "8.0.*",
+        "symfony/property-info": "8.0.*",
+        "symfony/rate-limiter": "8.0.*",
+        "symfony/redis-messenger": "8.0.*",
+        "symfony/runtime": "8.0.*",
+        "symfony/scheduler": "8.0.*",
+        "symfony/security-bundle": "8.0.*",
+        "symfony/serializer": "8.0.*",
+        "symfony/stimulus-bundle": "^2.36.0",
+        "symfony/string": "8.0.*",
+        "symfony/translation": "8.0.*",
+        "symfony/twig-bundle": "8.0.*",
+        "symfony/uid": "8.0.*",
+        "symfony/ux-chartjs": "^2.36.0",
+        "symfony/ux-icons": "^2.36.1",
+        "symfony/ux-live-component": "^2.36",
+        "symfony/ux-turbo": "^2.36.0",
+        "symfony/ux-twig-component": "^2.36.0",
+        "symfony/validator": "8.0.*",
+        "symfony/web-link": "8.0.*",
+        "symfony/webhook": "8.0.*",
+        "symfony/yaml": "8.0.*",
+        "symfonycasts/dynamic-forms": "^0.2",
+        "twig/extra-bundle": "^3.24.0",
+        "twig/intl-extra": "^3.26.0",
+        "twig/markdown-extra": "^3.28",
+        "twig/string-extra": "^3.24.0",
+        "twig/twig": "^2.12|^3.28.0",
+        "zenstruck/bytes": "^1.1",
+        "zenstruck/messenger-monitor-bundle": "^0.6.0"
+    },
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": true,
+            "phpstan/extension-installer": true,
+            "symfony/flex": true,
+            "symfony/runtime": true
+        },
+        "bump-after-update": true,
+        "sort-packages": true,
+        "platform": {
+            "php": "8.4.10"
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "App\\Tests\\": "tests/"
+        }
+    },
+    "replace": {
+        "symfony/polyfill-ctype": "*",
+        "symfony/polyfill-iconv": "*",
+        "symfony/polyfill-php72": "*",
+        "symfony/polyfill-php73": "*",
+        "symfony/polyfill-php74": "*",
+        "symfony/polyfill-php80": "*",
+        "symfony/polyfill-php81": "*",
+        "symfony/polyfill-php82": "*"
+    },
+    "scripts": {
+        "auto-scripts": {
+            "cache:clear": "symfony-cmd",
+            "assets:install %PUBLIC_DIR%": "symfony-cmd",
+            "importmap:install": "symfony-cmd"
+        },
+        "post-install-cmd": [
+            "@auto-scripts",
+            "./bin/gitHook/install.sh"
+        ],
+        "post-update-cmd": [
+            "@auto-scripts"
+        ],
+        "lint:check": "./vendor/bin/php-cs-fixer check --verbose --config=.php-cs-fixer.dist.php --using-cache=no --diff",
+        "lint:fix": "./vendor/bin/php-cs-fixer fix --verbose --config=.php-cs-fixer.dist.php --using-cache=no  --diff",
+        "phpstan": "./vendor/bin/phpstan",
+        "phpunit": "./vendor/bin/phpunit tests",
+        "rector:check": "./vendor/bin/rector --dry-run",
+        "rector:fix": "./vendor/bin/rector"
+    },
+    "conflict": {
+        "symfony/symfony": "*"
+    },
+    "extra": {
+        "symfony": {
+            "allow-contrib": true,
+            "require": "8.0.*"
+        }
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^3.95.13",
+        "igor-php/igor-php": "^0.8.1",
+        "phpstan/extension-installer": "^1.4.3",
+        "phpstan/phpstan": "^2.2.5",
+        "phpstan/phpstan-doctrine": "^2.0.28",
+        "phpstan/phpstan-symfony": "^2.0.20",
+        "phpunit/phpunit": "^11.5.56",
+        "predis/predis": "^3.5.1",
+        "rector/rector": "^2.5.6",
+        "symfony/browser-kit": "8.0.*",
+        "symfony/css-selector": "8.0.*",
+        "symfony/debug-bundle": "8.0.*",
+        "symfony/maker-bundle": "^1.67.0",
+        "symfony/stopwatch": "8.0.*",
+        "symfony/web-profiler-bundle": "8.0.*",
+        "vincentlanglet/twig-cs-fixer": "^3.14"
+    }
+}

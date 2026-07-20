@@ -1,0 +1,7 @@
+{# @var bag \App\Metrics\Dto\Bag\Php\PhpBag #}
+{# @var dto \App\Metrics\Renderer\Dto\GaugeDto #}
+<twig:Metric:Metric:Gauge dto="{{ dto }}" chart="{{ chart }}" options="{{ options }}">
+    {% if bag.fpm.activeProcesses >= 0 and bag.fpm.totalProcesses >= 0 %}
+        {{ bag.fpm.activeProcesses }} / {{ bag.fpm.totalProcesses }}
+    {% endif %}
+</twig:Metric:Metric:Gauge>

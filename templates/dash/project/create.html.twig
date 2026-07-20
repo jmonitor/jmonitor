@@ -1,0 +1,9 @@
+{% extends 'dash/base.html.twig' %}
+
+{% block content %}
+<div class="col-lg-4">
+    <h1 class="mb-4">New project</h1>
+
+    {{ include('dash/project/_create_form.html.twig', {form: form}) }}
+</div>
+{% endblock %}

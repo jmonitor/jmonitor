@@ -1,0 +1,44 @@
+# yaml-language-server: $schema=../../vendor/symfony/dependency-injection/Loader/schema/services.schema.json
+# see https://symfony.com/doc/current/reference/configuration/framework.html
+framework:
+
+    # https://www.cloudflare.com/fr-fr/ips/
+    trusted_proxies: '%env(csv:TRUSTED_PROXIES)%'
+    trusted_headers: ['x-forwarded-for', 'x-forwarded-proto', 'x-forwarded-port', 'x-forwarded-host']
+
+    secret: '%env(APP_SECRET)%'
+
+    # Note that the session will be started ONLY if you read or write from it.
+    session:
+        # ID of the service used for session storage
+        # NULL means that Symfony uses PHP default session mechanism
+        handler_id: '%env(REDIS_SESSION_DSN)%'
+        cookie_samesite: lax
+        cookie_secure: auto
+        cookie_domain: '%env(APP_DOMAIN)%'
+        name: 'JMONITOR_SESSID_%env(APP_ENV)%'
+        gc_probability: 1 # inutile avec redis
+        gc_divisor: 1000 # inutile avec redis
+        cookie_lifetime: 0
+        # temps d'inactivité avant expiration de la session. Sera pas déco grace au rememberme.
+        gc_maxlifetime: 1800 # 30 minutes.
+
+    # https://symfony.com/doc/current/reference/configuration/framework.html#configuration-framework-http_cache
+    http_cache:
+        enabled: false
+        debug: '%kernel.debug%'
+        default_ttl: 0
+        allow_reload: true
+        allow_revalidate: true
+
+when@test:
+    framework:
+        test: true
+        session:
+            storage_factory_id: session.storage.factory.mock_file
+
+when@dev:
+    framework:
+        http_client:
+            default_options:
+                verify_peer: false

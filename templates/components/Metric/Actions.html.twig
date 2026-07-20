@@ -1,0 +1,7 @@
+{% if actions %}
+    <twig:Html:Dropdown class="dropdown-actions">
+        {% for action in actions %}
+            <twig:Metric:Action action="{{ action }}" />
+        {% endfor %}
+    </twig:Html:Dropdown>
+{% endif %}

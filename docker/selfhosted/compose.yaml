@@ -1,0 +1,161 @@
+# Self-hosted JMonitor stack — full install guide in README.md.
+# Quick start: cp .env.example .env, fill the CHANGE_ME values, docker compose up -d
+name: jmonitor
+
+# Environment shared by the app, worker and collector containers: internal wiring only
+# (Docker DNS service names). User-facing settings live in .env — including TZ,
+# which reaches these containers through env_file, immune to a TZ exported in
+# the host shell (compose ${} interpolation would silently prefer the shell).
+x-app-environment: &app-environment
+  DATABASE_URL: "mysql://root:${MYSQL_ROOT_PASSWORD:?}@mysql:3306/jmonitor?serverVersion=8.0&charset=utf8mb4"
+  REDIS_SESSION_DSN: redis://redis:6379/1
+  REDIS_CACHE_DSN: redis://redis:6379/0
+  MESSENGER_TRANSPORT_DSN: redis://redis:6379/messages
+  INFLUXDB_URL: http://influxdb:8086
+  INFLUXDB_ORG_NAME: jmonitor
+  # Server-side Mercure publishing: both containers reach the hub embedded in
+  # the app container's Caddy through the compose service name.
+  MERCURE_URL: http://app/.well-known/mercure
+  # Browser-side subscription URL (through the self-hoster's TLS proxy).
+  MERCURE_PUBLIC_URL: https://dash.${APP_DOMAIN:?}/.well-known/mercure
+  # Host of the php-metrics route: compiled into the APP container's routing
+  # cache (entrypoint cache:warmup); the collector service calls it via
+  # http://app/... (shared here so app and collector stay consistent).
+  JMONITOR_PHP_METRICS_HOST: app
+
+services:
+  app:
+    image: ghcr.io/jmonitor/jmonitor:${JMONITOR_VERSION:-latest}
+    restart: unless-stopped
+    ports:
+      - "${JMONITOR_HTTP_BIND:-127.0.0.1}:${JMONITOR_HTTP_PORT:-8080}:80"
+    env_file: .env
+    networks:
+      default:
+        aliases:
+          # Lets the collector service reach the app with the exact Host header
+          # Symfony routes on (collector.<domain>), without leaving the compose
+          # network or hairpinning through the self-hoster's reverse proxy.
+          - "collector.${APP_DOMAIN:?}"
+    environment:
+      <<: *app-environment
+    # The image healthcheck targets Caddy (:2019), which only starts once the
+    # entrypoint finished cache warmup + app:install: give it a long grace period.
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:2019/metrics"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 180s
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      influxdb:
+        condition: service_healthy
+
+  worker:
+    image: ghcr.io/jmonitor/jmonitor:${JMONITOR_VERSION:-latest}
+    restart: unless-stopped
+    # Async messages (metrics ingestion, alerts, emails) + scheduled tasks.
+    # --time-limit: exit cleanly every hour, compose restarts a fresh process.
+    command: ["php", "bin/console", "messenger:consume", "async", "scheduler_default", "--time-limit=3600"]
+    env_file: .env
+    environment:
+      <<: *app-environment
+    healthcheck:
+      # Override the image healthcheck (it curls Caddy, which this container
+      # doesn't run). PID 1 is messenger:consume, so running already means
+      # alive — but `up --wait` errors out on `disable: true`, hence this
+      # trivial always-passing check.
+      test: ["CMD", "php", "-v"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    depends_on:
+      # service_healthy = migrations are done (the app entrypoint runs app:install).
+      app:
+        condition: service_healthy
+
+  collector:
+    image: ghcr.io/jmonitor/jmonitor:${JMONITOR_VERSION:-latest}
+    restart: unless-stopped
+    # Self-monitoring agent (jmonitor:collect). The sleep-infinity guard keeps
+    # the container idle instead of restart-looping when SELF_MONITORING=0
+    # (compose cannot disable a service from an env var).
+    # --time-limit: exit cleanly every hour, compose restarts a fresh process.
+    command: ["sh", "-c", "if [ \"$$SELF_MONITORING\" = \"0\" ]; then echo 'Self-monitoring disabled (SELF_MONITORING=0)'; exec sleep infinity; fi; exec php bin/console jmonitor:collect --time-limit=3600"]
+    env_file: .env
+    environment:
+      <<: *app-environment
+      JMONITOR_COLLECTOR_URL: http://collector.${APP_DOMAIN:?}
+      JMONITOR_PHP_ENDPOINT: http://app/jmonitor/php-metrics
+      JMONITOR_CADDY_ENDPOINT: http://app:2020/metrics
+    healthcheck:
+      # Override the image healthcheck (it curls Caddy, which this container
+      # doesn't run) — same reasoning as the worker service.
+      test: ["CMD", "php", "-v"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    depends_on:
+      # service_healthy = install done (admin created; self-monitoring project when enabled).
+      app:
+        condition: service_healthy
+
+  mysql:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      # Keep MySQL's system timezone (NOW(), log timestamps) aligned with PHP.
+      # Interpolated (no env_file here — it would leak the app secrets into
+      # this container), so a TZ exported in the host shell wins over .env:
+      # cosmetic worst case, PHP-side dates are driven by the app containers.
+      TZ: ${TZ:-UTC}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?}
+      MYSQL_DATABASE: jmonitor
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -p\"$$MYSQL_ROOT_PASSWORD\""]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+
+  redis:
+    image: redis:8-alpine
+    restart: unless-stopped
+    # AOF persistence: the messenger queue lives in Redis — don't lose it on restart.
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis-data:/data
+
+  influxdb:
+    image: influxdb:2.7
+    restart: unless-stopped
+    environment:
+      # First-start setup of the org + operator token (no-op once initialized).
+      # The app creates its per-project buckets through the API; the bootstrap
+      # bucket is required by setup mode but never used.
+      DOCKER_INFLUXDB_INIT_MODE: setup
+      DOCKER_INFLUXDB_INIT_USERNAME: admin
+      DOCKER_INFLUXDB_INIT_PASSWORD: ${INFLUXDB_ADMIN_PASSWORD:?}
+      DOCKER_INFLUXDB_INIT_ORG: jmonitor
+      DOCKER_INFLUXDB_INIT_BUCKET: bootstrap
+      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: ${INFLUXDB_TOKEN:?}
+    volumes:
+      - influxdb-data:/var/lib/influxdb2
+    healthcheck:
+      test: ["CMD", "influx", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+
+networks:
+  default:
+
+volumes:
+  mysql-data:
+  redis-data:
+  influxdb-data:

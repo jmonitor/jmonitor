@@ -1,0 +1,79 @@
+{% extends 'dash/project/settings_layout.twig' %}
+
+{% block title %}Alerts{% endblock %}
+
+{% block settings_content %}
+    {% set can_edit = is_granted('project.admin') %}
+    {% if is_granted('right.alerting') %}
+        <twig:Alert type="warning" class="mb-0">
+            You are currently managing <b>project</b> alerts.<br>
+            To configure your personal notifications, please visit your <a href="{{ path('account') }}" target="_top">account settings</a>.
+        </twig:Alert>
+    {% else %}
+        <twig:Alert type="warning" class="mb-0">
+            Alerts are not available with the free plan.
+            <br>You can create them, but they will remain inactives.
+            <a href="{{ path('project.settings.plan', {uuid: current_project().uuid}) }}">Upgrade plan</a>
+        </twig:Alert>
+    {% endif %}
+
+    {% for component in current_project().components %}
+        {% set title = ux_icon(component.icon, {width: '1.2em', height: '1.2em'}) ~ ' ' ~ component.name %}
+        <twig:Cards titles="{{ [title] }}">
+            <twig:Card>
+                <turbo-frame id="tf-alert-{{ component.value }}">
+                    {% set alerts = current_project().alertsByComponent(component) %}
+                    {% if alerts %}
+                        <div class="table-responsive mb-4">
+                            <table class="table table-borderless mb-0">
+                                <thead>
+                                <tr>
+                                    <th scope="col"><small class="text-body-tertiary fw-normal">Metric</small></th>
+                                    <th scope="col"><small class="text-body-tertiary fw-normal">Threshold</small></th>
+                                    <th scope="col"><small class="text-body-tertiary fw-normal">Status</small></th>
+                                    <th scope="col"></th>
+                                    <th scope="col"></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for alert in alerts %}
+                                    <tr>
+                                        <td class="fw-semibold">{{ alert.alertMetric.label }}</td>
+                                        <td>{{ alert.config ? alert.config.description }}</td>
+                                        <td>
+                                            {% if alert.paused %}
+                                                <twig:Html:Badge:Yellow :icon="false">Paused</twig:Html:Badge:Yellow>
+                                            {% else %}
+                                                <twig:Html:Badge:Green :icon="false">Active</twig:Html:Badge:Green>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <a href="{{ path('project.settings.alerts.toggle', {alert: alert.uuid, uuid: alert.project.uuid}) }}" class="{% if not can_edit %}pe-none opacity-50{% endif %}" {% if not can_edit %}tabindex="-1" aria-disabled="true"{% endif %}>
+                                                <twig:ux:icon name="material-symbols:play-pause" width="1.2em" height="1.2em" />
+                                            </a>
+                                        </td>
+                                        <td class="pe-0">
+                                            <div class="d-flex gap-3 align-items-center justify-content-end">
+                                                <a href="{{ path('project.settings.alerts.edit', {alertMetric: alert.alertMetric.value, uuid: current_project().uuid}) }}" class="{% if not can_edit %}pe-none opacity-50{% endif %}" {% if not can_edit %}tabindex="-1" aria-disabled="true"{% endif %}><twig:ux:icon name="fa7-solid:pen" /></a>
+
+                                                <form action="{{ path('project.settings.alerts.remove', {alertMetric: alert.alertMetric.value, uuid: current_project().uuid}) }}" method="post" class="text-end" data-turbo-confirm="Please confirm deletion">
+                                                    <button type="submit" class="btn btn-sm link-danger" {% if not can_edit %}disabled{% endif %}><twig:ux:icon name="material-symbols:delete-outline" /></button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% endif %}
+                    <a
+                        href="{{ path('project.settings.alerts.create', {component: component.value, uuid: current_project().uuid}) }}"
+                        class="btn btn-primary btn-sm {% if not can_edit %}disabled{% endif %}"
+                        {% if not can_edit %}tabindex="-1" aria-disabled="true"{% endif %}
+                    >{{ ux_icon('material-symbols:add', {height: '1.1em'}) }} Create an alert</a>
+                </turbo-frame>
+            </twig:Card>
+        </twig:Cards>
+    {% endfor %}
+{% endblock %}

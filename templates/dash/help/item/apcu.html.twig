@@ -1,0 +1,38 @@
+{% extends 'dash/common/_turbo_offcanvas_end.html.twig' %}
+
+{% block title %}<twig:Metric:Help:Title>APCu</twig:Metric:Help:Title>{% endblock %}
+
+{% block body %}
+    <twig:Metric:Help:Section:Definition>
+        <p>APCu is a PHP extension used for storing data in memory.</p>
+        <p>It is a local cache, shared between requests on the same server.</p>
+    </twig:Metric:Help:Section:Definition>
+
+    <twig:Metric:Help:Section:WhyItMatters>
+        <p>APCu helps avoid repeating the same work multiple times.</p>
+        <p>It can store computed values, configuration, or results from expensive operations.</p>
+        <p>This improves performance and reduces load on the server.</p>
+    </twig:Metric:Help:Section:WhyItMatters>
+
+    <twig:Metric:Help:Section title="How it works" icon="material-symbols:play-circle-outline">
+        <p>A PHP script can save data in APCu using a key.</p>
+        <p>Later requests can read this data directly from memory.</p>
+        <p>This is much faster than recomputing or querying a database.</p>
+    </twig:Metric:Help:Section>
+
+    <twig:Metric:Help:Section title="Web vs CLI (command line interface)" icon="material-symbols:compare-arrows">
+        <p>APCu is mainly useful for web requests, where data can be reused between users.</p>
+        <p>
+            In CLI, it is often disabled (apc.enable_cli).
+            <br>This is expected.
+            <br>CLI scripts are usually short-lived, so cached data is not reused.
+        </p>
+    </twig:Metric:Help:Section>
+
+    <twig:Metric:Help:Section title="Good to know" icon="material-symbols:tips-and-updates-outline">
+        <p>APCu cache is local to one server.</p>
+        <p>It is not shared between multiple servers.</p>
+        <p>Cache is cleared when the PHP process restarts.</p>
+        <p>Applications must explicitly use APCu functions to benefit from it.</p>
+    </twig:Metric:Help:Section>
+{% endblock %}

@@ -1,0 +1,20 @@
+{# @var range \App\Metrics\Range\Dto\Range #}
+<twig:Metric:Help:Section icon="material-symbols:speed" title="Typical ranges">
+    <ul>
+        {% for range in ranges %}
+            <li>
+                <div class="d-flex align-items-center gap-2">
+                    <twig:Html:Badge:Badge badge="{{ range.badge }}" />
+                    {{ range.min }} - {{ range.max }}
+                </div>
+                <p>
+                    {{ range.meaning }}
+                </p>
+            </li>
+        {% endfor %}
+    </ul>
+
+    {% if ranges.notes %}
+        <p class="d-flex align-items-center gap-2"><twig:ux:icon name="material-symbols:lightbulb-2" /> {{ ranges.notes }}</p>
+    {% endif %}
+</twig:Metric:Help:Section>

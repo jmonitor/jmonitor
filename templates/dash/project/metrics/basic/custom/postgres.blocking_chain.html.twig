@@ -1,0 +1,29 @@
+{# @var bag \App\Metrics\Dto\Bag\Postgres\PostgresActivityBag #}
+{% set bag = dto.value %}
+
+{% if bag.blockedQueries is empty %}
+    <p class="text-muted mb-0">No blocking detected at last collection.</p>
+{% else %}
+    <div class="table-responsive mh-25">
+        <table class="table align-middle mb-0">
+            <thead>
+            <tr>
+                <th scope="col">Blocked query</th>
+                <th scope="col">Waiting</th>
+                <th scope="col">Blocked by</th>
+                <th scope="col">Blocker state</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for row in bag.blockedQueries %}
+                <tr>
+                    <td class="text-xs pe-4"><span class="text-codelike">{{ row.blocked_query_sample }}</span></td>
+                    <td class="text-warning">{{ row.blocked_wait_seconds }}s</td>
+                    <td class="text-xs pe-4"><span class="text-codelike">{{ row.blocking_query_sample }}</span></td>
+                    <td class="text-muted">{{ row.blocking_state }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endif %}

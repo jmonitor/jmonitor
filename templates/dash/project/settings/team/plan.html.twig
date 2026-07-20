@@ -1,0 +1,167 @@
+{% extends 'dash/project/settings_layout.twig' %}
+
+{% block max_width_css_class %}max-w-6xl{% endblock %}
+
+{% block title %}Plan{% endblock %}
+
+{% block settings_content %}
+    <div class="row g-2rem">
+        {% for plan in plans %}
+            <div class="col-xl-4">
+                {% set class = 'h-100' %}
+                {% if current_plan.score === plan.score %}
+                    {% set class = class ~ ' border border-2 border-primary' %}
+                {% endif %}
+
+                <twig:Card class="{{ class }}" cardBody:class="d-flex flex-column gap-4 text-center">
+                    {{ ux_icon(plan.icon, {class: 'mx-auto', width: '80px', height: '50px'}) }}
+
+                    <h5 class="card-title mb-0">{{ plan.label }}</h5>
+
+                    <small class="text-primary-light text-uppercase opacity-75 fw-light">{{ plan.subtitle }}</small>
+
+                    <div>
+                        <span class="h3 fw-semibold">{{ plan.subscribeMonthlyPrice }}€</span>
+                        <span class="text-primary-light fw-light ms-1 opacity-75">/Month</span>
+                    </div>
+
+                    <ul class="list-unstyled text-start">
+                        {% for feature in plan.cardFeatures %}
+                        <li><twig:ux:icon name="material-symbols:check" class="text-success me-1" width="1.8em" height="1.8em" /> {{ feature|raw }}</li>
+                        {% endfor %}
+                    </ul>
+
+                    <div class="mt-auto">
+                        {% if current_plan.score === plan.score %}
+                            {% if plan.value === 'free' %}
+                                <a href="#" class="btn btn-light disabled w-75">Current Plan</a>
+                            {% elseif is_granted('project.admin') %}
+                                {% if current_project().activeSubscription()?.stripeSubscriptionId %}
+                                    <a href="{{ stripe_portal_url }}" class="btn btn-primary" target="_blank">Manage subscription <twig:ux:icon name="material-symbols:open-in-new" /></a>
+                                {% else %}
+                                    {# current plan not linked to Stripe (trial): offer to subscribe, the remaining days are credited #}
+                                    <a href="{{ path('project.settings.plan.subscribe', {plan: plan.value, uuid: current_project().uuid}) }}" class="btn btn-primary w-75" target="_top">Subscribe to {{ plan.label }}</a>
+                                {% endif %}
+                            {% else %}
+                                <a href="#" class="btn btn-light disabled w-75">Current Plan</a>
+                            {% endif %}
+                        {% elseif current_plan.score > plan.score %}
+                            <a href="#" class="btn btn-light disabled w-75">You're on {{ current_plan.label }}</a>
+                        {% elseif is_granted('project.admin') %}
+                            {% if current_project().activeSubscription()?.stripeSubscriptionId %}
+                                {# plan switch (with proration) is handled by the Stripe portal, synced back by webhook #}
+                                <a href="{{ stripe_portal_url }}" class="btn btn-primary w-75" target="_blank">Upgrade to {{ plan.label }} <twig:ux:icon name="material-symbols:open-in-new" /></a>
+                            {% else %}
+                                <a href="{{ path('project.settings.plan.subscribe', {plan: plan.value, uuid: current_project().uuid}) }}" class="btn btn-primary w-75" target="_top">Upgrade to {{ plan.label }}</a>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </twig:Card>
+            </div>
+        {% endfor %}
+    </div>
+
+    <twig:Card>
+        <div class="table-responsive">
+            <table class="table align-middle table-pricing">
+                <thead>
+                <tr>
+                    <th scope="col">Feature</th>
+                    <th scope="col">Free</th>
+                    <th scope="col" class="text-primary table-active">Pro</th>
+                    <th scope="col">Max</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>
+                        Real-time monitoring
+                        <br><small class="text-body-secondary"><sup>*</sup>Updates when you push data</small>
+                    </td>
+                    {% for plan in plans %}
+                        <td>{{ _self.check(true) }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>Invite collaborators</td>
+                    {% for plan in plans %}
+                        <td>{{ _self.check(true) }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>Push interval</td>
+                    {% for plan in plans %}
+                        <td>{{ plan.pushInterval }}s</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>Auto refresh</td>
+                    {% for plan in plans %}
+                        <td>{{ _self.check(plan.autoRefresh) }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>History charts</td>
+                    {% for plan in plans %}
+                        <td>{{ _self.check(plan.historyChart) }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>Alerting</td>
+                    {% for plan in plans %}
+                        <td>{{ _self.check(plan.alerting) }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>Embed metrics</td>
+                    {% for plan in plans %}
+                        <td>{{ _self.check(plan.embedable) }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>
+                        Data retention
+                        <br><small class="text-body-secondary">for history charts</small>
+                    </td>
+                    {% for plan in plans %}
+                        <td>{{ plan.dataRetention|default(_self.check(false)) }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <th colspan="4">Components</th>
+                </tr>
+                {% for component in enum('App\\Entity\\Enums\\Component').pricingOrderedCases %}
+                    <tr>
+                        <td>{{ component.label }}</td>
+                        {% for plan in plans %}
+                            <td>
+                                {% if component.value === 'redis' %}
+                                    {{ plan.nbRedisDb }} database{{ plan.nbRedisDb > 1 ? 's' }}
+                                {% elseif component.value === 'frankenphp' %}
+                                    {{ plan.nbFrankenPhpWorkers }} worker{{ plan.nbFrankenPhpWorkers > 1 ? 's' }}
+                                {% else %}
+                                    {{ _self.check(true) }}
+                                {% endif %}
+                            </td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% macro check(doCheck) %}
+            {% if doCheck -%}
+                <twig:ux:icon name="material-symbols:check" class="text-success" width="1.8em" height="1.8em" />
+            {%- else -%}
+                <twig:ux:icon name="material-symbols:cancel-outline" class="text-border" width="1.1em" height="1.1em" />
+            {% endif %}
+        {% endmacro %}
+    </twig:Card>
+
+    <twig:Card title="Fair-use limitations">
+        <ul>
+            <li>Maximum of 3 free projects per account.</li>
+        </ul>
+    </twig:Card>
+{% endblock %}

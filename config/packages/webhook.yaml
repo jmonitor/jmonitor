@@ -1,0 +1,6 @@
+framework:
+    webhook:
+        routing:
+            stripe:
+                service: App\Webhook\Stripe\StripeRequestParser
+                secret: '%env(STRIPE_WEBHOOK_SECRET)%'

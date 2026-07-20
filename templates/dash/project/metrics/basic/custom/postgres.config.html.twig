@@ -1,0 +1,14 @@
+{# @var settings \App\Metrics\Dto\Bag\Postgres\PostgresSettingsBag #}
+{% set settings = dto.value %}
+
+<twig:Metric:Metric:List class="mh-15 overflow-y-auto pe-2">
+    <twig:InfoLine label="max_connections" value="{{ settings.maxConnections }}" />
+    <twig:InfoLine label="effective_cache_size" value="{{ settings.effectiveCacheSize|format_bytes }}" />
+    <twig:InfoLine label="work_mem" value="{{ settings.workMem|format_bytes }}" />
+    <twig:InfoLine label="maintenance_work_mem" value="{{ settings.maintenanceWorkMem|format_bytes }}" />
+
+    <hr>
+    <twig:InfoLine label="wal_level" value="{{ settings.walLevel }}" />
+    <twig:InfoLine label="max_wal_size" value="{{ settings.maxWalSize|format_bytes }}" />
+    <twig:InfoLine label="checkpoint_completion_target" value="{{ settings.checkpointCompletionTarget }}" />
+</twig:Metric:Metric:List>

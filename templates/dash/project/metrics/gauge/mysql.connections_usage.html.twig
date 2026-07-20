@@ -1,0 +1,8 @@
+{# @var status \App\Metrics\Dto\Bag\Mysql\MysqlStatusBag #}
+{# @var variables \App\Metrics\Dto\Bag\Mysql\MysqlVariableBag #}
+{# @var dto \App\Metrics\Renderer\Dto\GaugeDto #}
+<twig:Metric:Metric:Gauge dto="{{ dto }}" chart="{{ chart }}" options="{{ options }}">
+    {% set status = bags['mysql.status'] %}
+    {% set variables = bags['mysql.variables'] %}
+    {{ status.threadsConnected }} / {{ variables.maxConnections }}
+</twig:Metric:Metric:Gauge>

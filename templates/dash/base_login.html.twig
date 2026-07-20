@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    {% set cardContent = block('content') %}
+    {% set h1 = block('h1') %}
+    {% set sub_h1 = block('sub_h1') is defined ? block('sub_h1') : null %}
+    <body>
+        <div class="container min-vh-100 d-flex flex-column pt-3">
+            <div class="h-100 my-auto">
+
+                <a href="//{{ app.request.host|replace({'dash.': ''}) }}" class="btn btn-default rounded-5 mb-2 fw-light">
+                    <twig:ux:icon name="material-symbols:arrow-left-alt" />
+                    Back to website
+                </a>
+
+                <twig:Card cardBody:class="p-lg-3">
+                    <div class="row">
+                        <div class="col-lg-6 col-xl-7 d-none d-lg-block">
+                            <div class="rounded overflow-hidden opacity-50 h-100">
+                                <img src="{{ asset('icons/login-illustration.svg') }}" class="w-100 h-100 object-fit-cover" alt="Illustration jmonitor">
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-xl-5">
+                            <div class="d-flex flex-column h-100 justify-content-center px-lg-5 py-lg-4">
+                                <div class="mb-5">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h1 class="mb-0">{{ h1 }}</h1>
+                                        <twig:ux:icon name="logo-j" width="2.5em" height="2.5em"/>
+                                    </div>
+                                    {% if sub_h1 %}
+                                        <p class="text-body-tertiary mt-4 mb-0">{{ sub_h1|raw }}</p>
+                                    {% endif %}
+                                </div>
+                                {{ cardContent|raw }}
+                            </div>
+                        </div>
+                    </div>
+                </twig:Card>
+            </div>
+
+            {{ include('common/flash_messages_toast.html.twig') }}
+        </div>
+    </body>
+{% endblock %}

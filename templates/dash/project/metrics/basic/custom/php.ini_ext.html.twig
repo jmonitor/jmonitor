@@ -1,0 +1,50 @@
+{# @var bag \App\Metrics\Dto\Bag\Php\PhpBag #}
+{% set bag = bag('php') %}
+{% set iniTitle %}
+    <div class="d-flex align-items-center gap-2 justify-content-between">
+        INI files
+        {% if dto.context.nbIni %}
+            <span class="badge text-bg-primary-btn rounded-1">{{ dto.context.nbIni }}</span>
+        {% endif %}
+    </div>
+{% endset %}
+
+{% set extensionsTitle %}
+    <div class="d-flex align-items-center gap-2 justify-content-between">
+        Extensions
+        {% if dto.context.nbExt %}
+            <span class="badge text-bg-primary-btn rounded-1">{{ dto.context.nbExt }}</span>
+        {% endif %}
+    </div>
+{% endset %}
+
+<twig:Cards :titles="[iniTitle, extensionsTitle]" class="h-100">
+    <twig:block name="block_1">
+        <twig:Card class="h-100">
+            <ul class="list-unstyled mb-0 mh-15 overflow-y-auto pe-2">
+                {{ _self.line(bag.iniFile) }}
+
+                {% for file in bag.iniFiles %}
+                    {{ _self.line(file) }}
+                {% endfor %}
+            </ul>
+
+            {% macro line(string) %}
+                <li class="d-flex align-items-center gap-2" {{ stimulus_controller('clipboard', {successContent: '✓'}) }}>
+                    <span class="clamp clamp-1" title="{{ string }}" {{ stimulus_target('clipboard', 'source') }}>{{ string }}</span>
+                    <button class="btn btn-transparent px-1 lh-1" type="button" title="Copy to clipboard" {{ stimulus_action('clipboard', 'copy') }} {{ stimulus_target('clipboard', 'button') }}>{{ ux_icon('fa7-regular:clone') }}</button>
+                </li>
+            {% endmacro %}
+        </twig:Card>
+    </twig:block>
+
+    <twig:block name="block_2">
+        <twig:Card class="h-100">
+            <div class="d-flex flex-wrap gap-2">
+                {% for ext in bag.loadedExtensions %}
+                    <span>{{ ext }}</span>
+                {% endfor %}
+            </div>
+        </twig:Card>
+    </twig:block>
+</twig:Cards>

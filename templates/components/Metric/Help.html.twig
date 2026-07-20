@@ -1,0 +1,39 @@
+{% extends 'dash/common/_turbo_offcanvas_end.html.twig' %}
+
+{% block title %}<twig:Metric:Help:Title>{{ metric.label }}</twig:Metric:Help:Title>{% endblock %}
+
+{% block body %}
+    <div class="d-flex flex-column gap-4">
+        {% block definition %}
+            {% if helpDto and helpDto.definitions %}
+                <twig:Metric:Help:Section:Definition paragraphes="{{ helpDto.definitions }}" />
+            {% endif %}
+        {% endblock %}
+
+        {% block why_it_matters %}
+            {% if helpDto and helpDto.whyItMatters %}
+                <twig:Metric:Help:Section:WhyItMatters paragraphes="{{ helpDto.whyItMatters }}" />
+            {% endif %}
+        {% endblock %}
+        {% block how_to_read %}
+            {% if helpDto and helpDto.howToRead %}
+                <twig:Metric:Help:Section:HowToRead paragraphes="{{ helpDto.howToRead }}" />
+            {% endif %}
+        {% endblock %}
+        {% block typical_ranges %}
+            {% if metric_ranges(metric) %}
+                <twig:Metric:Help:Section:TypicalRanges metric="{{ metric }}" />
+            {% endif %}
+        {% endblock %}
+        {% block actions %}
+            {% if helpDto and helpDto.actions %}
+                <twig:Metric:Help:Section:WhatToDo actions="{{ helpDto.actions }}" />
+            {% endif %}
+        {% endblock %}
+        {% block good_to_know %}
+            {% if helpDto and helpDto.goodToKnow %}
+                <twig:Metric:Help:Section:GoodToKnow paragraphes="{{ helpDto.goodToKnow }}" />
+            {% endif %}
+        {% endblock %}
+    </div>
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends 'dash/project/metric_layout.twig' %}
+
+{% block metric_content %}
+    <div class="row g-4">
+        <div class="col-xxl-4">
+            <div class="d-flex flex-column flex-sm-row flex-md-column flex-lg-row flex-xxl-column gap-4 h-100">
+                <twig:Metric:Card metric="nginx.version" class="flex-fill"/>
+                <twig:Metric:Card metric="nginx.processes_config" class="flex-fill"/>
+            </div>
+        </div>
+        <div class="col-xl-6 col-xxl-4">
+            <twig:Metric:Card metric="nginx.core_config" class="h-100"/>
+        </div>
+        <div class="col-xl-6 col-xxl-4">
+            <twig:Metric:Card metric="nginx.other_config" class="h-100"/>
+        </div>
+    </div>
+
+    <twig:Html:Metrics:H2 :bag="bag" :showRange="true">Quick view</twig:Html:Metrics:H2>
+
+    <div class="row g-4">
+        <div class="col-xxl-6">
+            <twig:Metric:Card metric="nginx.active_connections" renderer="gauge" class="h-100" cardBody:class="d-flex flex-column justify-content-center"/>
+        </div>
+        <div class="col-xxl-6">
+            <twig:Metric:Card metric="nginx.req_per_sec" class="h-100"/>
+        </div>
+    </div>
+
+    <twig:Html:Metrics:H2 :bag="bag" :showRange="true">Connections</twig:Html:Metrics:H2>
+
+    <div class="row g-4">
+        <div class="col-xl-6">
+            <twig:Metric:Card metric="nginx.active_connections" renderer="line" class="h-100"/>
+        </div>
+        <div class="col-xl-6">
+            <twig:Metric:Card metric="nginx.waiting_connections" renderer="line" class="h-100"/>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-xl-6">
+            <twig:Metric:Card metric="nginx.active_connections_rate" renderer="line" class="h-100"/>
+        </div>
+
+        <div class="col-xl-6">
+            <div class="d-flex flex-column flex-lg-row flex-xl-column gap-4 h-100">
+                <twig:Metric:Card metric="nginx.refused_connections" class="flex-fill"/>
+                <twig:Metric:Card metric="nginx.reused_connections_ratio" class="flex-fill"/>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends 'dash/help/metric/layout.html.twig' %}
+
+{% block definition %}
+    <p>This card shows the main APCu settings used for in-memory caching.</p>
+{% endblock %}
+
+{% block why_it_matters %}
+    <p>APCu stores data in memory to speed up your application. Wrong settings can lead to cache misses or wasted memory.</p>
+{% endblock %}
+
+{% block how_to_read %}
+    <ul class="d-flex flex-column gap-2">
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">shm_size</twig:Html:Badge:Neutral>
+            <p>Total shared memory available for APCu. More memory allows storing more cached data.</p>
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">shm_segments</twig:Html:Badge:Neutral>
+            <p>Number of shared memory segments. Usually kept low; increasing it can help in some system setups.</p>
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">ttl</twig:Html:Badge:Neutral>
+            <p>Default time to live (in seconds) for cached entries. After this time, data may expire and be removed from the cache.</p>
+        </li>
+    </ul>
+{% endblock %}

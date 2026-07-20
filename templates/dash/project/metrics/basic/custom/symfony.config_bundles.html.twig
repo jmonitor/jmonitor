@@ -1,0 +1,65 @@
+{# @var bag \App\Metrics\Dto\Bag\Symfony\SymfonyBag #}
+{# @var phpBag \App\Metrics\Dto\Bag\Php\PhpBag #}
+{% set bag = bag('symfony') %}
+{% set phpBag = bag('php') %}
+
+{% set nbBundles = bag.bundles|length %}
+{% set bundlesTitle %}
+    <div class="d-flex align-items-center gap-2 justify-content-between">
+        Bundles
+        {% if nbBundles %}
+            <span class="badge text-bg-primary-btn rounded-1">{{ nbBundles }}</span>
+        {% endif %}
+    </div>
+{% endset %}
+
+<twig:Cards :titles="['Recommendations', bundlesTitle]" class="h-100">
+    <twig:block name="block_1">
+        <twig:Card class="h-100">
+            <twig:Metric:Metric:List class="overflow-y-auto pe-2">
+                {% if phpBag %}
+                    <twig:InfoLine label="OPcache">
+                        {% if phpBag.opcache.config.directives.enabled %}
+                            <twig:Html:Badge:Green>Enabled</twig:Html:Badge:Green>
+                        {% else %}
+                            <twig:Html:Badge:Red>Disabled</twig:Html:Badge:Red>
+                        {% endif %}
+                    </twig:InfoLine>
+                    <twig:InfoLine label="APCu">
+                        {% if phpBag.apcu.config.enabled %}
+                            <twig:Html:Badge:Green>Enabled</twig:Html:Badge:Green>
+                        {% else %}
+                            <twig:Html:Badge:Yellow>Disabled</twig:Html:Badge:Yellow>
+                        {% endif %}
+                    </twig:InfoLine>
+                    <hr>
+                    <h6 class="mb-0">[PHP]</h6>
+                    <twig:InfoLine label="realpath_cache_size">
+                        {% if phpBag.realpathCacheSize >= 4096000 %}
+                            <twig:Html:Badge:Green>{{ phpBag.realpathCacheSize|format_bytes }}</twig:Html:Badge:Green>
+                        {% elseif phpBag.realpathCacheSize !== null and phpBag.realpathCacheSize < 4096000 %}
+                            <twig:Html:Badge:Yellow>{{ phpBag.realpathCacheSize|format_bytes }}</twig:Html:Badge:Yellow>
+                        {% endif %}
+                    </twig:InfoLine>
+                    <twig:InfoLine label="realpath_cache_ttl">
+                        {% if phpBag.realpathCacheTtl >= 600 %}
+                            <twig:Html:Badge:Green>{{ phpBag.realpathCacheTtl }}</twig:Html:Badge:Green>
+                        {% elseif phpBag.realpathCacheTtl !== null and phpBag.realpathCacheTtl < 600 %}
+                            <twig:Html:Badge:Yellow>{{ phpBag.realpathCacheTtl }}</twig:Html:Badge:Yellow>
+                        {% endif %}
+                    </twig:InfoLine>
+                {% endif %}
+            </twig:Metric:Metric:List>
+        </twig:Card>
+    </twig:block>
+
+    <twig:block name="block_2">
+        <twig:Card class="h-100">
+            <div class="d-flex flex-wrap gap-2">
+                {% for bundle in bag.bundles %}
+                    <span>{{ bundle }}</span>
+                {% endfor %}
+            </div>
+        </twig:Card>
+    </twig:block>
+</twig:Cards>

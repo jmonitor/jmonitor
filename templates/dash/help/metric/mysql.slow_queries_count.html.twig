@@ -1,0 +1,14 @@
+{% extends 'dash/help/metric/layout.html.twig' %}
+
+{% block how_to_read %}
+    <ul class="d-flex flex-column gap-2">
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">slow_query_log</twig:Html:Badge:Neutral>
+            <p>Indicates if slow query logging is enabled. If disabled, no slow queries are recorded.</p>
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">long_query_time</twig:Html:Badge:Neutral>
+            <p>Threshold (in seconds) above which a query is considered slow.</p>
+        </li>
+    </ul>
+{% endblock %}

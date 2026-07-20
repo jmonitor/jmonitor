@@ -1,0 +1,20 @@
+{
+  "exclude": [],
+  "safe_namespaces": [
+    "Symfony\\",
+    "Doctrine\\"
+  ],
+  "scan_vendors": null,
+  "console_path": "bin/console",
+  "env": "prod",
+  "verbose": false,
+  "baseline": "igor-baseline.json",
+  "output": "",
+  "container_dump": "",
+  "llm": {
+    "provider": "",
+    "api_url": "",
+    "api_key_env": "",
+    "model": ""
+  }
+}

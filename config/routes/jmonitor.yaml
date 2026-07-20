@@ -1,0 +1,13 @@
+jmonitor_expose_php_metrics:
+    path: '/jmonitor/php-metrics'
+    controller: Jmonitor\JmonitorBundle\Controller\JmonitorPhpController
+
+# In production the route is restricted to an internal Host (see below).
+when@prod:
+    jmonitor_expose_php_metrics:
+        path: '/jmonitor/php-metrics'
+        controller: Jmonitor\JmonitorBundle\Controller\JmonitorPhpController
+        # Cloud: localhost (the agent runs in the same instance). Self-hosted:
+        # the compose stack sets JMONITOR_PHP_METRICS_HOST=app (internal Host).
+        # Same env-var-in-host pattern as %app.domain% in config/routes.yaml.
+        host: '%app.php_metrics_host%'

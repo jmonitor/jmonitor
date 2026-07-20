@@ -1,0 +1,24 @@
+<div {{ attributes.defaults({class: 'd-flex flex-column'}) }}> {# flex-column keeps the tabs and the pane flush together, otherwise a stray 1px gap sometimes shows up #}
+    <ul class="nav nav-tabs nav-tabs-card flex-nowrap overflow-x-auto" role="tablist">
+        {% for title in titles %}
+            <li class="nav-item" role="presentation">
+                <button class="nav-link text-truncate {% if loop.index0 == 0 %}active{% endif %}" id="label-{{ loop.index }}" data-bs-toggle="tab" data-bs-target="#pane-{{ loop.index }}" type="button" role="tab" aria-controls="pane-{{ loop.index }}" aria-selected="{{ loop.index == 1 ? 'true' : 'false' }}">{{ title|raw }}</button>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <div {{ attributes.nested('tabContent').defaults({class: 'tab-content flex-grow-1'}) }}>
+        {% for title in titles %}
+            {% if loop.index == 1 and block('block_' ~ loop.index) is not defined and block('content') is defined %} {# single block: the content was put in the "content" block, more convenient #}
+                {% set content = block('content') %}
+            {% else %}
+                {% set content = block('block_' ~ loop.index) %}
+            {% endif %}
+
+            <div class="tab-pane h-100 {% if loop.index == 1 %}show active{% endif %}" id="pane-{{ loop.index }}" role="tabpanel" aria-labelledby="label-{{ loop.index }}" tabindex="{{ loop.index0 }}">
+                {{ content|raw }}
+            </div>
+        {% endfor %}
+
+    </div>
+</div>

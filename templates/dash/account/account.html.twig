@@ -1,0 +1,35 @@
+{% extends 'dash/account/layout.html.twig' %}
+
+{% block content %}
+    <div class="max-w-3xl d-flex flex-column gap-5">
+        <twig:Html:H1 icon="material-symbols:manage-accounts-outline">Account</twig:Html:H1>
+
+        <twig:Card title="My e-mail">
+            {{ render(path('account.email')) }}
+        </twig:Card>
+
+        <twig:Card title="Invites">
+            {{ render(path('account.invites')) }}
+        </twig:Card>
+
+        <twig:Card title="Projects">
+            {{ render(path('account.projects')) }}
+        </twig:Card>
+
+        <twig:Card title="Projects alert notifications">
+            {{ render(path('account.project_notifications')) }}
+        </twig:Card>
+
+        <twig:Card title="Account notifications">
+            {{ render(path('account.account-notifications')) }}
+        </twig:Card>
+
+        <twig:Card title="Authentication">
+            {{ render(path('account.authentication')) }}
+        </twig:Card>
+
+        <twig:Card title="Delete account" class="border-danger">
+            {{ render(path('account.delete')) }}
+        </twig:Card>
+    </div>
+{% endblock %}

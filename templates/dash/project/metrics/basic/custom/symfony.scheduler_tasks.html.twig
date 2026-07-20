@@ -1,0 +1,32 @@
+{# @var bag \App\Metrics\Dto\Bag\Symfony\SymfonyBag #}
+{% set bag = bag('symfony') %}
+<div class="table-responsive mh-20">
+    <table class="table table align-middle mb-0">
+        <thead>
+        <tr>
+            <th scope="col">Command</th>
+            <th scope="col" style="min-width: 200px">Description</th>
+            <th scope="col">Trigger</th>
+            <th scope="col" class="text-nowrap" style="width: 1%">Next run</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for task in bag.components.scheduler.tasks %}
+            <tr {% if loop.last %}style="--bs-border-width: 0"{% endif %}>
+                <td class="text-nowrap text-sm">{{ task.command }}</td>
+                <td class="text-muted">{{ task.description }}</td>
+                <td class="text-nowrap">
+                    {{ task.trigger|capitalize }}
+                    {% if task.jitter %}
+                        <br><small class="text-muted">{{ task.jitter }} jitters</small>
+                    {% endif %}
+                </td>
+                <td class="text-nowrap">
+                    <span {{ stimulus_controller('relative-time', {timestamp: task.nextRun}) }}></span>
+                    <br><small class="text-muted">{{ task.nextRunAt.format('Y-m-d H:i:s') }}</small>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>

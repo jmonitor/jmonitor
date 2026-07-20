@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../vendor/symfony/dependency-injection/Loader/schema/services.schema.json
+framework:
+    default_locale: en
+    # micro opti perf pour éviter de générer les fichiers de translations inutiles
+    enabled_locales: [ 'fr', 'en' ]
+
+    translator:
+        default_path: '%kernel.project_dir%/translations'
+        providers:
+        fallbacks: ['en']

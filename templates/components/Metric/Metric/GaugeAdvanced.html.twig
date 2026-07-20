@@ -1,0 +1,12 @@
+<div {{ attributes.defaults({class: 'row gx-5 gy-4'}) }}>
+
+    {% set col1Attrs = attributes.nested('col1') %}
+    <div {{ col1Attrs.has('class') ? col1Attrs : col1Attrs.defaults({class: 'col-xxl-5'}) }}>
+        <twig:Metric:Metric:Gauge dto="{{ dto }}" chart="{{ chart }}" options="{{ options }}">{{ block(outerBlocks.subtitle) }}</twig:Metric:Metric:Gauge>
+    </div>
+
+    {% set col2Attrs = attributes.nested('col2') %}
+    <div {{ col2Attrs.has('class') ? col2Attrs : col2Attrs.defaults({class: 'col-xxl-7 d-flex flex-column justify-content-center'}) }}>
+        {% block content %}{% endblock %}
+    </div>
+</div>

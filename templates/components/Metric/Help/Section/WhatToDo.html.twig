@@ -1,0 +1,16 @@
+<twig:Metric:Help:Section icon="material-symbols:build" title="Recommended actions">
+    {% if actions %}
+        <ul>
+            {% for action in actions %}
+                <li>
+                    <h6>{{ action.case }}</h6>
+                    {% for paragraphe in action.actions %}
+                        <p>{{ paragraphe|raw }}</p>
+                    {% endfor %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        {{ block(outerBlocks.content) }}
+    {% endif %}
+</twig:Metric:Help:Section>

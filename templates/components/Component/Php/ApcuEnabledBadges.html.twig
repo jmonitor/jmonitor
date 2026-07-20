@@ -1,0 +1,13 @@
+{% if apcuBag %}
+    {% if enabled is same as(true) %}
+        <twig:Html:Badge:Green>Enabled</twig:Html:Badge:Green>
+    {% else %}
+        <twig:Html:Badge:Red>Disabled</twig:Html:Badge:Red>
+    {% endif %}
+
+    {% if enabledCli is same as(true) %}
+        <twig:Html:Badge:Yellow>CLI: enabled</twig:Html:Badge:Yellow>
+    {% else %}
+        <twig:Html:Badge:Neutral>CLI: disabled</twig:Html:Badge:Neutral>
+    {% endif %}
+{% endif %}

@@ -1,0 +1,22 @@
+{% extends 'dash/help/metric/layout.html.twig' %}
+
+{% block how_to_read %}
+    <p>Apache comes with three modes, each with a different approach to handling requests simultaneously.</p>
+    <ul class="d-flex flex-column gap-2">
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">prefork</twig:Html:Badge:Neutral>
+            <p>Each request gets its own isolated handler. The most compatible mode, but uses more memory and handles high traffic less efficiently than the others.</p>
+            <p class="text-muted small">The only MPM compatible with <strong>mod_php</strong> (PHP running directly inside Apache). If you see this value, PHP is likely embedded in Apache rather than running as a separate service.</p>
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">worker</twig:Html:Badge:Neutral>
+            <p>Multiple requests are handled in parallel within the same process. More memory-efficient than prefork, but PHP and all loaded modules must support this parallel execution safely.</p>
+            <p class="text-muted small">Must be used with <strong>PHP-FPM</strong> (PHP running as a separate service). Not compatible with mod_php.</p>
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">event</twig:Html:Badge:Neutral>
+            <p>Similar to worker, but idle connections waiting for follow-up requests are managed separately, freeing up capacity for new visitors. The recommended choice for high-traffic sites.</p>
+            <p class="text-muted small">Like worker, requires <strong>PHP-FPM</strong>. This is the most common and recommended combination for modern PHP applications based on Apache.</p>
+        </li>
+    </ul>
+{% endblock %}

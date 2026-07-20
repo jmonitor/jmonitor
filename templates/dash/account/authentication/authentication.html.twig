@@ -1,0 +1,25 @@
+<turbo-frame id="account-auth">
+    {% if app.user.isDemo %}
+        <p class="text-secondary mb-0"><small>The demo account password cannot be changed.</small></p>
+    {% elseif is_granted('IS_AUTHENTICATED_FULLY') %}
+        {% if app.user.password %}
+            <p><a href="{{ path('account.authentication.password') }}">Change my password</a></p>
+
+            <p>
+                You also can delete your password from our database. It means you will have to use Oauth to login. Magic link auth will be available soon.
+            </p>
+            <form
+                action="{{ path('account.authentication.remove_password') }}"
+                method="post"
+                data-turbo-confirm="Please confirm"
+            >
+                <input type="hidden" name="_token" value="{{ csrf_token('delete-password') }}">
+                <button type="submit" class="btn btn-outline-danger btn-sm">Remove my password</button>
+            </form>
+        {% else %}
+            <p>You don't have any password yet. <a href="{{ path('account.authentication.password') }}">Create a password</a></p>
+        {% endif %}
+    {% else %}
+        <p>You must log in again to access this item. <a href="{{ path('security.login', {target_route: 'account'}) }}" target="_top">Login</a></p>
+    {% endif %}
+</turbo-frame>

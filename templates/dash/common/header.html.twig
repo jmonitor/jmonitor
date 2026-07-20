@@ -1,0 +1,37 @@
+<div class="bg-navbar d-flex align-items-center px-3">
+    <button class="navbar-toggler" type="button" {{ stimulus_action('app', 'toggleSidebar') }} aria-label="Toggle sidebar">
+        {{ ux_icon('mynaui:sidebar', {width: '1.3em', height: '1.3em'}) }}
+    </button>
+    <nav class="navbar navbar-expand-lg flex-grow-1">
+        <button class="navbar-toggler ms-auto" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse gap-3" id="navbarContent">
+            <ul class="navbar-nav ms-auto gap-3 align-items-center">
+                <li class="nav-item">
+                    <a class="nav-link d-inline-flex align-items-center gap-1" href="https://github.com/orgs/jmonitor/discussions/categories/4-help" target="_blank">{{ ux_icon('fa7-brands:github', {width: '1.3em', height: '1.3em'}) }} Help</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="{{ app.user|user_avatar }}" alt="" class="rounded-circle" width="32" height="32">
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="{{ path('account') }}">Account settings</a></li>
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <li class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ path('admin') }}">Admin</a></li>
+                            <li><a class="dropdown-item" href="{{ path('zenstruck_messenger_monitor_dashboard') }}">Zenstruck</a></li>
+                        {% endif %}
+
+                        <li class="dropdown-divider"></li>
+                        {% if is_granted('IS_IMPERSONATOR') %}
+                            <li><a class="dropdown-item" href="{{ impersonation_exit_path() }}">Stop impersonate</a></li>
+                        {% endif %}
+                        <li><a class="dropdown-item" href="{{ path('security.logout') }}"><i class="fas fa-arrow-right-from-bracket"></i> Logout</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</div>

@@ -1,0 +1,18 @@
+{% extends 'dash/help/metric/layout.html.twig' %}
+
+{% block how_to_read %}
+    <ul class="d-flex flex-column gap-2">
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">standalone</twig:Html:Badge:Neutral>
+            <p>Single Redis instance. Simple setup, no built-in high availability.</p>
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">replication</twig:Html:Badge:Neutral>
+            <p>One primary instance with one or more replicas. Improves read scalability and provides basic failover.</p>
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">cluster</twig:Html:Badge:Neutral>
+            <p>Data is split across multiple nodes. Provides horizontal scaling and high availability.</p>
+        </li>
+    </ul>
+{% endblock %}

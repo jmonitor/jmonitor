@@ -1,0 +1,13 @@
+{# @var bag \App\Metrics\Dto\Bag\System\SystemBag #}
+{% set bag = bag('system') %}
+<twig:Metric:Metric:List>
+    <twig:InfoLine label="Server time" icon="material-symbols:calendar-month-outline" value="{{ bag.dateTime ? bag.dateTime|format_datetime('medium', 'short') }}" />
+    <twig:InfoLine label="Timezone" icon="mdi:clock-outline" value="{{ bag.timeZone }}" />
+    <twig:InfoLine label="Uptime" icon="material-symbols:history">
+        <span {{ stimulus_controller('duration', {seconds: bag.os.uptime}) }}></span>
+    </twig:InfoLine>
+    <hr class="my-lg-4">
+    <twig:InfoLine label="Hostname" value="{{ bag.hostname }}" />
+    <twig:InfoLine label="OS" value="{{ bag.os.name }}" />
+    <twig:InfoLine label="CPU cores" value="{{ bag.cpu.nbCores }}" />
+</twig:Metric:Metric:List>

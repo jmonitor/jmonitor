@@ -1,0 +1,24 @@
+{# @var bag \App\Metrics\Dto\Bag\Mysql\MysqlStatusBag #}
+{% set bag = bag('mysql.status') %}
+<twig:Metric:Metric:GaugeAdvanced dto="{{ dto }}" chart="{{ chart }}"
+                                  col1:class="col-sm-6"
+                                  col2:class="col-sm-6 d-flex flex-column justify-content-center"
+>
+        <twig:block name="subtitle">
+            {{ dto.context.waited }} / {{ dto.context.total }}
+        </twig:block>
+
+    <twig:Metric:Metric:List>
+        <h6>Since last push</h6>
+        <twig:InfoLine label="Waited">{{ dto.context.waited }}</twig:InfoLine>
+        <twig:InfoLine label="Total">{{ dto.context.total }}</twig:InfoLine>
+        <twig:InfoLine label="Ratio">{{ dto.value }}%</twig:InfoLine>
+
+        <hr class="my-2">
+
+        <h6>Since last reboot</h6>
+        <twig:InfoLine label="Ratio">{{ bag.tableLockWaitPercentSinceReboot }}%</twig:InfoLine>
+
+    </twig:Metric:Metric:List>
+
+</twig:Metric:Metric:GaugeAdvanced>

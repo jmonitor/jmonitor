@@ -1,0 +1,83 @@
+# yaml-language-server: $schema=../vendor/symfony/dependency-injection/Loader/schema/services.schema.json
+
+# This file is the entry point to configure your own services.
+# Files in the packages/ subdirectory configure your dependencies.
+# See also https://symfony.com/doc/current/service_container/import.html
+
+# Put parameters here that don't need to change on each machine where the app is deployed
+# https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
+parameters:
+    .container.dumper.inline_factories: true # https://symfony.com/doc/current/performance.html#dump-the-service-container-into-a-single-file
+    app.domain: '%env(APP_DOMAIN)%'
+    menu.default_cache_tag: 'menu'
+    stripe.portal_url: '%env(STRIPE_PORTAL_URL)%'
+    app.mailer_sender_email: '%env(MAILER_SENDER_EMAIL)%'
+    # Expéditeur des mails d'alerte : ALERT_MAIL_FROM, ou (vide/absent) fallback sur
+    # MAILER_SENDER_EMAIL — permet au self-hosted de ne configurer qu'une adresse.
+    app.alert_mail_from: '%env(default:app.mailer_sender_email:ALERT_MAIL_FROM)%'
+    # Collector agent config: cloud defaults, overridable per env var by the
+    # self-hosted stack (docker/selfhosted/compose.yaml). The default: env
+    # processor falls back to the parameter when the env var does not exist.
+    app.jmonitor_mysql_db: 'jmonitor'
+    app.jmonitor_php_endpoint: 'http://localhost:8080/jmonitor/php-metrics'
+    app.jmonitor_caddy_endpoint: 'http://localhost:2019/metrics'
+    app.php_metrics_host_default: 'localhost'
+    app.php_metrics_host: '%env(default:app.php_metrics_host_default:JMONITOR_PHP_METRICS_HOST)%'
+
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+    # makes classes in src/ available to be used as services
+    # this creates a service per class whose id is the fully-qualified class name
+    App\:
+        resource: '../src/'
+
+    # add more service definitions when explicit configuration is needed
+    # please note that last definitions always *replace* previous ones
+
+    # Créer un client qui utilise le client HTTP de Symfony par défaut, à savoir avec verify_peer à false en dev.
+    jmonitor_http_client:
+        class: Symfony\Component\HttpClient\Psr18Client
+        arguments:
+            - '@http_client'
+
+    # Handler monolog des mails d'erreur prod (référencé par config/packages/monolog.yaml).
+    # Factory : renvoie un NullHandler si ERROR_MAIL_TO est vide/absent (self-hoster qui
+    # ne veut pas de mail d'erreur) ; les erreurs restent alors dans error_log.
+    app.monolog.error_mailer_handler:
+        class: Monolog\Handler\HandlerInterface
+        factory: ['@App\Logging\ErrorMailerHandlerFactory', 'create']
+
+    # L'édition (cloud / selfhosted) comme service injectable.
+    # L'env var est résolue au runtime, à l'instanciation du service.
+    # autoconfigure: false car FrameworkExtension autoconfigure \UnitEnum::class avec le tag
+    # "container.excluded" (toute enum est exclue de l'autowiring par défaut) : sans ce flag,
+    # ce tag serait aussi appliqué à cette définition manuelle et casserait l'injection de
+    # App\Plan\Edition dans les services qui la typehintent (ex. PlanResolver).
+    App\Plan\Edition:
+        factory: ['App\Plan\Edition', 'from']
+        arguments: ['%env(APP_EDITION)%']
+        autoconfigure: false
+
+when@dev:
+    services:
+        # Standalone DBAL connection to the dockerized PostgreSQL demo instance
+        # (docker/pg-demo, a separate compose stack publishing 5433 on the host —
+        # reached through host.docker.internal from the app container). Used only
+        # by the Jmonitor PostgreSQL collector so we can test the Postgres
+        # dashboard without changing the app's main (MySQL) connection.
+        #   docker compose -f docker/pg-demo/compose.yaml up -d
+        app.pg_demo_connection:
+            class: Doctrine\DBAL\Connection
+            factory: ['Doctrine\DBAL\DriverManager', 'getConnection']
+            arguments:
+                -
+                    driver: 'pdo_pgsql'
+                    host: 'host.docker.internal'
+                    port: 5433
+                    dbname: 'shop'
+                    user: 'jmonitor'
+                    password: 'jmonitor'

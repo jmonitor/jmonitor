@@ -1,0 +1,34 @@
+{% extends 'dash/help/metric/layout.html.twig' %}
+
+{% block definition %}
+    <p>This card shows key Redis configuration and runtime information.</p>
+{% endblock %}
+
+{% block why_it_matters %}
+    <p>These settings impact memory usage, data eviction, and how Redis behaves in a distributed setup.</p>
+{% endblock %}
+
+{% block how_to_read %}
+    <ul class="d-flex flex-column gap-2">
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">maxmemory</twig:Html:Badge:Neutral>
+            <p>Maximum amount of memory Redis can use. When reached, data may be evicted based on the policy.</p>
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">maxmemory-policy</twig:Html:Badge:Neutral>
+            <p>Defines how Redis removes data when memory is full (e.g. LRU, LFU, no eviction).</p>
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">port</twig:Html:Badge:Neutral>
+            <p>Network port used by Redis to accept connections.</p>
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">Role</twig:Html:Badge:Neutral>
+            <p>Indicates if the instance is a primary (master) or a replica.</p>
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">Connected slaves</twig:Html:Badge:Neutral>
+            <p>Number of replicas connected to the primary instance.</p>
+        </li>
+    </ul>
+{% endblock %}

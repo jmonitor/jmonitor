@@ -1,0 +1,46 @@
+{% extends 'dash/help/metric/layout.html.twig' %}
+
+{% block definition %}
+    <p>This card shows how Redis evicts data when the memory limit is reached.</p>
+{% endblock %}
+
+{% block why_it_matters %}
+    <p>The eviction policy defines which keys are removed when memory is full. It directly impacts cache efficiency and data retention..</p>
+{% endblock %}
+
+{% block how_to_read %}
+    <ul class="d-flex flex-column gap-2">
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">noeviction</twig:Html:Badge:Neutral>
+            <p>No keys are removed. New write operations will fail when memory is full.</p>
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">allkeys-lru</twig:Html:Badge:Neutral>
+            <p>Removes the least recently used keys, from all keys.</p>
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">volatile-lru</twig:Html:Badge:Neutral>
+            <p>Removes the least recently used keys, only among keys with an expiration set.</p>
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">allkeys-lfu</twig:Html:Badge:Neutral>
+            <p>Removes the least frequently used keys, from all keys.</p>
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">volatile-lfu</twig:Html:Badge:Neutral>
+            <p>Removes the least frequently used keys, only among keys with an expiration set.</p>
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">allkeys-random</twig:Html:Badge:Neutral>
+            <p>Removes random keys, from all keys.</p>
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">volatile-random</twig:Html:Badge:Neutral>
+            <p>Removes random keys, only among keys with an expiration set.</p>
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">volatile-ttl</twig:Html:Badge:Neutral>
+            <p>Removes keys with an expiration, starting with the ones closest to expiration.</p>
+        </li>
+    </ul>
+{% endblock %}

@@ -1,0 +1,40 @@
+{# @var bag \App\Metrics\Dto\Bag\Symfony\SymfonyBag #}
+{% set bag = bag('symfony') %}
+<table class="table table-borderless mb-0">
+    <thead>
+    <tr>
+        <th scope="col">Transport</th>
+        <th scope="col" class="text-end">Messages</th>
+    </tr>
+    </thead>
+    <tbody>
+        {% for name, transport in bag.components.messenger.transports %}
+            <tr>
+                <td class="py-1">{{ name }}</td>
+                <td class="py-1 text-end">
+                    {% if transport.count > 0 %}
+                        {% if name === 'failed' %}
+                            <twig:Html:Badge:Red :icon="false">{{ transport.count }}</twig:Html:Badge:Red>
+                        {% else %}
+                            <twig:Html:Badge:Blue>{{ transport.count }}</twig:Html:Badge:Blue>
+                        {% endif %}
+                    {% else %}
+                        {{ transport.count }}
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        {% for name in bag.components.messenger.uncountableTransports %}
+            {% if loop.index0 === 0 %}
+                <tr>
+                    <td colspan="2"><hr class="my-0"></td>
+                </tr>
+            {% endif %}
+
+            <tr>
+                <td class="py-1">{{ name }}</td>
+                <td class="py-1 text-end text-muted">Uncountable</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

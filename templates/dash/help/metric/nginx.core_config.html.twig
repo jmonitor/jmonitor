@@ -1,0 +1,34 @@
+{% extends 'dash/help/metric/layout.html.twig' %}
+
+{% block definition %}
+    <p>This card shows the main Nginx configuration settings related to system behavior and logging.</p>
+{% endblock %}
+
+{% block why_it_matters %}
+    <p>These settings control how Nginx runs and logs activity. Misconfiguration can cause errors, missing logs, or security issues.</p>
+{% endblock %}
+
+{% block how_to_read %}
+    <ul class="d-flex flex-column gap-2">
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">config file</twig:Html:Badge:Neutral>
+            <p>This is the main Nginx configuration file. It defines how the server is set up and where other settings are loaded from.</p>
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">include</twig:Html:Badge:Neutral>
+            <p>These are additional configuration files loaded by Nginx. They help organize the configuration into multiple files.</p>
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">user</twig:Html:Badge:Neutral>
+            <p>This is the system user running Nginx workers. It affects file permissions and security.</p>
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">access_log</twig:Html:Badge:Neutral>
+            <p>This is the file where Nginx records incoming requests. It is useful for monitoring traffic and debugging.</p>
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">log level</twig:Html:Badge:Neutral>
+            <p>This defines how detailed the error logs are. Higher levels show more details but can generate more logs.</p>
+        </li>
+    </ul>
+{% endblock %}

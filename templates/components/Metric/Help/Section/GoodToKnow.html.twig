@@ -1,0 +1,9 @@
+<twig:Metric:Help:Section icon="material-symbols:tips-and-updates-outline" title="Good to know">
+    {% if paragraphes %}
+        {% for paragraphe in paragraphes %}
+            <p>{{ paragraphe|raw }}</p>
+        {% endfor %}
+    {% else %}
+        {{ block(outerBlocks.content) }}
+    {% endif %}
+</twig:Metric:Help:Section>

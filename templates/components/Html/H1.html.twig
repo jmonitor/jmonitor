@@ -1,0 +1,5 @@
+{% if icon %}
+    <h1 class="h4 mb-0 d-flex align-items-center gap-2">{{ ux_icon(icon) }} {{ block('content') }}</h1>
+{% else %}
+    <h1 class="h4 mb-0">{{ block('content') }}</h1>
+{% endif %}

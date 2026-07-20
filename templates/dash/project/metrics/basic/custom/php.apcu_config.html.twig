@@ -1,0 +1,7 @@
+{# @var bag \App\Metrics\Dto\Bag\Php\PhpBag #}
+{% set bag = bag('php') %}
+<twig:Metric:Metric:List>
+    <twig:InfoLine label="shm_size">{{ bag.apcu.config.shmSize|format_bytes }}</twig:InfoLine>
+    <twig:InfoLine label="shm_segments">{{ bag.apcu.config.shmSegments }}</twig:InfoLine>
+    <twig:InfoLine label="ttl">{{ bag.apcu.config.ttl }}</twig:InfoLine>
+</twig:Metric:Metric:List>

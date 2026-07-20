@@ -1,0 +1,15 @@
+{% extends 'dash/project/settings_layout.twig' %}
+
+{% block title %}Alerts{% endblock %}
+
+{% block settings_content %}
+<turbo-frame id="tf-alert-{{ component.value }}">
+
+    {{ component('Alert:AlertForm', {
+        component: component,
+        projectUuId: current_project().uuid,
+        alertMetric: alertMetric|default(null),
+    }) }}
+
+</turbo-frame>
+{% endblock %}

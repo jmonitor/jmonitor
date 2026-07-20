@@ -1,0 +1,22 @@
+{% extends 'dash/help/metric/layout.html.twig' %}
+
+{% block definition %}
+    <p>This card shows how FrankenPHP executes your PHP application.</p>
+{% endblock %}
+
+{% block why_it_matters %}
+    <p>The execution mode impacts performance, memory usage, and how requests are handled.</p>
+{% endblock %}
+
+{% block how_to_read %}
+    <ul class="d-flex flex-column gap-2">
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">worker</twig:Html:Badge:Neutral>
+            <p>Runs your application in long-lived workers. Improves performance by reusing the same process, but requires code to be designed for persistent state.</p>
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">classic</twig:Html:Badge:Neutral>
+            <p>Runs each request in isolation, like traditional PHP. Simpler and safer, but less performant due to repeated initialization.</p>
+        </li>
+    </ul>
+{% endblock %}

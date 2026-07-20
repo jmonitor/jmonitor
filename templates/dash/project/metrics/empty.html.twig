@@ -1,0 +1,25 @@
+{% extends 'dash/project/metric_layout.twig' %}
+
+{% block metric_content %}
+    <twig:Alert type="warning">
+        <h2 class="mb-4">No data to display</h2>
+        <p class="mb-0 fs-5 fw-light">We have not received any data for this component for a while.</p>
+    </twig:Alert>
+
+    {% if collectorContext.lastPushStatus.inactive %}
+        <h3>Your collector seems inactive</h3>
+        <div class="max-w-lg">
+            <twig:Dashboard:Status />
+        </div>
+    {% else %}
+        <h3>Did you just activate the component?</h3>
+        <div>
+            <p>Add the component to your collector, and come back here.</p>
+            <p>
+                Refer to the agent documentation on GitHub,
+                <a href="https://github.com/jmonitor/collector" target="_blank">jmonitor/collector <twig:ux:icon name="material-symbols:open-in-new" /></a>
+                or <a href="https://github.com/jmonitor/jmonitor-bundle" target="_blank">jmonitor/jmonitor-bundle <twig:ux:icon name="material-symbols:open-in-new" /></a>.
+            </p>
+        </div>
+    {% endif %}
+{% endblock %}

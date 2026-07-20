@@ -1,0 +1,7 @@
+{# @var bag \App\Metrics\Dto\Bag\Php\PhpBag #}
+{# @var dto \App\Metrics\Renderer\Dto\GaugeDto #}
+<twig:Metric:Metric:Gauge dto="{{ dto }}" chart="{{ chart }}" options="{{ options }}">
+    {% if bag.apcu.sma.usedMem >= 0 and bag.apcu.sma.availableMem %}
+        {{ bag.apcu.sma.usedMem|format_bytes }} / {{ bag.apcu.sma.availableMem|format_bytes }}
+    {% endif %}
+</twig:Metric:Metric:Gauge>

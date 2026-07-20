@@ -1,0 +1,6 @@
+{# @var bag \App\Metrics\Dto\Bag\Redis\RedisBag #}
+<twig:Metric:Metric:Gauge dto="{{ dto }}" chart="{{ chart }}" options="{{ options }}">
+    {% if bag.memory.used > 0 and bag.memory.maxMemory >= 0 %}
+        {{ bag.memory.used|format_bytes }} / {{ bag.memory.maxMemory|format_bytes }}
+    {% endif %}
+</twig:Metric:Metric:Gauge>

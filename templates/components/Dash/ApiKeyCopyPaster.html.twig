@@ -1,0 +1,11 @@
+<div {{ attributes.defaults({class: 'input-group'}) }} {{ stimulus_controller('clipboard', {successContent: 'copied!'}) }}>
+    {% if displayFull %}
+        {% set value = key %}
+    {% else %}
+        {% set value = key.slice(0, 3) ~ (''|u.padEnd(key.length - 3, '*')) %}
+    {% endif %}
+
+    <input type="text" class="form-control {% if not displayFull %}pe-none{% endif %}" {% if displayFull %}onfocus="this.select()"{% endif %} id="api_key" value="{{ value }}" readonly>
+    <button class="btn btn-primary lh-1 rounded-end-1" type="button" title="Copy to clipboard" {{ stimulus_action('clipboard', 'copy') }} {{ stimulus_target('clipboard', 'button') }}>{{ ux_icon('fa7-regular:clone') }}</button>
+    <input type="hidden" value="{{ current_project().apiKey }}" {{ stimulus_target('clipboard', 'source') }}>
+</div>

@@ -1,0 +1,52 @@
+# Dev Caddyfile for the app container. Mirrors production (root Caddyfile):
+# same-process Mercure hub, Caddy admin API on :2019 for the caddy collector,
+# FrankenPHP worker mode (same execution model as prod, so worker-mode bugs —
+# leaked static state, stale services — show up locally). `watch` restarts
+# the workers on code changes.
+{
+	frankenphp
+	metrics
+}
+
+# One HTTP site block for every host: Symfony routes by Host header (config/routes.yaml).
+# `localhost` serves in-container calls (the php-metrics endpoint fetched by the php
+# collector); `app` (the compose service name) serves cross-container server-side calls
+# like Mercure publishing (MERCURE_URL) — *.localhost can't be used for those because
+# libcurl force-resolves it to loopback (RFC 6761), bypassing Docker DNS.
+http://dash.jmonitor.localhost, http://collector.jmonitor.localhost, http://admin.jmonitor.localhost, http://webhook.jmonitor.localhost, http://localhost, http://app {
+	root * public/
+	encode zstd br gzip
+	header {
+		X-Content-Type-Options "nosniff"
+	}
+
+	mercure {
+		transport local
+
+		# Dev secret — must match MERCURE_JWT_SECRET in .env.dev.
+		publisher_jwt "!ChangeThisDevMercureSecret-min-32-bytes!" HS256
+		subscriber_jwt "!ChangeThisDevMercureSecret-min-32-bytes!" HS256
+
+		cors_origins http://dash.jmonitor.localhost
+
+		# No `anonymous`: a valid subscriber JWT (cookie set by the app, scoped to the
+		# project topic) is required to subscribe, just like prod.
+	}
+
+	php_server {
+		worker {
+			file ./public/index.php
+			num 2
+			name jmonitor
+			# Source dirs only: the bare `watch` default also matches
+			# var/cache/dev/**/*.php, restarting workers on every request.
+			watch ./src
+			watch ./config
+			watch ./templates
+			watch ./translations
+			# Autoload files rewritten on every composer require/update/install,
+			# so workers restart when dependencies change (tiny dir, not all of vendor/).
+			watch ./vendor/composer
+		}
+	}
+}

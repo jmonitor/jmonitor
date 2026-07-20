@@ -1,0 +1,31 @@
+<twig:Card {{ ...attributes }}>
+    <div class="mb-3 d-flex gap-2">
+        <twig:ux:icon name="material-symbols:notifications-outline" class="text-primary" width="1.5em" height="1.5em" />
+        <h3 class="card-title mb-0">Paused alerts</h3>
+        <a class="ms-auto text-decoration-none" href="{{ path('project.settings.alerts', {uuid: current_project().uuid}) }}">See alerts <twig:ux:icon name="material-symbols:arrow-right-alt" /></a>
+    </div>
+    <p class="text-muted">
+        <small>
+            Alerts are automatically paused when they are triggered.
+            <br>You can resume them at any time.
+        </small>
+    </p>
+
+    {% set can_resume = is_granted(constant('App\\Security\\Voter\\ProjectVoter::PROJECT_ADMIN'), current_project()) %}
+    <turbo-frame id="dashboard-alerts" class="d-flex flex-column gap-2 mh-10 overflow-y-auto">
+        {% for alert in pausedAlerts %}
+            <div class="rounded p-3 bg-card d-flex align-items-center gap-2">
+                <div class="dot bg-warning align-self-baseline mt-2"></div>
+                <div>
+                    <div>{{ alert.alertMetric.label }}</div>
+                    <small class="text-muted">{{ alert.alertMetric.component.label }}</small>
+                </div>
+                <a href="{{ path('project.settings.alerts.toggle', {alert: alert.uuid, uuid: alert.project.uuid}) }}" class="ms-auto btn btn-sm btn-default {% if not can_resume %}disabled{% endif %}" title="Resume alert">
+                    <twig:ux:icon name="material-symbols:play-arrow" width="2em" height="2em" />
+                </a>
+            </div>
+        {% else %}
+            <p class="mb-0 text-primary-light opacity-75 d-flex align-items-center gap-1"><twig:ux:icon name="material-symbols:check" class="text-success me-1" width="1em" height="1em" /> There is no paused alerts.</p>
+        {% endfor %}
+    </turbo-frame>
+</twig:Card>

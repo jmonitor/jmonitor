@@ -1,0 +1,4 @@
+{# @var dto \App\Metrics\Renderer\Dto\GaugeDto #}
+<twig:Metric:Metric:Gauge dto="{{ dto }}" chart="{{ chart }}" options="{{ options }}">
+    {{ dto.context.allocated|format_bytes }} / {{ dto.context.ram|format_bytes }}
+</twig:Metric:Metric:Gauge>

@@ -1,0 +1,8 @@
+{# @var dto \App\Metrics\Renderer\Dto\BasicDto #}
+<div class="text-end">
+    {% if dto.value === 0 %}
+        <twig:Html:Badge:Badge style="success" class="fs-6">0</twig:Html:Badge:Badge>
+    {% else %}
+        <twig:Html:Badge:Badge style="danger" class="fs-6">{{ dto.value }}</twig:Html:Badge:Badge>
+    {% endif %}
+</div>

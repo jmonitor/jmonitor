@@ -1,0 +1,10 @@
+<nav class="nav nav-underline border-bottom overflow-x-auto flex-nowrap">
+    {% for link in links %}
+        <li class="nav-item">
+            <a class="nav-link px-2 px-sm-3 px-md-4 px-xl-2rem d-flex align-items-center gap-2 text-nowrap {% if link.metadata('disabled') %}disabled{% elseif link.active(app.request) %}active{% endif %}" href="{{ path(link.routeName, link.routeParameters) }}"{% if link.metadata('disabled') %} aria-disabled="true" tabindex="-1"{% endif %}>
+                {{ ux_icon(link.metadata('icon'), {height: '1.3em', width: '1.3em'}) }}
+                {{ link.label|raw }}
+            </a>
+        </li>
+    {% endfor %}
+</nav>

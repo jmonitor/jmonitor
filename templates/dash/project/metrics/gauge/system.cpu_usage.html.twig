@@ -1,0 +1,5 @@
+<twig:Metric:Metric:Gauge dto="{{ dto }}" chart="{{ chart }}" options="{{ options }}">
+    {% if bag.cpu.load1 is not same as(null) %}
+        Load average {{ bag.cpu.load1 }}
+    {% endif %}
+</twig:Metric:Metric:Gauge>

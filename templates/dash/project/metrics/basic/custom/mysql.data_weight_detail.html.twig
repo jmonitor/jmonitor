@@ -1,0 +1,6 @@
+{# @var dto \App\Metrics\Renderer\Dto\BasicDto #}
+<twig:Metric:Metric:List>
+    <twig:InfoLine label="Data" value="{{ dto.value['data_length']|format_bytes }}" />
+    <twig:InfoLine label="Index" value="{{ dto.value['index_length']|format_bytes }}" />
+    <twig:InfoLine label="Total" value="{{ dto.value['total_length']|format_bytes }}" />
+</twig:Metric:Metric:List>

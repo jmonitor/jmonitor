@@ -1,0 +1,46 @@
+{% extends 'dash/help/metric/layout.html.twig' %}
+
+{% block definition %}
+    <p>This card shows key Nginx settings that impact performance and security.</p>
+{% endblock %}
+
+{% block why_it_matters %}
+    <p>These settings control how data is sent, how connections are managed, and how secure your server is. Poor values can slow down your site or expose information.</p>
+{% endblock %}
+
+{% block how_to_read %}
+    <ul class="d-flex flex-column gap-2">
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">sendfile</twig:Html:Badge:Neutral>
+            <p>Enables sending files directly from disk to the network. This improves performance for static files.</p>
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">tcp_nopush</twig:Html:Badge:Neutral>
+            <p>Optimizes how data packets are sent. It helps send full packets instead of small chunks, improving efficiency.</p>
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">tcp_nodelay</twig:Html:Badge:Neutral>
+            <p>Sends data immediately without waiting. This reduces latency for small responses.</p>
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">keepalive_timeout</twig:Html:Badge:Neutral>
+            <p>Defines how long a connection stays open for reuse. Longer timeouts reduce connection overhead but use more resources.</p>
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">gzip</twig:Html:Badge:Neutral>
+            <p>Enables compression of responses. This reduces bandwidth usage and speeds up page load times.</p>
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">ssl_protocols</twig:Html:Badge:Neutral>
+            <p>Defines which SSL/TLS versions are allowed. Older protocols are less secure and should be disabled.</p>
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">ssl_prefer_server_ciphers</twig:Html:Badge:Neutral>
+            <p>Forces the server to choose secure ciphers over the client’s preference.</p>
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">server_tokens</twig:Html:Badge:Neutral>
+            <p>Controls whether Nginx version information is shown in responses. Disabling it improves security by hiding details.</p>
+        </li>
+    </ul>
+{% endblock %}

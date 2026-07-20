@@ -1,0 +1,1076 @@
+{
+    "files": {
+        "src/AutoRefresh/Dto/AutoRefreshDto.php": [
+            {
+                "message": "Mutation of state 'autoRefresh' in AutoRefreshDto::setAutoRefresh()"
+            }
+        ],
+        "src/Bridge/Eol/EndOfLife.php": [
+            {
+                "message": "Mutation of state 'cycles' in EndOfLife::getCycle()"
+            },
+            {
+                "message": "Mutation of state 'eolResponse' in EndOfLife::load()"
+            }
+        ],
+        "src/Bridge/InfluxDb/InfluxDb.php": [
+            {
+                "message": "Mutation of state 'resolvedOrgId' in InfluxDb::getOrgId()"
+            }
+        ],
+        "src/Chart/Dto/GaugeChartConfiguration.php": [
+            {
+                "message": "Mutation of state 'aspectRatio' in GaugeChartConfiguration::setAspectRatio()"
+            },
+            {
+                "message": "Mutation of state 'color' in GaugeChartConfiguration::setColor()"
+            }
+        ],
+        "src/Chart/Dto/TimeSeriesChartConfiguration.php": [
+            {
+                "message": "Mutation of state 'colors' in TimeSeriesChartConfiguration::setColors()"
+            },
+            {
+                "message": "Mutation of state 'colors' in TimeSeriesChartConfiguration::setColor()"
+            },
+            {
+                "message": "Mutation of state 'chartType' in TimeSeriesChartConfiguration::setChartType()"
+            },
+            {
+                "message": "Mutation of state 'yMin' in TimeSeriesChartConfiguration::setYMin()"
+            },
+            {
+                "message": "Mutation of state 'suggestedYMin' in TimeSeriesChartConfiguration::setSuggestedYMin()"
+            },
+            {
+                "message": "Mutation of state 'yMax' in TimeSeriesChartConfiguration::setYMax()"
+            },
+            {
+                "message": "Mutation of state 'range' in TimeSeriesChartConfiguration::setRange()"
+            },
+            {
+                "message": "Mutation of state 'aspectRatio' in TimeSeriesChartConfiguration::setAspectRatio()"
+            },
+            {
+                "message": "Mutation of state 'unit' in TimeSeriesChartConfiguration::setUnit()"
+            }
+        ],
+        "src/Chart/Units/Bytes.php": [
+            {
+                "message": "Mutation of state 'converted' in Bytes::__clone()"
+            },
+            {
+                "message": "Mutation of state 'converted' in Bytes::convert()"
+            },
+            {
+                "message": "Mutation of state 'converted' in Bytes::convert()"
+            }
+        ],
+        "src/Command/Demo/DemoWorkerCommand.php": [
+            {
+                "message": "Mutation of state 'demoProject' in DemoWorkerCommand::resolveDemoProject()"
+            },
+            {
+                "message": "Mutation of state 'stop' in DemoWorkerCommand::handleSignal()"
+            }
+        ],
+        "src/Demo/State/DemoState.php": [
+            {
+                "message": "Mutation of state 'state' in DemoState::counter()"
+            },
+            {
+                "message": "Mutation of state 'state' in DemoState::walk()"
+            },
+            {
+                "message": "Mutation of state 'state' in DemoState::load()"
+            },
+            {
+                "message": "Mutation of state 'loaded' in DemoState::load()"
+            }
+        ],
+        "src/Entity/Alert.php": [
+            {
+                "message": "Mutation of state 'project' in Alert::setProject()"
+            },
+            {
+                "message": "Mutation of state 'alertMetric' in Alert::setAlertMetric()"
+            },
+            {
+                "message": "Mutation of state 'configBag' in Alert::getConfig()"
+            },
+            {
+                "message": "Mutation of state 'config' in Alert::setConfig()"
+            },
+            {
+                "message": "Mutation of state 'configBag' in Alert::setConfig()"
+            },
+            {
+                "message": "Mutation of state 'paused' in Alert::setPaused()"
+            }
+        ],
+        "src/Entity/Order.php": [
+            {
+                "message": "Mutation of state 'createdAt' in Order::setCreatedAt()"
+            },
+            {
+                "message": "Mutation of state 'paidAt' in Order::setPaidAt()"
+            },
+            {
+                "message": "Mutation of state 'user' in Order::setUser()"
+            },
+            {
+                "message": "Mutation of state 'project' in Order::setProject()"
+            },
+            {
+                "message": "Mutation of state 'total' in Order::setTotal()"
+            },
+            {
+                "message": "Mutation of state 'stripeCustomerId' in Order::setStripeCustomerId()"
+            },
+            {
+                "message": "Mutation of state 'plan' in Order::setPlan()"
+            },
+            {
+                "message": "Mutation of state 'status' in Order::setStatus()"
+            },
+            {
+                "message": "Mutation of state 'number' in Order::setNumber()"
+            }
+        ],
+        "src/Entity/Project.php": [
+            {
+                "message": "Mutation of state 'uuid' in Project::setUuid()"
+            },
+            {
+                "message": "Mutation of state 'createdAt' in Project::setCreatedAt()"
+            },
+            {
+                "message": "Mutation of state 'name' in Project::setName()"
+            },
+            {
+                "message": "Mutation of state 'apiKey' in Project::setApiKey()"
+            },
+            {
+                "message": "Mutation of state 'bucketId' in Project::setBucketId()"
+            },
+            {
+                "message": "Mutation of state 'bucketName' in Project::setBucketName()"
+            },
+            {
+                "message": "Mutation of state 'components' in Project::setComponents()"
+            },
+            {
+                "message": "Mutation of state 'components' in Project::removeComponent()"
+            },
+            {
+                "message": "Mutation of state 'components' in Project::addComponent()"
+            },
+            {
+                "message": "Mutation of state 'status' in Project::setStatus()"
+            },
+            {
+                "message": "Mutation of state 'subscription' in Project::setSubscription()"
+            },
+            {
+                "message": "Mutation of state 'lastDataPushDate' in Project::setLastDataPushDate()"
+            }
+        ],
+        "src/Entity/ProjectInvitation.php": [
+            {
+                "message": "Mutation of state 'createdAt' in ProjectInvitation::setCreatedAt()"
+            },
+            {
+                "message": "Mutation of state 'email' in ProjectInvitation::setEmail()"
+            },
+            {
+                "message": "Mutation of state 'project' in ProjectInvitation::setProject()"
+            },
+            {
+                "message": "Mutation of state 'role' in ProjectInvitation::setRole()"
+            }
+        ],
+        "src/Entity/ProjectUser.php": [
+            {
+                "message": "Mutation of state 'createdAt' in ProjectUser::setCreatedAt()"
+            },
+            {
+                "message": "Mutation of state 'user' in ProjectUser::setUser()"
+            },
+            {
+                "message": "Mutation of state 'project' in ProjectUser::setProject()"
+            },
+            {
+                "message": "Mutation of state 'role' in ProjectUser::setRole()"
+            },
+            {
+                "message": "Mutation of state 'alertNotificationsEnabled' in ProjectUser::setAlertNotificationsEnabled()"
+            }
+        ],
+        "src/Entity/Subscription.php": [
+            {
+                "message": "Mutation of state 'createdAt' in Subscription::setCreatedAt()"
+            },
+            {
+                "message": "Mutation of state 'startAt' in Subscription::setStartAt()"
+            },
+            {
+                "message": "Mutation of state 'endAt' in Subscription::setEndAt()"
+            },
+            {
+                "message": "Mutation of state 'stripeSubscriptionId' in Subscription::setStripeSubscriptionId()"
+            },
+            {
+                "message": "Mutation of state 'autoRenew' in Subscription::setAutoRenew()"
+            },
+            {
+                "message": "Mutation of state 'project' in Subscription::setProject()"
+            },
+            {
+                "message": "Mutation of state 'plan' in Subscription::setPlan()"
+            }
+        ],
+        "src/Entity/User.php": [
+            {
+                "message": "Mutation of state 'email' in User::setEmail()"
+            },
+            {
+                "message": "Mutation of state 'role' in User::setRole()"
+            },
+            {
+                "message": "Mutation of state 'createdAt' in User::setCreatedAt()"
+            },
+            {
+                "message": "Mutation of state 'password' in User::setPassword()"
+            },
+            {
+                "message": "Mutation of state 'plainPassword' in User::setPlainPassword()"
+            },
+            {
+                "message": "Mutation of state 'passwordLostHash' in User::setPasswordLostHash()"
+            },
+            {
+                "message": "Mutation of state 'activationHash' in User::setActivationHash()"
+            },
+            {
+                "message": "Mutation of state 'createdByIp' in User::setCreatedByIp()"
+            },
+            {
+                "message": "Mutation of state 'deletedAt' in User::setDeletedAt()"
+            },
+            {
+                "message": "Mutation of state 'subscribedToNewsletter' in User::setSubscribedToNewsletter()"
+            },
+            {
+                "message": "Mutation of state 'subscribedToPartnerMarketing' in User::setSubscribedToPartnerMarketing()"
+            },
+            {
+                "message": "Mutation of state 'subscribedToJmonitorMarketing' in User::setSubscribedToJmonitorMarketing()"
+            },
+            {
+                "message": "Mutation of state 'status' in User::setStatus()"
+            },
+            {
+                "message": "Mutation of state 'lastConnectedDate' in User::setLastConnectedDate()"
+            }
+        ],
+        "src/Env.php": [
+            {
+                "message": "Usage of PHP Superglobal $_SERVER is discouraged in Worker mode."
+            }
+        ],
+        "src/EventListener/Messenger/WorkerRestartDetector.php": [
+            {
+                "message": "Mutation of state 'startedAt' in WorkerRestartDetector::onStarted()"
+            }
+        ],
+        "src/Menu/MenuLink.php": [
+            {
+                "message": "Mutation of state 'label' in MenuLink::setLabel()"
+            }
+        ],
+        "src/Metrics/Actions/Dto/Action.php": [
+            {
+                "message": "Mutation of state 'label' in Action::setLabel()"
+            },
+            {
+                "message": "Mutation of state 'icon' in Action::setIcon()"
+            },
+            {
+                "message": "Mutation of state 'url' in Action::setUrl()"
+            },
+            {
+                "message": "Mutation of state 'routeName' in Action::setRouteName()"
+            },
+            {
+                "message": "Mutation of state 'routeParams' in Action::setRouteParams()"
+            },
+            {
+                "message": "Mutation of state 'attributes' in Action::setAttribute()"
+            }
+        ],
+        "src/Metrics/Dto/DeltaBag.php": [
+            {
+                "message": "Mutation of state 'deltasByKey' in DeltaBag::getValue()"
+            },
+            {
+                "message": "Mutation of state 'deltasByKey' in DeltaBag::getValue()"
+            },
+            {
+                "message": "Mutation of state 'deltasByKey' in DeltaBag::getValue()"
+            }
+        ],
+        "src/Metrics/Help/HelpProvider.php": [
+            {
+                "message": "Mutation of state 'instances' in HelpProvider::load()"
+            }
+        ],
+        "src/Metrics/Model/Influx/QueryBuilder.php": [
+            {
+                "message": "Mutation of state 'range' in QueryBuilder::range()"
+            },
+            {
+                "message": "Mutation of state 'measurement' in QueryBuilder::measurement()"
+            },
+            {
+                "message": "Mutation of state 'field' in QueryBuilder::field()"
+            },
+            {
+                "message": "Mutation of state 'tags' in QueryBuilder::tag()"
+            },
+            {
+                "message": "Mutation of state 'field' in QueryBuilder::fields()"
+            },
+            {
+                "message": "Mutation of state 'aggregateWindow' in QueryBuilder::aggregateWindow()"
+            },
+            {
+                "message": "Mutation of state 'derivative' in QueryBuilder::derivative()"
+            }
+        ],
+        "src/Metrics/Range/TypicalRangesProvider.php": [
+            {
+                "message": "Mutation of state 'instances' in TypicalRangesProvider::load()"
+            }
+        ],
+        "src/Metrics/Renderer/Dto/AbstractDto.php": [
+            {
+                "message": "Mutation of state 'cardTemplate' in AbstractDto::setCardTemplate()"
+            },
+            {
+                "message": "Mutation of state 'badge' in AbstractDto::setBadge()"
+            },
+            {
+                "message": "Mutation of state 'cardTitle' in AbstractDto::setCardTitle()"
+            },
+            {
+                "message": "Mutation of state 'valueAvailable' in AbstractDto::setValueAvailable()"
+            },
+            {
+                "message": "Mutation of state 'emptyDataMode' in AbstractDto::setValueAvailable()"
+            },
+            {
+                "message": "Mutation of state 'context' in AbstractDto::setContext()"
+            }
+        ],
+        "src/Metrics/Renderer/Dto/BasicDto.php": [
+            {
+                "message": "Mutation of state 'value' in BasicDto::setValue()"
+            },
+            {
+                "message": "Mutation of state 'formattedValue' in BasicDto::setFormattedValue()"
+            }
+        ],
+        "src/Metrics/Renderer/Dto/ConsumerValueDto.php": [
+            {
+                "message": "Mutation of state 'formatter' in ConsumerValueDto::formatValue()"
+            }
+        ],
+        "src/Metrics/Renderer/Dto/Embed/EmbedRendererOptionsBuilder.php": [
+            {
+                "message": "Mutation of state 'range' in EmbedRendererOptionsBuilder::range()"
+            },
+            {
+                "message": "Mutation of state 'aspectRatio' in EmbedRendererOptionsBuilder::aspectRatio()"
+            },
+            {
+                "message": "Mutation of state 'displayHelp' in EmbedRendererOptionsBuilder::displayHelp()"
+            }
+        ],
+        "src/Metrics/Renderer/Dto/GaugeDto.php": [
+            {
+                "message": "Mutation of state 'value' in GaugeDto::setValue()"
+            },
+            {
+                "message": "Mutation of state 'value' in GaugeDto::setValue()"
+            },
+            {
+                "message": "Mutation of state 'min' in GaugeDto::setMin()"
+            },
+            {
+                "message": "Mutation of state 'max' in GaugeDto::setMax()"
+            }
+        ],
+        "src/Metrics/Renderer/Dto/ListDto.php": [
+            {
+                "message": "Mutation of state 'consumers' in ListDto::setConsumers()"
+            }
+        ],
+        "src/Metrics/Renderer/Dto/TimeSerieDto.php": [
+            {
+                "message": "Mutation of state 'measurement' in TimeSerieDto::setMeasurement()"
+            },
+            {
+                "message": "Mutation of state 'fields' in TimeSerieDto::setFields()"
+            },
+            {
+                "message": "Mutation of state 'queryBuilder' in TimeSerieDto::setQueryBuilder()"
+            },
+            {
+                "message": "Mutation of state 'currentValue' in TimeSerieDto::setCurrentValue()"
+            }
+        ],
+        "src/Metrics/Renderer/Options/GaugeRendererOptions.php": [
+            {
+                "message": "Mutation of state 'displayHelp' in GaugeRendererOptions::setDisplayHelp()"
+            }
+        ],
+        "src/Range/Dto/RangeDto.php": [
+            {
+                "message": "Mutation of state 'range' in RangeDto::setRange()"
+            }
+        ],
+        "src/Twig/Components/Alert/AlertForm.php": [
+            {
+                "message": "Mutation of state 'project' in AlertForm::getProject()"
+            },
+            {
+                "message": "Mutation of state 'isSuccessful' in AlertForm::save()"
+            }
+        ],
+        "src/Twig/Components/Cards.php": [
+            {
+                "message": "Mutation of state 'titles' in Cards::setTitle()"
+            }
+        ],
+        "src/Twig/Components/EmbedAutoRefreshForm.php": [
+            {
+                "message": "Mutation of state 'autoRefreshDto' in EmbedAutoRefreshForm::getRefreshDto()"
+            }
+        ],
+        "src/Twig/Components/Html/Badge/Badge.php": [
+            {
+                "message": "Mutation of state 'style' in Badge::setStyle()"
+            }
+        ],
+        "src/Twig/Components/Metric/Card.php": [
+            {
+                "message": "Mutation of state 'metric' in Card::setMetric()"
+            },
+            {
+                "message": "Mutation of state 'renderer' in Card::setRenderer()"
+            },
+            {
+                "message": "Mutation of state 'renderer' in Card::postMount()"
+            }
+        ],
+        "src/Utils/Units/MilliSecond.php": [
+            {
+                "message": "Mutation of state 'converted' in MilliSecond::__clone()"
+            },
+            {
+                "message": "Mutation of state 'converted' in MilliSecond::convert()"
+            },
+            {
+                "message": "Mutation of state 'converted' in MilliSecond::convert()"
+            },
+            {
+                "message": "Mutation of state 'converted' in MilliSecond::convert()"
+            }
+        ],
+        "vendor/easycorp/easyadmin-bundle/src/DataCollector/EasyAdminDataCollector.php": [
+            {
+                "message": "Mutation of state 'data' in EasyAdminDataCollector::collect()"
+            }
+        ],
+        "vendor/easycorp/easyadmin-bundle/src/Field/Configurator/AssociationConfigurator.php": [
+            {
+                "message": "Mutation of state 'targetCrudDtoCache' in AssociationConfigurator::getTargetCrudDto()"
+            },
+            {
+                "message": "Mutation of state 'targetCrudDtoCache' in AssociationConfigurator::getTargetCrudDto()"
+            }
+        ],
+        "vendor/easycorp/easyadmin-bundle/src/Intl/IntlFormatter.php": [
+            {
+                "message": "Mutation of state 'dateFormatters' in IntlFormatter::createDateFormatter()"
+            },
+            {
+                "message": "Mutation of state 'numberFormatters' in IntlFormatter::createNumberFormatter()"
+            }
+        ],
+        "vendor/easycorp/easyadmin-bundle/src/Orm/EntityPaginator.php": [
+            {
+                "message": "Mutation of state 'pageSize' in EntityPaginator::paginate()"
+            },
+            {
+                "message": "Mutation of state 'rangeSize' in EntityPaginator::paginate()"
+            },
+            {
+                "message": "Mutation of state 'rangeEdgeSize' in EntityPaginator::paginate()"
+            },
+            {
+                "message": "Mutation of state 'currentPage' in EntityPaginator::paginate()"
+            },
+            {
+                "message": "Mutation of state 'rangeFirstResultNumber' in EntityPaginator::paginate()"
+            },
+            {
+                "message": "Mutation of state 'rangeLastResultNumber' in EntityPaginator::paginate()"
+            },
+            {
+                "message": "Mutation of state 'results' in EntityPaginator::paginate()"
+            },
+            {
+                "message": "Mutation of state 'numResults' in EntityPaginator::paginate()"
+            },
+            {
+                "message": "Mutation of state 'rangeLastResultNumber' in EntityPaginator::paginate()"
+            }
+        ],
+        "vendor/easycorp/easyadmin-bundle/src/Registry/AdminControllerRegistry.php": [
+            {
+                "message": "Mutation of state 'controllerFqcnToRouteMap' in AdminControllerRegistry::loadDashboardRoutesCache()"
+            },
+            {
+                "message": "Mutation of state 'routeToControllerFqcnMap' in AdminControllerRegistry::loadDashboardRoutesCache()"
+            },
+            {
+                "message": "Mutation of state 'crudFqcnToEntityFqcnMap' in AdminControllerRegistry::loadCrudEntityCache()"
+            },
+            {
+                "message": "Mutation of state 'entityFqcnToCrudFqcnMap' in AdminControllerRegistry::loadCrudEntityCache()"
+            }
+        ],
+        "vendor/jmonitor/collector/src/Collector/Caddy/CaddyCollector.php": [
+            {
+                "message": "Mutation of state 'propertyCache' in CaddyCollector::getCaddyVersion()"
+            }
+        ],
+        "vendor/jmonitor/collector/src/Collector/FrankenPhp/FrankenPhpCollector.php": [
+            {
+                "message": "Mutation of state 'propertyCache' in FrankenPhpCollector::getFrankenPhpVersion()"
+            },
+            {
+                "message": "Mutation of state 'propertyCache' in FrankenPhpCollector::getFrankenPhpVersion()"
+            },
+            {
+                "message": "Mutation of state 'propertyCache' in FrankenPhpCollector::getFrankenPhpVersion()"
+            },
+            {
+                "message": "Mutation of state 'propertyCache' in FrankenPhpCollector::getFrankenPhpMode()"
+            },
+            {
+                "message": "Usage of local static variable is dangerous in Worker mode."
+            }
+        ],
+        "vendor/jmonitor/collector/src/Collector/Redis/RedisCollector.php": [
+            {
+                "message": "Mutation of state 'config' in RedisCollector::getConfig()"
+            },
+            {
+                "message": "Mutation of state 'config' in RedisCollector::getConfig()"
+            },
+            {
+                "message": "Mutation of state 'config' in RedisCollector::getConfig()"
+            }
+        ],
+        "vendor/jmonitor/collector/src/Collector/System/SystemCollector.php": [
+            {
+                "message": "Property 'longTermPropertyCache' of SystemCollector is mutated but not reset in reset()."
+            }
+        ],
+        "vendor/jmonitor/collector/src/Jmonitor.php": [
+            {
+                "message": "Mutation of state 'collectors' in Jmonitor::addCollector()"
+            },
+            {
+                "message": "Mutation of state 'booted' in Jmonitor::collect()"
+            },
+            {
+                "message": "Mutation of state 'bootErrors' in Jmonitor::boot()"
+            }
+        ],
+        "vendor/jmonitor/collector/src/Prometheus/PrometheusMetricsProvider.php": [
+            {
+                "message": "Mutation of state 'metrics' in PrometheusMetricsProvider::getMetrics()"
+            },
+            {
+                "message": "Mutation of state 'consumedBy' in PrometheusMetricsProvider::getMetrics()"
+            },
+            {
+                "message": "Mutation of state 'consumedBy' in PrometheusMetricsProvider::getMetrics()"
+            },
+            {
+                "message": "Mutation of state 'metrics' in PrometheusMetricsProvider::getMetrics()"
+            }
+        ],
+        "vendor/jmonitor/jmonitor-bundle/src/Collector/CommandRunner.php": [
+            {
+                "message": "Mutation of state 'phpBinary' in CommandRunner::getPhpBinary()"
+            },
+            {
+                "message": "Mutation of state 'phpBinary' in CommandRunner::getPhpBinary()"
+            }
+        ],
+        "vendor/jmonitor/jmonitor-bundle/src/Collector/Components/FlexRecipesCollector.php": [
+            {
+                "message": "Mutation of state 'propertyCache' in FlexRecipesCollector::collect()"
+            },
+            {
+                "message": "Mutation of state 'propertyCache' in FlexRecipesCollector::collect()"
+            }
+        ],
+        "vendor/jmonitor/jmonitor-bundle/src/Collector/Components/MessengerStatsCollector.php": [
+            {
+                "message": "Mutation of state 'bootCollect' in MessengerStatsCollector::boot()"
+            },
+            {
+                "message": "Mutation of state 'bootCollect' in MessengerStatsCollector::collect()"
+            }
+        ],
+        "vendor/jmonitor/jmonitor-bundle/src/Collector/Components/SchedulerCollector.php": [
+            {
+                "message": "Mutation of state 'bootCollect' in SchedulerCollector::boot()"
+            },
+            {
+                "message": "Mutation of state 'bootCollect' in SchedulerCollector::collect()"
+            }
+        ],
+        "vendor/jmonitor/jmonitor-bundle/src/Collector/SymfonyCollector.php": [
+            {
+                "message": "Mutation of state 'disabledComponents' in SymfonyCollector::boot()"
+            }
+        ],
+        "vendor/jmonitor/jmonitor-bundle/src/Command/CollectorCommand.php": [
+            {
+                "message": "Mutation of state 'limits' in CollectorCommand::execute()"
+            },
+            {
+                "message": "Mutation of state 'stopSignalReceived' in CollectorCommand::handleSignal()"
+            },
+            {
+                "message": "Mutation of state 'serverErrorCount' in CollectorCommand::handleResult()"
+            },
+            {
+                "message": "Mutation of state 'serverErrorCount' in CollectorCommand::handle5xxError()"
+            }
+        ],
+        "vendor/monolog/monolog/src/Monolog/Formatter/JsonFormatter.php": [
+            {
+                "message": "Mutation of state 'includeStacktraces' in JsonFormatter::includeStacktraces()"
+            },
+            {
+                "message": "Mutation of state 'appendNewline' in JsonFormatter::formatBatchNewlines()"
+            },
+            {
+                "message": "Mutation of state 'appendNewline' in JsonFormatter::formatBatchNewlines()"
+            }
+        ],
+        "vendor/monolog/monolog/src/Monolog/Formatter/LineFormatter.php": [
+            {
+                "message": "Mutation of state 'basePath' in LineFormatter::setBasePath()"
+            },
+            {
+                "message": "Mutation of state 'includeStacktraces' in LineFormatter::includeStacktraces()"
+            },
+            {
+                "message": "Mutation of state 'allowInlineLineBreaks' in LineFormatter::includeStacktraces()"
+            },
+            {
+                "message": "Mutation of state 'stacktracesParser' in LineFormatter::includeStacktraces()"
+            },
+            {
+                "message": "Mutation of state 'indentStacktraces' in LineFormatter::indentStacktraces()"
+            },
+            {
+                "message": "Mutation of state 'allowInlineLineBreaks' in LineFormatter::allowInlineLineBreaks()"
+            },
+            {
+                "message": "Mutation of state 'ignoreEmptyContextAndExtra' in LineFormatter::ignoreEmptyContextAndExtra()"
+            },
+            {
+                "message": "Mutation of state 'maxLevelNameLength' in LineFormatter::setMaxLevelNameLength()"
+            }
+        ],
+        "vendor/monolog/monolog/src/Monolog/Formatter/NormalizerFormatter.php": [
+            {
+                "message": "Mutation of state 'dateFormat' in NormalizerFormatter::setDateFormat()"
+            },
+            {
+                "message": "Mutation of state 'maxNormalizeDepth' in NormalizerFormatter::setMaxNormalizeDepth()"
+            },
+            {
+                "message": "Mutation of state 'maxNormalizeItemCount' in NormalizerFormatter::setMaxNormalizeItemCount()"
+            },
+            {
+                "message": "Mutation of state 'jsonEncodeOptions' in NormalizerFormatter::setJsonPrettyPrint()"
+            },
+            {
+                "message": "Mutation of state 'jsonEncodeOptions' in NormalizerFormatter::setJsonPrettyPrint()"
+            },
+            {
+                "message": "Mutation of state 'basePath' in NormalizerFormatter::setBasePath()"
+            },
+            {
+                "message": "Mutation of state 'jsonEncodeOptions' in NormalizerFormatter::addJsonEncodeOption()"
+            },
+            {
+                "message": "Mutation of state 'jsonEncodeOptions' in NormalizerFormatter::removeJsonEncodeOption()"
+            }
+        ],
+        "vendor/monolog/monolog/src/Monolog/Handler/StreamHandler.php": [
+            {
+                "message": "Mutation of state 'stream' in StreamHandler::close()"
+            },
+            {
+                "message": "Mutation of state 'dirCreated' in StreamHandler::close()"
+            },
+            {
+                "message": "Mutation of state 'errorMessage' in StreamHandler::write()"
+            },
+            {
+                "message": "Mutation of state 'stream' in StreamHandler::write()"
+            },
+            {
+                "message": "Mutation of state 'stream' in StreamHandler::write()"
+            },
+            {
+                "message": "Mutation of state 'inodeUrl' in StreamHandler::write()"
+            },
+            {
+                "message": "Mutation of state 'errorMessage' in StreamHandler::write()"
+            },
+            {
+                "message": "Mutation of state 'retrying' in StreamHandler::write()"
+            },
+            {
+                "message": "Mutation of state 'retrying' in StreamHandler::write()"
+            },
+            {
+                "message": "Mutation of state 'errorMessage' in StreamHandler::customErrorHandler()"
+            },
+            {
+                "message": "Mutation of state 'errorMessage' in StreamHandler::createDir()"
+            },
+            {
+                "message": "Mutation of state 'dirCreated' in StreamHandler::createDir()"
+            },
+            {
+                "message": "Mutation of state 'retrying' in StreamHandler::hasUrlInodeWasChanged()"
+            }
+        ],
+        "vendor/monolog/monolog/src/Monolog/Logger.php": [
+            {
+                "message": "Property 'exceptionHandler' of Logger is mutated but not reset in reset()."
+            },
+            {
+                "message": "Property 'timezone' of Logger is mutated but not reset in reset()."
+            },
+            {
+                "message": "Property 'handlers' of Logger is mutated but not reset in reset()."
+            },
+            {
+                "message": "Property '$property' of Logger is mutated but not reset in reset()."
+            },
+            {
+                "message": "Property 'microsecondTimestamps' of Logger is mutated but not reset in reset()."
+            },
+            {
+                "message": "Property 'detectCycles' of Logger is mutated but not reset in reset()."
+            },
+            {
+                "message": "Property 'fiberLogDepth' of Logger is mutated but not reset in reset()."
+            },
+            {
+                "message": "Property 'logDepth' of Logger is mutated but not reset in reset()."
+            }
+        ],
+        "vendor/php-http/discovery/src/Psr17Factory.php": [
+            {
+                "message": "Usage of PHP Superglobal $_SERVER is discouraged in Worker mode."
+            },
+            {
+                "message": "Usage of PHP Superglobal $_FILES is discouraged in Worker mode."
+            },
+            {
+                "message": "Usage of PHP Superglobal $_GET is discouraged in Worker mode."
+            },
+            {
+                "message": "Usage of PHP Superglobal $_POST is discouraged in Worker mode."
+            },
+            {
+                "message": "Usage of PHP Superglobal $_COOKIE is discouraged in Worker mode."
+            },
+            {
+                "message": "Usage of PHP Superglobal $_SERVER is discouraged in Worker mode."
+            },
+            {
+                "message": "Mutation of state 'requestFactory' in Psr17Factory::setFactory()"
+            },
+            {
+                "message": "Mutation of state 'responseFactory' in Psr17Factory::setFactory()"
+            },
+            {
+                "message": "Mutation of state 'serverRequestFactory' in Psr17Factory::setFactory()"
+            },
+            {
+                "message": "Mutation of state 'streamFactory' in Psr17Factory::setFactory()"
+            },
+            {
+                "message": "Mutation of state 'uploadedFileFactory' in Psr17Factory::setFactory()"
+            },
+            {
+                "message": "Mutation of state 'uriFactory' in Psr17Factory::setFactory()"
+            },
+            {
+                "message": "Usage of PHP Superglobal $_SERVER is discouraged in Worker mode."
+            },
+            {
+                "message": "Usage of PHP Superglobal $_SERVER is discouraged in Worker mode."
+            },
+            {
+                "message": "Usage of PHP Superglobal $_SERVER is discouraged in Worker mode."
+            },
+            {
+                "message": "Usage of PHP Superglobal $_SERVER is discouraged in Worker mode."
+            },
+            {
+                "message": "Usage of PHP Superglobal $_SERVER is discouraged in Worker mode."
+            },
+            {
+                "message": "Usage of PHP Superglobal $_SERVER is discouraged in Worker mode."
+            },
+            {
+                "message": "Usage of PHP Superglobal $_SERVER is discouraged in Worker mode."
+            }
+        ],
+        "vendor/stripe/stripe-php/lib/StripeClient.php": [
+            {
+                "message": "Mutation of state 'coreServiceFactory' in StripeClient::getService()"
+            }
+        ],
+        "vendor/twig/html-extra/HtmlExtension.php": [
+            {
+                "message": "Mutation of state 'mimeTypes' in HtmlExtension::dataUri()"
+            }
+        ],
+        "vendor/twig/intl-extra/IntlExtension.php": [
+            {
+                "message": "Usage of local static variable is dangerous in Worker mode."
+            },
+            {
+                "message": "Mutation of state 'dateFormatters' in IntlExtension::createDateFormatter()"
+            },
+            {
+                "message": "Mutation of state 'numberFormatters' in IntlExtension::createNumberFormatter()"
+            }
+        ],
+        "vendor/twig/markdown-extra/MarkdownExtension.php": [
+            {
+                "message": "Usage of local static variable is dangerous in Worker mode."
+            }
+        ],
+        "vendor/twig/string-extra/StringExtension.php": [
+            {
+                "message": "Mutation of state 'englishInflector' in StringExtension::getInflector()"
+            },
+            {
+                "message": "Mutation of state 'spanishInflector' in StringExtension::getInflector()"
+            },
+            {
+                "message": "Mutation of state 'frenchInflector' in StringExtension::getInflector()"
+            }
+        ],
+        "vendor/twig/twig/src/Environment.php": [
+            {
+                "message": "Mutation of state 'debug' in Environment::enableDebug()"
+            },
+            {
+                "message": "Mutation of state 'debug' in Environment::disableDebug()"
+            },
+            {
+                "message": "Mutation of state 'autoReload' in Environment::enableAutoReload()"
+            },
+            {
+                "message": "Mutation of state 'autoReload' in Environment::disableAutoReload()"
+            },
+            {
+                "message": "Mutation of state 'strictVariables' in Environment::enableStrictVariables()"
+            },
+            {
+                "message": "Mutation of state 'strictVariables' in Environment::disableStrictVariables()"
+            },
+            {
+                "message": "Mutation of state 'hotCache' in Environment::removeCache()"
+            },
+            {
+                "message": "Mutation of state 'originalCache' in Environment::setCache()"
+            },
+            {
+                "message": "Mutation of state 'cache' in Environment::setCache()"
+            },
+            {
+                "message": "Mutation of state 'originalCache' in Environment::setCache()"
+            },
+            {
+                "message": "Mutation of state 'cache' in Environment::setCache()"
+            },
+            {
+                "message": "Mutation of state 'originalCache' in Environment::setCache()"
+            },
+            {
+                "message": "Mutation of state 'cache' in Environment::setCache()"
+            },
+            {
+                "message": "Mutation of state 'loadedTemplates' in Environment::loadTemplate()"
+            },
+            {
+                "message": "Mutation of state 'lexer' in Environment::setLexer()"
+            },
+            {
+                "message": "Mutation of state 'lexer' in Environment::tokenize()"
+            },
+            {
+                "message": "Mutation of state 'parser' in Environment::setParser()"
+            },
+            {
+                "message": "Mutation of state 'parser' in Environment::parse()"
+            },
+            {
+                "message": "Mutation of state 'compiler' in Environment::setCompiler()"
+            },
+            {
+                "message": "Mutation of state 'compiler' in Environment::compile()"
+            },
+            {
+                "message": "Mutation of state 'loader' in Environment::setLoader()"
+            },
+            {
+                "message": "Mutation of state 'charset' in Environment::setCharset()"
+            },
+            {
+                "message": "Mutation of state 'runtimeLoaders' in Environment::addRuntimeLoader()"
+            },
+            {
+                "message": "Mutation of state 'runtimes' in Environment::getRuntime()"
+            },
+            {
+                "message": "Mutation of state 'runtimes' in Environment::getRuntime()"
+            },
+            {
+                "message": "Mutation of state 'resolvedGlobals' in Environment::addGlobal()"
+            },
+            {
+                "message": "Mutation of state 'globals' in Environment::addGlobal()"
+            },
+            {
+                "message": "Mutation of state 'resolvedGlobals' in Environment::getGlobals()"
+            },
+            {
+                "message": "Mutation of state 'resolvedGlobals' in Environment::resetGlobals()"
+            },
+            {
+                "message": "Mutation of state 'optionsHash' in Environment::updateOptionsHash()"
+            }
+        ],
+        "vendor/twig/twig/src/Extension/AttributeExtension.php": [
+            {
+                "message": "Mutation of state 'filters' in AttributeExtension::initFromAttributes()"
+            },
+            {
+                "message": "Mutation of state 'functions' in AttributeExtension::initFromAttributes()"
+            },
+            {
+                "message": "Mutation of state 'tests' in AttributeExtension::initFromAttributes()"
+            }
+        ],
+        "vendor/twig/twig/src/Loader/ChainLoader.php": [
+            {
+                "message": "Mutation of state 'loaders' in ChainLoader::addLoader()"
+            },
+            {
+                "message": "Mutation of state 'hasSourceCache' in ChainLoader::addLoader()"
+            },
+            {
+                "message": "Mutation of state 'loaders' in ChainLoader::getLoaders()"
+            },
+            {
+                "message": "Mutation of state 'hasSourceCache' in ChainLoader::exists()"
+            },
+            {
+                "message": "Mutation of state 'hasSourceCache' in ChainLoader::exists()"
+            }
+        ],
+        "vendor/twig/twig/src/Loader/FilesystemLoader.php": [
+            {
+                "message": "Mutation of state 'paths' in FilesystemLoader::setPaths()"
+            },
+            {
+                "message": "Mutation of state 'cache' in FilesystemLoader::addPath()"
+            },
+            {
+                "message": "Mutation of state 'errorCache' in FilesystemLoader::addPath()"
+            },
+            {
+                "message": "Mutation of state 'paths' in FilesystemLoader::addPath()"
+            },
+            {
+                "message": "Mutation of state 'cache' in FilesystemLoader::prependPath()"
+            },
+            {
+                "message": "Mutation of state 'errorCache' in FilesystemLoader::prependPath()"
+            },
+            {
+                "message": "Mutation of state 'paths' in FilesystemLoader::prependPath()"
+            },
+            {
+                "message": "Mutation of state 'errorCache' in FilesystemLoader::findTemplate()"
+            },
+            {
+                "message": "Mutation of state 'cache' in FilesystemLoader::findTemplate()"
+            },
+            {
+                "message": "Mutation of state 'cache' in FilesystemLoader::findTemplate()"
+            },
+            {
+                "message": "Mutation of state 'errorCache' in FilesystemLoader::findTemplate()"
+            }
+        ],
+        "vendor/twig/twig/src/Profiler/Profile.php": [
+            {
+                "message": "Mutation of state 'profiles' in Profile::addProfile()"
+            },
+            {
+                "message": "Mutation of state 'starts' in Profile::enter()"
+            },
+            {
+                "message": "Mutation of state 'ends' in Profile::leave()"
+            }
+        ],
+        "vendor/zenstruck/messenger-monitor-bundle/src/History/Storage/ORMStorage.php": [
+            {
+                "message": "Mutation of state 'repository' in ORMStorage::repository()"
+            }
+        ],
+        "vendor/zenstruck/messenger-monitor-bundle/src/Transports.php": [
+            {
+                "message": "Mutation of state 'failure' in Transports::failure()"
+            }
+        ],
+        "vendor/zenstruck/messenger-monitor-bundle/src/Worker/WorkerListener.php": [
+            {
+                "message": "Mutation of state 'messagesHandled' in WorkerListener::onRunning()"
+            }
+        ]
+    }
+}

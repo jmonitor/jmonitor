@@ -1,0 +1,69 @@
+{% extends 'dash/project/metric_layout.twig' %}
+
+{% block metric_content %}
+    <div class="row g-4">
+        <div class="col-xxl-4">
+            <div class="d-flex flex-column flex-sm-row flex-xxl-column gap-4 h-100">
+                <twig:Metric:Card metric="caddy.version" class="flex-fill"/>
+                <twig:Metric:Card metric="caddy.uptime" class="flex-fill"/>
+            </div>
+        </div>
+        <div class="col-xl-6 col-xxl-4">
+            <twig:Metric:Card metric="caddy.memory_usage" class="h-100"/>
+        </div>
+        <div class="col-xl-6 col-xxl-4">
+            <twig:Metric:Card metric="caddy.cpu_usage" class="h-100"/>
+        </div>
+    </div>
+
+    <twig:Html:Metrics:H2 :showRange="true" :bag="bag">Traffic Overview</twig:Html:Metrics:H2>
+
+    <div class="row g-4">
+        {% for handler, name in {php: 'PHP', file_server: 'FILE_SERVER'} %}
+        <div class="col-xl-6">
+            <twig:Card class="card-transparent" title="{{ name }}">
+                <twig:Metric:Card metric="caddy.req_per_sec" options="{{ {handler: handler} }}" class="h-100"/>
+            </twig:Card>
+        </div>
+        {% endfor %}
+    </div>
+
+    <twig:Html:Metrics:H2 :showRange="true" :bag="bag">Performances</twig:Html:Metrics:H2>
+
+    {% for handler, name in {php: 'PHP', file_server: 'FILE_SERVER'} %}
+        <twig:Card class="card-transparent" title="{{ name }}">
+            <div class="row g-4">
+                <div class="col-xl-6 col-xxl-4">
+                    <twig:Metric:Card metric="caddy.avg_request_duration" options="{{ {handler: handler} }}" class="h-100"/>
+                </div>
+                <div class="col-xl-6 col-xxl-4">
+                    <twig:Metric:Card metric="caddy.avg_response_duration" options="{{ {handler: handler} }}" class="h-100"/>
+                </div>
+                <div class="col-xl-6 col-xxl-4">
+                    <twig:Metric:Card metric="caddy.requests_under_250" options="{{ {handler: handler} }}" class="h-100"/>
+                </div>
+            </div>
+        </twig:Card>
+    {% endfor %}
+
+    <twig:Html:Metrics:H2 :showRange="true" :bag="bag">Bandwidth</twig:Html:Metrics:H2>
+
+    {% for handler, name in {php: 'PHP', file_server: 'FILE_SERVER'} %}
+        <twig:Card class="card-transparent" title="{{ name }}">
+            <div class="row g-4">
+                <div class="col-xl-6">
+                    <twig:Metric:Card metric="caddy.request_size" options="{{ {handler: handler} }}" class="h-100"/>
+                </div>
+                <div class="col-xl-6">
+                    <twig:Metric:Card metric="caddy.response_size" options="{{ {handler: handler} }}" class="h-100"/>
+                </div>
+                <div class="col-xl-6">
+                    <twig:Metric:Card metric="caddy.avg_request_size" options="{{ {handler: handler} }}" class="h-100"/>
+                </div>
+                <div class="col-xl-6">
+                    <twig:Metric:Card metric="caddy.avg_response_size" options="{{ {handler: handler} }}" class="h-100"/>
+                </div>
+            </div>
+        </twig:Card>
+    {% endfor %}
+{% endblock %}

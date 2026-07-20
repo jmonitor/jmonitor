@@ -1,0 +1,32 @@
+{% extends 'dash/common/_turbo_offcanvas_end.html.twig' %}
+
+{% block title %}<twig:Metric:Help:Title>OpCache</twig:Metric:Help:Title>{% endblock %}
+
+{% block body %}
+    <twig:Metric:Help:Section:Definition>
+        <p>PHP-FPM (FastCGI Process Manager) is a way to run PHP as a service.</p>
+        <p>It manages a pool of worker processes that handle PHP requests.</p>
+    </twig:Metric:Help:Section:Definition>
+
+    <twig:Metric:Help:Section:WhyItMatters>
+        <p>PHP-FPM is the most common setup for modern PHP applications.</p>
+        <p>It improves performance, stability, and allows better control over resources.</p>
+        <p>It also provides useful metrics about how requests are handled.</p>
+    </twig:Metric:Help:Section:WhyItMatters>
+
+    <twig:Metric:Help:Section title="How it works" icon="material-symbols:play-circle-outline">
+        <p>A web server (like Nginx or Apache) sends requests to PHP-FPM.</p>
+        <p>PHP-FPM processes the request using one of its workers.</p>
+        <p>Each worker handles one request at a time.</p>
+    </twig:Metric:Help:Section>
+
+    <twig:Metric:Help:Section title="Why this section may be empty">
+        <p>These metrics are only available if PHP runs with PHP-FPM.</p>
+        <p>If you use another mode (like mod_php with Apache or CLI), no data will be shown.</p>
+    </twig:Metric:Help:Section>
+
+    <twig:Metric:Help:Section title="Good to know" icon="material-symbols:tips-and-updates-outline">
+        <p>PHP-FPM can be tuned (number of workers, limits, timeouts).</p>
+        <p>Bad configuration can lead to slow responses or high memory usage.</p>
+    </twig:Metric:Help:Section>
+{% endblock %}

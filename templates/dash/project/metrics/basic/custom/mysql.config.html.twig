@@ -1,0 +1,40 @@
+{# @var variables \App\Metrics\Dto\Bag\Mysql\MysqlVariableBag #}
+{% set variables = dto.value %}
+
+<twig:Cards :titles="['Memory', 'Connections', 'Logs & Charset']" class="h-100">
+    <twig:block name="block_1">
+        <twig:Card class="h-100">
+            <twig:Metric:Metric:List class="mh-15 overflow-y-auto pe-2">
+                <twig:InfoLine label="innodb_buffer_pool_size" value="{{ variables.innodbBufferPoolSize|format_bytes }}" />
+                <twig:InfoLine label="tmp_table_size" value="{{ variables.tmpTableSize|format_bytes }}" />
+                <twig:InfoLine label="max_heap_table_size" value="{{ variables.maxHeapTableSize|format_bytes }}" />
+                <twig:InfoLine label="join_buffer_size" value="{{ variables.joinBufferSize|format_bytes }}" />
+                <twig:InfoLine label="sort_buffer_size" value="{{ variables.sortBufferSize|format_bytes }}" />
+                <twig:InfoLine label="table_open_cache" value="{{ variables.tableOpenCache }}" />
+            </twig:Metric:Metric:List>
+        </twig:Card>
+    </twig:block>
+
+    <twig:block name="block_2">
+        <twig:Card class="h-100">
+            <twig:Metric:Metric:List class="mh-15 overflow-y-auto pe-2">
+                <twig:InfoLine label="max_connections" value="{{ variables.maxConnections }}" />
+                <twig:InfoLine label="wait_timeout" value="{{ variables.waitTimeout }}" />
+                <twig:InfoLine label="thread_cache_size" value="{{ variables.threadCacheSize }}" />
+            </twig:Metric:Metric:List>
+        </twig:Card>
+    </twig:block>
+
+    <twig:block name="block_3">
+        <twig:Card class="h-100">
+            <twig:Metric:Metric:List class="mh-15 overflow-y-auto pe-2">
+                <twig:InfoLine label="slow_query_log" value="{{ variables.slowQueryLog }}" />
+                <twig:InfoLine label="long_query_time" value="{{ variables.longQueryTime }}{{ variables.longQueryTime !== null ? 's' }}" />
+                <twig:InfoLine label="slow_query_log_file" value="{{ variables.slowQueryLogFile }}" />
+                <twig:InfoLine label="log_bin" value="{{ variables.logBin }}" />
+                <twig:InfoLine label="character-set-server" value="{{ variables.characterSetServer }}" />
+                <twig:InfoLine label="collation-server" value="{{ variables.collationServer }}" />
+            </twig:Metric:Metric:List>
+        </twig:Card>
+    </twig:block>
+</twig:Cards>

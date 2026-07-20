@@ -1,0 +1,52 @@
+{# @var bag \App\Metrics\Dto\Bag\Mysql\MysqlSlowQueriesBag #}
+{% set bag = bag('mysql.slow_queries') %}
+
+<div class="table-responsive mh-25">
+    <table class="table table align-middle mb-0">
+        <thead>
+        <tr>
+            <th scope="col">Query</th>
+            <th scope="col">Exec</th>
+            <th scope="col">Avg</th>
+            <th scope="col">Max</th>
+            <th scope="col">Sum</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for i, query in bag.slowQueries %}
+            <tr {% if loop.last %}style="--bs-border-width: 0"{% endif %}>
+                <td class="text-xs py-4 pe-4">
+                    <div role="button" class="clamp clamp-1" onclick="this.classList.toggle('clamp-1')">
+                        <twig:ux:icon name="material-symbols:expand-content" width="1.5em" height="1.5em" class="text-muted" />
+                        <span class="text-codelike">{{ query.querySample }}</span>
+                    </div>
+                </td>
+                <td class="text-muted">{{ query.execCount }}</td>
+                <td class="">{{ query.avgTimeMs }}ms</td>
+                <td class="">{{ query.maxTimeMs }}ms</td>
+                <td class="">
+                    <span {{ stimulus_controller('duration', {seconds: query.totalTimeS}) }}></span>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="5" class="text-center text-muted">No slow queries found.</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+<div class="text-sm mt-1">
+    <div class="d-flex align-items-center gap-3">
+        <div class="text-muted">Collector configuration:</div>
+        <div>
+            <span class="text-muted">Min avg time:</span> {{ bag.minAvgTimeMs }}ms
+        </div>
+        <div>
+            <span class="text-muted">Min exec count:</span> {{ bag.minExecCount }}
+        </div>
+        <div>
+            <span class="text-muted">Sort:</span> {{ bag.orderBy?.value }}
+        </div>
+    </div>
+</div>

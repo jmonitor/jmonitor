@@ -1,0 +1,40 @@
+{# @var bag \App\Metrics\Dto\Bag\Symfony\SymfonyBag #}
+{# @var task \App\Metrics\Dto\Bag\Symfony\SchedulerTaskBag|null #}
+
+{% set bag = bag('symfony') %}
+
+{# TODO handle this check in the PHP metric instead #}
+{% if bag.components.scheduler.all %}
+    {% set task = bag.components.scheduler.nextTask %}
+
+    <div class="d-flex align-items-center gap-4 flex-wrap">
+
+        <div class="d-flex flex-column gap-1">
+            {% if task %}
+                <div class="fs-5">{{ task.command }}</div>
+                <div class="text-muted">{{ task.description }}</div>
+                <div class="d-flex align-items-center gap-2">
+                    <twig:Html:Badge:Badge style="info" icon="material-symbols:refresh">{{ task.trigger }}</twig:Html:Badge:Badge>
+                    {% if task.jitter %}<span class="text-muted">{{ task.jitter }} jitters</span>{% endif %}
+                </div>
+            {% else %}
+                <p class="text-muted">No tasks</p>
+            {% endif %}
+        </div>
+        {% if task %}
+            <div class="p-3 bg-card rounded flex-fill">
+                <div class="d-flex gap-3">
+                    <twig:ux:icon name="material-symbols:schedule-outline" class="text-primary" width="2em" height="2em" />
+                    <div>
+                        <span class="fs-5" {{ stimulus_controller('relative-time', {timestamp: task.nextRun}) }}></span>
+                        <br><span class="text-muted">{{ task.nextRunAt.format('Y-m-d H:i:s') }}</span>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="p-3 bg-card rounded">
+                <twig:ux:icon name="material-symbols:schedule-outline" class="text-primary" width="2em" height="2em" />
+            </div>
+        {% endif %}
+    </div>
+{% endif %}

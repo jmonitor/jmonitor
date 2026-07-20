@@ -1,0 +1,13 @@
+{# @var variables \App\Metrics\Dto\Bag\Mysql\MysqlVariableBag #}
+{# @var status \App\Metrics\Dto\Bag\Mysql\MysqlStatusBag #}
+<twig:Metric:Metric:List>
+    {% set variables = dto.value['variables'] %}
+    {% set status = dto.value['status'] %}
+
+    <twig:InfoLine label="Date" value="{{ variables.dateTime ? variables.dateTime|format_datetime('medium', 'short') }}" />
+    <twig:InfoLine label="Timezone" value="{{ variables.timeZone }}" />
+    <twig:InfoLine label="System Timezone" value="{{ variables.systemTimeZone }}" />
+    <twig:InfoLine label="Uptime">
+        <span {{ stimulus_controller('duration', {seconds: status.uptime}) }}></span>
+    </twig:InfoLine>
+</twig:Metric:Metric:List>

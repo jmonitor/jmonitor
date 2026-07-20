@@ -1,0 +1,13 @@
+{% if app.user.projectUsers|length > 0 %}
+    <p>Please leave all projects before deleting your account.</p>
+{% else %}
+    <form
+        action="{{ path('account.delete') }}"
+        method="post"
+        data-turbo-confirm="Please confirm deletion of your account"
+        data-turbo="false"
+    >
+        <input type="hidden" name="_token" value="{{ csrf_token('delete-account') }}">
+        <button type="submit" class="btn btn-danger btn-sm">Delete my account</button>
+    </form>
+{% endif %}

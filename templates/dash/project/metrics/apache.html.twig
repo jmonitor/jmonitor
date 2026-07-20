@@ -1,0 +1,42 @@
+{% extends 'dash/project/metric_layout.twig' %}
+
+{% block metric_content %}
+
+    <div class="row g-4">
+        <div class="col-xxl-3">
+            <div class="d-flex flex-column flex-sm-row flex-xxl-column gap-4 h-100">
+                <twig:Metric:Card metric="apache.version" class="flex-fill"/>
+                <twig:Metric:Card metric="apache.mpm" class="flex-fill" />
+            </div>
+        </div>
+        <div class="col-xxl-5">
+            <twig:Card class="h-100">
+                <div class="row g-4 h-100">
+                    <div class="col-sm-6">
+                        <twig:Metric metric="apache.busy_workers"/>
+                    </div>
+                    <div class="col-sm-6">
+                        <twig:Metric metric="apache.busy_process"/>
+                    </div>
+                </div>
+            </twig:Card>
+        </div>
+        <div class="col-xxl-4">
+            <div class="d-flex flex-column flex-sm-row flex-xxl-column gap-4 h-100">
+                <twig:Metric:Card metric="apache.uptime" class="flex-fill"/>
+                <twig:Metric:Card metric="apache.load_average" class="flex-fill card-transparent"/>
+            </div>
+        </div>
+    </div>
+
+    <twig:Html:Metrics:H2 :showRange="true" :bag="bag">Evolution</twig:Html:Metrics:H2>
+
+    <div class="row g-4">
+        <div class="col-lg-6">
+            <twig:Metric:Card metric="apache.req_per_sec" class="h-100"/>
+        </div>
+        <div class="col-lg-6">
+            <twig:Metric:Card metric="apache.bytes_per_sec" class="h-100"/>
+        </div>
+    </div>
+{% endblock %}

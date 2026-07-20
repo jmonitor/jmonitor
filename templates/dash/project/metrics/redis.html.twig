@@ -1,0 +1,86 @@
+{# @var bag \App\Metrics\Dto\Bag\Redis\RedisBag #}
+{% extends 'dash/project/metric_layout.twig' %}
+
+{% block metric_content %}
+    <div class="row g-4">
+        <div class="col-xxl-4">
+            <div class="d-flex flex-column flex-sm-row flex-xxl-column gap-4 h-100">
+                <twig:Metric:Card metric="redis.version" class="flex-fill"/>
+                <twig:Metric:Card metric="redis.mode" class="flex-fill"/>
+            </div>
+        </div>
+        <div class="col-lg-6 col-xxl-4">
+            <twig:Metric:Card metric="redis.informations" class="h-100"/>
+        </div>
+        <div class="col-lg-6 col-xxl-4">
+            <twig:Metric:Card metric="redis.persistence" class="h-100"/>
+        </div>
+    </div>
+
+    <twig:Html:Metrics:H2 :bag="bag" :showRange="true">Memory</twig:Html:Metrics:H2>
+
+    <div class="row g-4">
+        <div class="col-xl-6">
+            <twig:Metric:Card metric="redis.memory_usage" renderer="line" class="h-100"/>
+        </div>
+
+        <div class="col-sm-6 col-xxl-3">
+            {% if bag.memory.maxMemory %}
+                <twig:Metric:Card metric="redis.memory_usage" renderer="gauge" class="h-100"/>
+            {% else %}
+                <twig:Metric:Card metric="redis.memory_peak" class="h-100"/>
+            {% endif %}
+        </div>
+
+        <div class="col-sm-6 col-xxl-3">
+            <twig:Metric:Card metric="redis.max_memory_policy" class="h-100"/>
+        </div>
+
+        {% if bag.memory.maxMemory is not empty %}
+            <div class="col-xl-6 col-xxl-12">
+                <twig:Metric:Card metric="redis.memory_peak" class="h-100"/>
+            </div>
+        {% endif %}
+    </div>
+
+    <twig:Html:Metrics:H2 :bag="bag" :showRange="true">Performances</twig:Html:Metrics:H2>
+
+    <div class="row g-4">
+        <div class="col-lg-6">
+            <twig:Metric:Card metric="redis.requests_per_second" class="h-100"/>
+        </div>
+        <div class="col-md-6 col-lg-6 col-xxl-3">
+            <twig:Metric:Card metric="redis.hit_rate" class="h-100"/>
+        </div>
+        <div class="col-md-6 col-xxl-3">
+            <twig:Metric:Card metric="redis.stats" class="h-100"/>
+        </div>
+    </div>
+
+    {# cap to the number of databases allowed by the plan; TODO show an upgrade message for the hidden ones #}
+    {% set databases = bag.databases[:plan(bag.project).nbRedisDb] %}
+
+    {% if databases|length > 0 %}
+        <twig:Html:Metrics:H2 :bag="bag" :showRange="true">Databases</twig:Html:Metrics:H2>
+
+        <div class="row g-4">
+            {% for i, db in databases %}
+                <div class="col-xxl-6">
+                    <twig:Card class="card-transparent h-100" title="Db{{ i }}">
+                        <div class="row g-4">
+                            <div class="col-lg-7 col-xxl-12">
+                                <twig:Metric:Card metric="redis.db_keys" options="{{ {db: i} }}" class="h-100"/>
+                            </div>
+                            <div class="col-lg-5 col-xxl-12">
+                                <div class="d-flex flex-column flex-sm-row flex-lg-column flex-xxl-row gap-4 h-100">
+                                    <twig:Metric:Card metric="redis.db_expiring_keys" options="{{ {db: i} }}" class="flex-fill"/>
+                                    <twig:Metric:Card metric="redis.db_avg_ttl" options="{{ {db: i} }}" class="flex-fill"/>
+                                </div>
+                            </div>
+                        </div>
+                    </twig:Card>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endblock %}

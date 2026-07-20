@@ -1,0 +1,17 @@
+knpu_oauth2_client:
+    clients:
+        # configure your clients as described here: https://github.com/knpuniversity/oauth2-client-bundle#configuration
+        google:
+            type: google
+            client_id: '%env(GOOGLE_OAUTH_CLIENT_ID)%'
+            client_secret: '%env(GOOGLE_OAUTH_CLIENT_SECRET)%'
+            redirect_route: security.login.oauth.check
+            redirect_params: {type: google}
+        github:
+            type: github
+            client_id: '%env(OAUTH_GITHUB_CLIENT_ID)%'
+            client_secret: '%env(OAUTH_GITHUB_CLIENT_SECRET)%'
+            redirect_route: security.login.oauth.check
+            redirect_params: {type: github}
+            # whether to check OAuth2 "state": defaults to true
+            # use_state: true

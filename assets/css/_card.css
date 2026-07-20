@@ -1,0 +1,42 @@
+.card {
+    --bs-card-color: var(--app-body-color-full);
+    --bs-card-title-color: var(--app-body-color-full);
+    --bs-card-bg: var(--app-card-bg);
+    --bs-card-spacer-y: 2rem;
+    --bs-card-spacer-x: 2rem;
+    --bs-card-title-spacer-y: 1rem;
+    --bs-card-border-width: 0;
+    --bs-card-border-radius: var(--app-card-border-radius); /* 4 by default */
+
+    .card-title {
+        font-family: var(--app-titles-font-family);
+        font-weight: 600;
+        font-size: 1.35rem;
+    }
+}
+
+.card-transparent {
+    --bs-card-bg: transparent;
+    --bs-card-border-width: 1px;
+    --bs-card-spacer-y: .5rem;
+    --bs-card-spacer-x: .5rem;
+
+    @media (min-width: 576px) {
+        --bs-card-spacer-y: 1rem;
+        --bs-card-spacer-x: 1rem;
+    }
+}
+
+.card-blue {
+    --bs-card-color: var(--app-primary-light);
+    --bs-card-title-color: var(--app-primary-light);
+    --bs-card-bg: #256BEE1A;
+}
+
+.tab-content {
+    .tab-pane {
+        .card {
+            border-top-left-radius: 0;
+        }
+    }
+}

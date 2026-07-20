@@ -1,0 +1,10 @@
+{# @var bag \App\Metrics\Dto\Bag\Nginx\NginxBag #}
+{# @var system \App\Metrics\Dto\Bag\System\SystemBag #}
+{% set bag = dto.value %}
+{% set system = bag('system') %}
+
+<twig:Metric:Metric:List class="mh-15 overflow-y-auto pe-2">
+    <twig:InfoLine label="worker_processes" value="{{ bag.config.workerProcesses }}" />
+    <twig:InfoLine label="worker_connections" value="{{ bag.config.workerConnections }}" />
+    <twig:InfoLine label="Max connections" value="{{ bag.config.maxConnections }}" icon="material-symbols:subdirectory-arrow-right" />
+</twig:Metric:Metric:List>

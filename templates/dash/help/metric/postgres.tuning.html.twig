@@ -1,0 +1,51 @@
+{% extends 'dash/help/metric/layout.html.twig' %}
+
+{% block definition %}
+    <p>This card shows PostgreSQL settings that influence the query planner, automatic maintenance (autovacuum), and slow-query logging.</p>
+{% endblock %}
+
+{% block why_it_matters %}
+    <p>These parameters help the planner choose efficient execution plans, keep tables healthy over time, and surface slow queries. Wrong values lead to bad plans, table bloat, or missing diagnostics.</p>
+{% endblock %}
+
+{% block how_to_read %}
+    <p class="text-muted small mb-1">Planner</p>
+    <ul class="d-flex flex-column gap-2">
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">random_page_cost</twig:Html:Badge:Neutral>
+            <p>The planner's estimated cost of a random disk read. The default <code>4.0</code> assumes spinning disks; on SSD/NVMe, lowering it to ~<code>1.1</code> makes the planner favor index scans.</p>
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">effective_io_concurrency</twig:Html:Badge:Neutral>
+            <p>Number of concurrent disk I/O operations PostgreSQL expects the storage to handle. Higher values (e.g. 200 on SSD) speed up operations like bitmap heap scans.</p>
+        </li>
+    </ul>
+
+    <p class="text-muted small mb-1 mt-3">Maintenance (autovacuum)</p>
+    <ul class="d-flex flex-column gap-2">
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">autovacuum</twig:Html:Badge:Neutral>
+            <p>Automatically reclaims dead rows and updates statistics. It should stay <code>on</code>; disabling it leads to table bloat and degraded performance.</p>
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">autovacuum_vacuum_scale_factor</twig:Html:Badge:Neutral>
+            <p>Fraction of a table that must change before autovacuum runs. The default <code>0.2</code> (20%) can be too high for large tables, leaving them bloated for too long.</p>
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">track_counts</twig:Html:Badge:Neutral>
+            <p>Collects table access statistics. It must be <code>on</code> for autovacuum to know when to trigger, so it should never be disabled.</p>
+        </li>
+    </ul>
+
+    <p class="text-muted small mb-1 mt-3">Logging</p>
+    <ul class="d-flex flex-column gap-2">
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">log_min_duration_statement</twig:Html:Badge:Neutral>
+            <p>Logs any query slower than this threshold (in ms). <code>-1</code> disables it. Setting a value (e.g. 1000 ms) is the simplest way to catch slow queries.</p>
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">TimeZone</twig:Html:Badge:Neutral>
+            <p>Default time zone used for displaying and interpreting timestamps in the session.</p>
+        </li>
+    </ul>
+{% endblock %}

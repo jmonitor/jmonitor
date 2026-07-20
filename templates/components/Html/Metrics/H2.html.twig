@@ -1,0 +1,13 @@
+<div {{ attributes.defaults({class: 'd-flex flex-wrap justify-content-between align-items-center my-2'}) }}>
+    <h2 class="h4 mb-0">{% block content %}{% endblock %}</h2>
+    {% if showLastUpdate or showRange %}
+        <div class="d-flex align-items-center gap-2">
+            {% if showLastUpdate %}
+                <twig:Dash:LastUpdateNotice bag="{{ bag }}" />
+            {% endif %}
+            {% if showRange %}
+                <twig:RangeForm />
+            {% endif %}
+        </div>
+    {% endif %}
+</div>

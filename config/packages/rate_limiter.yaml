@@ -1,0 +1,25 @@
+framework:
+    rate_limiter:
+        passwordLostForm:
+            policy: 'fixed_window'
+            limit: 2
+            interval: '1 minute'
+        registerForm:
+            policy: 'fixed_window'
+            limit: 5
+            interval: '1 minute'
+        collector.free:
+            policy: 'fixed_window'
+            limit: 1
+            interval: '30 seconds'
+        collector.pro:
+            policy: 'fixed_window'
+            limit: 1
+            interval: '15 seconds'
+        collector.max:
+            policy: 'fixed_window'
+            limit: 1
+            interval: '10 seconds'
+        # Édition self-hosted : pas de limite de push (spec §5.4)
+        collector.selfhosted:
+            policy: 'no_limit'

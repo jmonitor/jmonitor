@@ -1,0 +1,12 @@
+<ul class="nav nav-sm nav-pills nav-pills-neutral gap-3">
+    {% for link in links %}
+        <li class="nav-item">
+            <a href="{{ path(link.routeName, link.routeParameters) }}" class="nav-link {% if link.isActive(app.request) %}active{% endif %}">
+                {% if link.metadata('icon') %}
+                    {{ ux_icon(link.metadata('icon')) }}
+                {% endif %}
+                {{ link.label|raw }}
+            </a>
+        </li>
+    {% endfor %}
+</ul>

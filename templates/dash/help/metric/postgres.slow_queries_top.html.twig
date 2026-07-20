@@ -1,0 +1,57 @@
+{% extends 'dash/help/metric/layout.html.twig' %}
+
+{% block definition %}
+    <p>This card lists the slowest queries running on your database, based on PostgreSQL's <code>pg_stat_statements</code> extension. Queries are normalized, so the same statement with different parameters is grouped into a single row.</p>
+{% endblock %}
+
+{% block how_to_read %}
+    <p>Each row represents a normalized query, with:</p>
+
+    <ul class="d-flex flex-column gap-2">
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">Calls</twig:Html:Badge:Neutral>: how many times the query was executed.
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">Avg</twig:Html:Badge:Neutral>: average execution time, in milliseconds.
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">Max</twig:Html:Badge:Neutral>: longest single execution time observed.
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">Cache hit</twig:Html:Badge:Neutral>: share of blocks this query read from the memory cache rather than disk. A low value means the query is I/O-bound.
+        </li>
+    </ul>
+
+    <p>At the bottom, you can see the collector configuration used to select which queries appear:</p>
+    <ul class="d-flex flex-column gap-2">
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">Min avg time</twig:Html:Badge:Neutral>
+            <p>Only queries with an average execution time above this value are included.</p>
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">Min calls</twig:Html:Badge:Neutral>
+            <p>Only queries executed at least this number of times are included.</p>
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">Sort</twig:Html:Badge:Neutral>
+            <p>Defines how queries are ranked (for example by average time or total time).</p>
+        </li>
+    </ul>
+    <p>
+        These settings are configurable in the collector. See:
+        <a href="https://github.com/jmonitor/jmonitor-bundle" target="_blank">https://github.com/jmonitor/jmonitor-bundle</a>
+        or <a href="https://github.com/jmonitor/collector" target="_blank">https://github.com/jmonitor/collector</a>
+    </p>
+{% endblock %}
+
+{% block actions %}
+    <ul class="d-flex flex-column gap-2">
+        <li>Focus first on queries with a high <strong>average time</strong> <em>and</em> a high number of <strong>calls</strong>: those dominate your total database load and benefit the most from optimization.</li>
+        <li>Use <code>EXPLAIN (ANALYZE, BUFFERS)</code> on a slow query to understand its plan, then add or adjust indexes to avoid sequential scans.</li>
+        <li>A low <strong>cache hit</strong> on a frequent query points to a memory or indexing problem rather than a CPU one.</li>
+    </ul>
+{% endblock %}
+
+{% block good_to_know %}
+    <p>The <code>pg_stat_statements</code> extension must be enabled on the server for this card to report data. Its statistics are cumulative since the last reset, so the averages reflect long-term behavior rather than the current instant.</p>
+{% endblock %}

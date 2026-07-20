@@ -1,0 +1,31 @@
+{# @var bag \App\Metrics\Dto\Bag\Redis\RedisBag #}
+<twig:Metric:Metric:List>
+    {% set bag = dto.value %}
+
+    <twig:InfoLine label="Max memory" icon="material-symbols:memory-alt-outline">
+        {% if bag.memory.maxMemory !== null %}
+            {% if bag.memory.maxMemory === 0 %}
+                <twig:Html:Badge:Red>Unlimited</twig:Html:Badge:Red>
+            {% else %}
+                {{ bag.memory.maxMemory|format_bytes }}
+            {% endif %}
+        {% endif %}
+    </twig:InfoLine>
+    <twig:InfoLine label="Max memory policy" icon="material-symbols:info-outline">
+        {% if bag.memory.maxMemoryPolicy %}
+            <twig:Html:Badge:Blue>{{ bag.memory.maxMemoryPolicy }}</twig:Html:Badge:Blue>
+        {% endif %}
+    </twig:InfoLine>
+    <twig:InfoLine label="Port" value="{{ bag.server.port }}" icon="material-symbols:dns-outline" />
+    <twig:InfoLine label="Uptime" icon="material-symbols:history">
+        <span {{ stimulus_controller('duration', {seconds: bag.server.uptime}) }}></span>
+    </twig:InfoLine>
+    <hr>
+    <h6 class="mb-0">Replication</h6>
+    <twig:InfoLine label="Role">
+        {% if bag.replication.role %}
+            <twig:Html:Badge:Blue>{{ bag.replication.role }}</twig:Html:Badge:Blue>
+        {% endif %}
+    </twig:InfoLine>
+    <twig:InfoLine label="Connected slaves" value="{{ bag.replication.connectedSlaves }}" />
+</twig:Metric:Metric:List>

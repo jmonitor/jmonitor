@@ -1,0 +1,44 @@
+{# @var bag \App\Metrics\Dto\Bag\Postgres\PostgresSlowQueriesBag #}
+{% set bag = bag('postgresql.slow_queries') %}
+
+<div class="table-responsive mh-25">
+    <table class="table align-middle mb-0">
+        <thead>
+        <tr>
+            <th scope="col">Query</th>
+            <th scope="col">Calls</th>
+            <th scope="col">Avg</th>
+            <th scope="col">Max</th>
+            <th scope="col">Cache hit</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for query in bag.slowQueries %}
+            <tr {% if loop.last %}style="--bs-border-width: 0"{% endif %}>
+                <td class="text-xs py-4 pe-4">
+                    <div role="button" class="clamp clamp-1" onclick="this.classList.toggle('clamp-1')">
+                        <twig:ux:icon name="material-symbols:expand-content" width="1.5em" height="1.5em" class="text-muted" />
+                        <span class="text-codelike">{{ query.querySample }}</span>
+                    </div>
+                </td>
+                <td class="text-muted">{{ query.execCount }}</td>
+                <td>{{ query.avgTimeMs }}ms</td>
+                <td>{{ query.maxTimeMs }}ms</td>
+                <td>{{ query.cacheHitRatio is not null ? query.cacheHitRatio ~ '%' : '—' }}</td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="5" class="text-center text-muted">No slow queries found.</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+<div class="text-sm mt-1">
+    <div class="d-flex align-items-center gap-3">
+        <div class="text-muted">Collector configuration:</div>
+        <div><span class="text-muted">Min avg time:</span> {{ bag.minAvgTimeMs }}ms</div>
+        <div><span class="text-muted">Min calls:</span> {{ bag.minCalls }}</div>
+        <div><span class="text-muted">Sort:</span> {{ bag.orderBy }}</div>
+    </div>
+</div>

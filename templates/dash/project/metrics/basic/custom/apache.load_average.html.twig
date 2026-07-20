@@ -1,0 +1,12 @@
+<div class="d-flex align-items-center gap-4">
+    {{ _self.bloc(dto.value.load1, 1) }}
+    {{ _self.bloc(dto.value.load5, 5) }}
+    {{ _self.bloc(dto.value.load15, 15) }}
+</div>
+
+{% macro bloc(value, minutes) %}
+    <div class="bg-card p-2 rounded text-center px-3 flex-fill">
+        <div>{{ value }}</div>
+        <div class="text-primary-light text-uppercase">{{ minutes }} min</div>
+    </div>
+{% endmacro %}

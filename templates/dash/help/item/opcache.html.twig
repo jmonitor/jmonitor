@@ -1,0 +1,44 @@
+{% extends 'dash/common/_turbo_offcanvas_end.html.twig' %}
+
+{% block title %}<twig:Metric:Help:Title>OpCache</twig:Metric:Help:Title>{% endblock %}
+
+{% block body %}
+    <twig:Metric:Help:Section:Definition>
+        <p>OpCache is a PHP feature that stores precompiled PHP code in memory.</p>
+        <p>It avoids recompiling scripts on every request.</p>
+    </twig:Metric:Help:Section:Definition>
+
+    <twig:Metric:Help:Section:WhyItMatters>
+        <p>
+            Without OpCache, PHP reads and compiles files each time they are executed.<br>
+            With OpCache, this step is skipped, making applications much faster.
+        </p>
+        <p>It also reduces CPU usage on the server.</p>
+    </twig:Metric:Help:Section:WhyItMatters>
+
+    <twig:Metric:Help:Section title="How it works" icon="material-symbols:play-circle-outline">
+        <p>The first time a PHP file runs, it is compiled and stored in memory.</p>
+        <p>Next requests reuse this compiled version instead of doing the work again.</p>
+    </twig:Metric:Help:Section>
+
+    <twig:Metric:Help:Section title="Web vs CLI (command line interface)" icon="material-symbols:compare-arrows">
+        <p>OpCache is usually enabled for web requests.</p>
+        <p>
+            For CLI (command line), it is often disabled by default.
+            <br>This is not necessarily a problem: CLI scripts are often short-lived, so they benefit less from caching.
+        </p>
+    </twig:Metric:Help:Section>
+
+    <twig:Metric:Help:Section title="Good to know" icon="material-symbols:tips-and-updates-outline">
+        <p>OpCache is enabled by default on most modern PHP setups.</p>
+        <p>Changes to PHP files may not be visible immediately depending on configuration:</p>
+        <ul>
+            <li class="mb-3"><twig:Html:Badge:Neutral>opcache.validate_timestamps</twig:Html:Badge:Neutral>: checks if files changed</li>
+            <li><twig:Html:Badge:Neutral>opcache.revalidate_freq</twig:Html:Badge:Neutral>: how often (in seconds) files are checked</li>
+        </ul>
+        <p>
+            If timestamp validation is disabled, changes will not be detected automatically.
+            <br>This can help reduce CPU usage, but a reload or restart of the web server (or PHP-FPM) is required to apply updates.
+        </p>
+    </twig:Metric:Help:Section>
+{% endblock %}

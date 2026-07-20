@@ -1,0 +1,6 @@
+{# @var bag \App\Metrics\Dto\Bag\Apache\ApacheBag #}
+<twig:Metric:Metric:Gauge dto="{{ dto }}" chart="{{ chart }}" options="{{ options }}">
+    {% if bag.scoreboard.used >= 0 and bag.scoreboard.total >= 0 %}
+        {{ bag.scoreboard.used }} / {{ bag.scoreboard.total }}
+    {% endif %}
+</twig:Metric:Metric:Gauge>

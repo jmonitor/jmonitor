@@ -1,0 +1,5 @@
+{% set value = dto.formattedValue !== null ? dto.formattedValue : dto.value %}
+
+{% if value is scalar %}
+    <div class="consumer_value-value">{{ value|raw }}</div>
+{% endif %}

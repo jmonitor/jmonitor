@@ -1,0 +1,5 @@
+{% if dto.value.max > 0 %}
+    <twig:Metric:Peak current="{{ dto.value.current|bytes }}" max="{{ dto.value.max|bytes }}" peak="{{ dto.value.peak|bytes }}" />
+{% else %}
+    <div class="text-end current-value">{{ dto.value.current|format_bytes }}</div>
+{% endif %}

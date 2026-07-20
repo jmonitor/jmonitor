@@ -1,0 +1,7 @@
+
+    {{ include(dto.cardTemplate|default('dash/project/metrics/card/card-' ~ renderer.value ~ '.html.twig'), {
+        dto: dto,
+        renderer: renderer,
+        options: options,
+        attributes: attributes,
+    }) }}

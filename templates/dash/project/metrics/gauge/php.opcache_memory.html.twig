@@ -1,0 +1,33 @@
+<twig:Metric:Metric:GaugeAdvanced dto="{{ dto }}" chart="{{ chart }}">
+    <div class="dldt">
+        <div class="dl">Memory usage</div>
+        <div class="dl text-end">
+            {% if bag.opcache.status.memory.used >= 0 and bag.opcache.status.memory.total >= 0 %}
+                {{ bag.opcache.status.memory.used|format_bytes }} / {{ bag.opcache.status.memory.total|format_bytes }}
+            {% endif %}
+        </div>
+    </div>
+
+    <hr class="opacity-0 my-4">
+
+    <div class="d-flex flex-column gap-2">
+        <div class="dldt">
+            <div>Used</div>
+            <div class="dl text-end">
+                {{ bag.opcache.status.memory.used|format_bytes }}
+            </div>
+        </div>
+        <div class="dldt">
+            <div>Available</div>
+            <div class="dl text-end">
+                {{ bag.opcache.status.memory.free|format_bytes }}
+            </div>
+        </div>
+        <div class="dldt">
+            <div>Wasted</div>
+            <div class="dl text-end">
+                {{ bag.opcache.status.memory.wasted|format_bytes }}
+            </div>
+        </div>
+    </div>
+</twig:Metric:Metric:GaugeAdvanced>

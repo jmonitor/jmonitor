@@ -1,0 +1,30 @@
+{% extends 'dash/help/metric/layout.html.twig' %}
+
+{% block definition %}
+    <p>This card shows the main PHP OPcache settings that control how scripts are cached in memory.</p>
+{% endblock %}
+
+{% block why_it_matters %}
+    <p>OPcache improves performance by avoiding repeated compilation of PHP files. Wrong settings can waste memory or prevent code updates from being applied.</p>
+{% endblock %}
+
+{% block how_to_read %}
+    <ul class="d-flex flex-column gap-2">
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">memory_consumption</twig:Html:Badge:Neutral>
+            <p>Amount of memory allocated to OPcache. More memory allows more scripts to be cached.</p>
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">preload</twig:Html:Badge:Neutral>
+            <p>Path to a PHP script that is loaded at server startup. It allows important files to be preloaded into memory for faster execution.</p>
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">revalidate_freq</twig:Html:Badge:Neutral>
+            <p>Time (in seconds) between checks for file updates. Lower values detect changes faster, higher values improve performance.</p>
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">max_accelerated_files</twig:Html:Badge:Neutral>
+            <p>Maximum number of PHP files that can be cached. Should be high enough to cover all your project files.</p>
+        </li>
+    </ul>
+{% endblock %}

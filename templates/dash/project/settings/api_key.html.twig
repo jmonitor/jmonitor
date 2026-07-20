@@ -1,0 +1,27 @@
+{% extends 'dash/project/settings_layout.twig' %}
+
+{% block title %}Api key{% endblock %}
+
+{% block settings_content %}
+    <twig:Cards title="Your API key">
+        <twig:Card>
+            {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                <twig:Dash:ApiKeyCopyPaster displayFull="{{ apiKeyJustRegenerated }}" />
+
+                <hr class="my-4v5">
+
+                <h5 class="card-title mb-3">Regenerate the key</h5>
+                <div>
+                    <p>The current API key will be disabled.</p>
+                    <form action="{{ path('project.settings.api_key', {uuid: current_project().uuid}) }}" method="post" data-turbo-confirm="Please confirm">
+                        <input type="hidden" name="_token" value="{{ csrf_token('regenerate_api_key') }}">
+                        <twig:Form:Submit label="Regenerate" />
+                    </form>
+                </div>
+
+            {% else %}
+                <p>You must log in again to see your API Key. <a href="{{ path('security.login', {target_route: 'apikey', p: current_project().uuid}) }}" target="_top">Login</a></p>
+            {% endif %}
+        </twig:Card>
+    </twig:Cards>
+{% endblock %}

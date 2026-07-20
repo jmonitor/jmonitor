@@ -1,0 +1,6 @@
+{# @var bag \App\Metrics\Dto\Bag\Mysql\MysqlVariableBag #}
+{% set bag = dto.value %}
+<div class="text-end">
+    <div class="consumer_value-value">{{ bag.mysqlVersion|raw }}</div>
+    <small class="text-muted">{{ bag.versionComment }}</small>
+</div>

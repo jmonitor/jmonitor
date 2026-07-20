@@ -1,0 +1,13 @@
+{% if opcacheBag %}
+    {% if enabled is same as(true) %}
+        <twig:Html:Badge:Green>Enabled</twig:Html:Badge:Green>
+    {% else %}
+        <twig:Html:Badge:Red>Enabled</twig:Html:Badge:Red>
+    {% endif %}
+
+    {% if enabledCli is same as(true) %}
+        <twig:Html:Badge:Green>CLI: enabled</twig:Html:Badge:Green>
+    {% else %}
+        <twig:Html:Badge:Neutral>CLI: disabled</twig:Html:Badge:Neutral>
+    {% endif %}
+{% endif %}

@@ -1,0 +1,47 @@
+{% extends 'dash/help/metric/layout.html.twig' %}
+
+{% block definition %}
+    <p>This card shows which sessions are currently <strong>blocking</strong> others on the database. Each row is a query that is stuck waiting for a lock, together with the query that is holding that lock. It is a snapshot taken at the last collection, built from PostgreSQL's <code>pg_locks</code> and <code>pg_stat_activity</code> views.</p>
+{% endblock %}
+
+{% block why_it_matters %}
+    <p>When one transaction holds a lock and does not release it, every other transaction needing the same row has to wait. A single stuck or slow transaction can therefore freeze many others behind it. This card makes the culprit visible: it shows you exactly who is waiting and, more importantly, who to act on.</p>
+{% endblock %}
+
+{% block how_to_read %}
+    <p>Each row pairs a waiting query with the one blocking it:</p>
+
+    <ul class="d-flex flex-column gap-2">
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">Blocked query</twig:Html:Badge:Neutral>
+            <p>The query that is stuck waiting for a lock to be released.</p>
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">Waiting</twig:Html:Badge:Neutral>
+            <p>How long this query has already been waiting, in seconds. The longer it grows, the more urgent the contention.</p>
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">Blocked by</twig:Html:Badge:Neutral>
+            <p>The query holding the lock the blocked one needs. This is the transaction you usually need to deal with.</p>
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">Blocker state</twig:Html:Badge:Neutral>
+            <p>What the blocking session is doing. <code>idle in transaction</code> is a strong warning sign: it holds locks while doing no work at all.</p>
+        </li>
+    </ul>
+
+    <p>If the card reads <em>"No blocking detected"</em>, no session was waiting on another at the last collection, which is the healthy state.</p>
+{% endblock %}
+
+{% block actions %}
+    <ul class="d-flex flex-column gap-2">
+        <li>Act on the <strong>blocker</strong>, not the blocked query: releasing the lock at the source frees every waiter behind it at once.</li>
+        <li>If the blocker is <code>idle in transaction</code>, the fix is on the application side, commit or roll back promptly, and never hold a transaction open across external calls or user think-time.</li>
+        <li>For an urgent, stuck blocker you can terminate it with <code>pg_terminate_backend(pid)</code> to unblock the queue immediately.</li>
+        <li>If blocking recurs, make transactions short and have all of them acquire locks in a consistent order to avoid contention turning into deadlocks.</li>
+    </ul>
+{% endblock %}
+
+{% block good_to_know %}
+    <p>This is a point-in-time snapshot, so brief blocking may not always be captured. It complements the time-series metrics: <strong>Blocked sessions</strong> counts how many waiters exist over time, while <strong>Idle in transaction</strong> and <strong>Oldest transaction</strong> usually reveal the underlying cause. Persistent blocking is also the typical precursor to <strong>Deadlocks</strong>.</p>
+{% endblock %}

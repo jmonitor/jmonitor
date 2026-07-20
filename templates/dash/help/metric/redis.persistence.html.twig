@@ -1,0 +1,31 @@
+{% extends 'dash/help/metric/layout.html.twig' %}
+
+{% block definition %}
+    <p>This card shows how Redis persists data to disk using RDB and AOF.</p>
+    <p>Redis is often used as a cache only. In this case, persistence may be disabled (both RDB and AOF), as data is not meant to be kept after a restart.</p>
+{% endblock %}
+
+{% block why_it_matters %}
+    <p>Persistence defines how your data survives restarts or crashes. Choosing the right method impacts performance and data safety.</p>
+{% endblock %}
+
+{% block how_to_read %}
+    <ul class="d-flex flex-column gap-2">
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">RDB (Redis Database Backup)</twig:Html:Badge:Neutral>
+            <p>Creates snapshots of your data at specific intervals.</p>
+            <ul>
+                <li>Faster and lighter</li>
+                <li>Can lose recent data between snapshots</li>
+            </ul>
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">AOF (Append Only File)</twig:Html:Badge:Neutral>
+            <p>Logs every write operation to a file.</p>
+            <ul>
+                <li>Better data safety</li>
+                <li>Higher disk usage and slightly lower performance</li>
+            </ul>
+        </li>
+    </ul>
+{% endblock %}

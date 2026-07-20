@@ -1,0 +1,16 @@
+<div {{ attributes.defaults({class: attributes.has('class') ? '' : 'mb-3'}) }}>
+    {{ form_label(form) }}
+    <div {{ attributes.nested('inputGoup').defaults({class: 'input-group'}) }}>
+        {% block form_widget %}{{ form_widget(form) }}{% endblock %}
+
+        {% set content = suffix is not null ? suffix : block('content') %}
+
+        {% if content starts with '<' %}
+            {{ content|raw }}
+        {% else %}
+            <span class="input-group-text">{{ content }}</span>
+        {% endif %}
+    </div>
+    {{ form_errors(form) }}
+    {{ form_help(form) }}
+</div>

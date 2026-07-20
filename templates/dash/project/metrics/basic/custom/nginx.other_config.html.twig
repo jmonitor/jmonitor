@@ -1,0 +1,39 @@
+{# @var bag \App\Metrics\Dto\Bag\Nginx\NginxBag #}
+{% set bag = dto.value %}
+
+<twig:Metric:Metric:List class="mh-15 overflow-y-auto pe-2">
+    <twig:InfoLine label="sendfile" value="{{ bag.config.sendfile }}" />
+    <twig:InfoLine label="tcp_nopush" value="{{ bag.config.tcpNopush }}" />
+    <twig:InfoLine label="tcp_nodelay" value="{{ bag.config.tcpNodelay }}" />
+    <twig:InfoLine label="keepalive_timeout" value="{{ bag.config.keepaliveTimeout }}" />
+    <twig:InfoLine label="gzip">
+        {% if bag.config.gzip === 'on' %}
+            <twig:Html:Badge:Green>on</twig:Html:Badge:Green>
+        {% elseif bag.config.gzip === 'off' %}
+            <twig:Html:Badge:Yellow>off</twig:Html:Badge:Yellow>
+        {% else %}
+            {{ bag.config.gzip }}
+        {% endif %}
+    </twig:InfoLine>
+
+    <hr>
+    <twig:InfoLine label="ssl_protocols " value="{{ bag.config.sslProtocols }}" />
+    <twig:InfoLine label="ssl_prefer_server_ciphers">
+        {% if bag.config.sslPreferServerCiphers !== null %}
+            {% if bag.config.sslPreferServerCiphers === 'on' %}
+                <twig:Html:Badge:Green>on</twig:Html:Badge:Green>
+            {% else %}
+                <twig:Html:Badge:Red>off</twig:Html:Badge:Red>
+            {% endif %}
+        {% endif %}
+    </twig:InfoLine>
+    <twig:InfoLine label="server_tokens">
+        {% if bag.config.serverTokens !== null %}
+            {% if bag.config.serverTokenEnabled %}
+                <twig:Html:Badge:Yellow>on</twig:Html:Badge:Yellow>
+            {% else %}
+                <twig:Html:Badge:Green>off</twig:Html:Badge:Green>
+            {% endif %}
+        {% endif %}
+    </twig:InfoLine>
+</twig:Metric:Metric:List>

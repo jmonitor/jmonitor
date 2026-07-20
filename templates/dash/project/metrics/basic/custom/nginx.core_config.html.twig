@@ -1,0 +1,20 @@
+{# @var bag \App\Metrics\Dto\Bag\Nginx\NginxBag #}
+{% set bag = dto.value %}
+
+<twig:Metric:Metric:List class="mh-15 overflow-y-auto pe-2">
+    <twig:InfoLine label="config file" value="{{ bag.config.configPath }}" />
+    {% if bag.config.include %}
+        <twig:InfoLine label="include" class="align-items-baseline">
+        <ul class="list-unstyled text-end mb-0">
+            {% for path in bag.config.include %}
+                <li>{{ path }}</li>
+            {% endfor %}
+        </ul>
+        </twig:InfoLine>
+    {% endif %}
+
+    <twig:InfoLine label="user" value="{{ bag.config.user }}" />
+    <twig:InfoLine label="access_log" value="{{ bag.config.accessLog }}" />
+    <twig:InfoLine label="error_log " value="{{ bag.config.errorLogPath }}" />
+    <twig:InfoLine label="log level " value="{{ bag.config.errorLogLevel }}" />
+</twig:Metric:Metric:List>

@@ -1,0 +1,23 @@
+{# @var bag \App\Metrics\Dto\Bag\Php\PhpBag #}
+{% set bag = bag('php') %}
+<twig:Metric:Metric:List>
+    <twig:InfoLine label="memory_consumption" icon="material-symbols:memory-alt-outline">
+        {{ bag.opcache.config.directives.memoryConsumption|format_bytes }}
+    </twig:InfoLine>
+
+    <twig:InfoLine label="preload" icon="material-symbols:fast-forward-outline">
+        {% if dto.context.preloadBadge %}
+            <twig:Html:Badge:Badge badge="{{ dto.context.preloadBadge }}" />
+        {% endif %}
+    </twig:InfoLine>
+    <twig:InfoLine label="revalidate_freq" icon="material-symbols:timer-outline">
+        {% if dto.context.revalidateFrequencyBadge %}
+            <twig:Html:Badge:Badge badge="{{ dto.context.revalidateFrequencyBadge }}" />
+        {% else %}
+            {{ dto.context.revalidateFrequency }}
+        {% endif %}
+    </twig:InfoLine>
+    <twig:InfoLine label="max_accelerated_files" icon="material-symbols:numbers">
+        {{ bag.opcache.config.directives.maxAcceleratedFiles }}
+    </twig:InfoLine>
+</twig:Metric:Metric:List>

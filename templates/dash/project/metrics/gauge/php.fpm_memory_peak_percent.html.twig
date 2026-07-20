@@ -1,0 +1,7 @@
+{# @var bag \App\Metrics\Dto\Bag\Php\PhpBag #}
+{# @var dto \App\Metrics\Renderer\Dto\GaugeDto #}
+<twig:Metric:Metric:Gauge dto="{{ dto }}" chart="{{ chart }}" options="{{ options }}">
+    {% if bag.fpm.memoryPeak and bag.memoryLimit %}
+        {{ bag.fpm.memoryPeak|format_bytes }} / {{ bag.memoryLimit|format_bytes }}
+    {% endif %}
+</twig:Metric:Metric:Gauge>

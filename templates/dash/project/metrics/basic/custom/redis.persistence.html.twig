@@ -1,0 +1,55 @@
+{# @var bag \App\Metrics\Dto\Bag\Redis\RedisBag #}
+{% set bag = dto.value %}
+<twig:Metric:Metric:List>
+    <twig:InfoLine label="RDB">
+        <twig:Html:Badge:Blue>
+            {% if bag.config.rdbSaveEnabled === null %}
+                Uncertain
+            {% else %}
+                {{ bag.config.rdbSaveEnabled ? 'Enabled' : 'Disabled' }}
+            {% endif %}
+        </twig:Html:Badge:Blue>
+    </twig:InfoLine>
+
+    {% if bag.config.rdbSaveEnabled !== false %}
+        <twig:InfoLine label="Last save">
+            <span {{ stimulus_controller('relative-time', {timestamp: bag.persistence.rdbLastSaveTime}) }}></span>
+        </twig:InfoLine>
+        <twig:InfoLine label="Unsaved changes" value="{{ bag.persistence.rdbChangesSinceLastSave }}" />
+        <twig:InfoLine label="Last save status">
+            {% if bag.persistence.rdbBgsaveInProgress %}
+                <twig:Html:Badge:Blue>In progress</twig:Html:Badge:Blue>
+            {% else %}
+                {% if bag.persistence.rdbLastBgsaveStatus === 'ok' %}
+                    <twig:Html:Badge:Green>ok</twig:Html:Badge:Green>
+                {% else %}
+                    <twig:Html:Badge:Red>{{ bag.persistence.rdbLastBgsaveStatus }}</twig:Html:Badge:Red>
+                {% endif %}
+            {% endif %}
+        </twig:InfoLine>
+    {% endif %}
+    <hr>
+    <twig:InfoLine label="AOF">
+        <twig:Html:Badge:Blue>{{ bag.persistence.aofEnabled ? 'Enabled' : 'Disabled' }}</twig:Html:Badge:Blue>
+    </twig:InfoLine>
+
+    {% if bag.persistence.aofEnabled %}
+        <twig:InfoLine label="Last rewrite status">
+            {% if bag.persistence.aofRewriteInProgress %}
+                <twig:Html:Badge:Blue>In progress</twig:Html:Badge:Blue>
+            {% else %}
+                {% if bag.persistence.aofLastBgrewriteStatus === 'ok' %}
+                    <twig:Html:Badge:Green>ok</twig:Html:Badge:Green>
+                {% else %}
+                    <twig:Html:Badge:Red>{{ bag.persistence.aofLastBgrewriteStatus }}</twig:Html:Badge:Red>
+                {% endif %}
+            {% endif %}
+        </twig:InfoLine>
+
+        <twig:InfoLine label="Last rewrite duration">
+            <span {{ stimulus_controller('duration', {seconds: bag.persistence.aofLastRewriteTimeSec}) }}></span>
+        </twig:InfoLine>
+        <twig:InfoLine label="AOF file size" value="{{ bag.persistence.aofCurrentSize|format_bytes }}" />
+        <twig:InfoLine label="Growth since last rewrite" value="{{ bag.persistence.aofGrowthPercent }}" />
+    {% endif %}
+</twig:Metric:Metric:List>

@@ -1,0 +1,5 @@
+<twig:Metric:Metric:Gauge dto="{{ dto }}" chart="{{ chart }}" options="{{ options }}">
+    {% if bag.disk.used >= 0 and bag.disk.total >= 0 %}
+        {{ bag.disk.used|format_bytes }} / {{ bag.disk.total|format_bytes }}
+    {% endif %}
+</twig:Metric:Metric:Gauge>

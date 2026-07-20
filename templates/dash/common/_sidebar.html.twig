@@ -1,0 +1,24 @@
+<div class="py-3 border-bottom mb-4">
+    <a href="/">{{ ux_icon('logo-full-white', {width: '7rem', height: '2rem'}) }}</a>
+</div>
+<div class="pt-2 mb-4">
+    <h6 class="nav-section-title">Project</h6>
+    <twig:Dash:ProjectSelector />
+</div>
+
+{% if current_project() %}
+    <div class="pt-2 mb-4">
+        {{ renderMenu('dash.sidebar.top') }}
+    </div>
+
+    <div class="mb-5">
+        <h6 class="nav-section-title">Metrics</h6>
+        {{ renderMenu('dash.sidebar.metrics') }}
+    </div>
+
+    <div class="mt-auto mb-4">
+        {{ renderMenu('dash.sidebar.bottom') }}
+        <hr class="my-4v5">
+        <small class="text-body-tertiary" style="opacity: .7">Version 1</small>
+    </div>
+{% endif %}

@@ -1,0 +1,4 @@
+easyadmin:
+    resource: .
+    type: easyadmin.routes
+    host: 'admin.%app.domain%'

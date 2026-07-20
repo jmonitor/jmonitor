@@ -1,0 +1,18 @@
+{# @var dto \App\Metrics\Renderer\Dto\BasicDto #}
+{# @var metric \App\Metrics\Metric #}
+<twig:Card {{ ...attributes.defaults({class: 'card-metric'}) }} cardBody:class="d-flex flex-column gap-4">
+    <div class="d-flex align-items-center gap-2 flex-wrap justify-content-between">
+        <div class="d-flex align-items-center gap-2">
+            <h3 class="card-title mb-0">{{ dto.cardTitle ?: dto.metric.label }}</h3>
+            {% if metric.hasHelp() %}
+                <twig:HelpIcon metric="{{ metric }}" />
+            {% endif %}
+        </div>
+        {% if dto.badge %}
+            <twig:Html:Badge:Badge badge="{{ dto.badge }}" />
+        {% endif %}
+    </div>
+    <div class="flex-grow-1">
+        <twig:Metric metric="{{ metric.value }}" renderer="{{ renderer.value }}" options="{{ options }}"/>
+    </div>
+</twig:Card>

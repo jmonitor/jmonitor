@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="112" height="64" viewBox="0 0 112 64">
+  <defs>
+    <clipPath id="clip-path">
+      <rect id="Rectangle_2089" data-name="Rectangle 2089" width="112" height="64" transform="translate(1652.563 422)" fill="rgba(165,182,255,0.81)"/>
+    </clipPath>
+    <clipPath id="clip-path-2">
+      <rect id="Rectangle_2068" data-name="Rectangle 2068" width="110.467" height="303.213" fill="none"/>
+    </clipPath>
+  </defs>
+  <g id="Groupe_de_masques_7" data-name="Groupe de masques 7" transform="translate(-1652.563 -422)" clip-path="url(#clip-path)">
+    <g id="Groupe_3831" data-name="Groupe 3831" transform="translate(1653.244 422)">
+      <rect id="Rectangle_2024" data-name="Rectangle 2024" width="110.467" height="29.214" transform="translate(0 0)" fill="#2e3c4b"/>
+      <rect id="Rectangle_2025" data-name="Rectangle 2025" width="106.884" height="5.086" transform="translate(1.791 29.214)" fill="#161c1f"/>
+      <rect id="Rectangle_2026" data-name="Rectangle 2026" width="39.561" height="13.086" transform="translate(62.955 8.064)" fill="#3e4d5d"/>
+      <rect id="Rectangle_2027" data-name="Rectangle 2027" width="11.361" height="6.533" transform="translate(8.014 16.459)" fill="#161c1f"/>
+      <rect id="Rectangle_2028" data-name="Rectangle 2028" width="11.361" height="6.533" transform="translate(8.014 6.221)" fill="#161c1f"/>
+      <g id="Groupe_3828" data-name="Groupe 3828" transform="translate(0 0)">
+        <g id="Groupe_3827" data-name="Groupe 3827" transform="translate(0 0)" clip-path="url(#clip-path-2)">
+          <path id="Tracé_9203" data-name="Tracé 9203" d="M182.666,46.955A3.043,3.043,0,1,1,185.709,50a3.043,3.043,0,0,1-3.043-3.043" transform="translate(-134.559 -32.348)" fill="#5f82ff"/>
+          <path id="Tracé_9204" data-name="Tracé 9204" d="M143.235,46.955A3.043,3.043,0,1,1,146.278,50a3.043,3.043,0,0,1-3.043-3.043" transform="translate(-105.512 -32.348)" fill="#31d8ff"/>
+          <path id="Tracé_9205" data-name="Tracé 9205" d="M103.8,46.955A3.043,3.043,0,1,1,106.846,50a3.043,3.043,0,0,1-3.043-3.043" transform="translate(-76.465 -32.348)" fill="#7bffb7"/>
+          <rect id="Rectangle_2029" data-name="Rectangle 2029" width="110.467" height="29.215" transform="translate(0 34.307)" fill="#2e3c4b"/>
+          <rect id="Rectangle_2030" data-name="Rectangle 2030" width="106.884" height="5.086" transform="translate(1.791 63.521)" fill="#152338"/>
+          <rect id="Rectangle_2031" data-name="Rectangle 2031" width="39.561" height="13.086" transform="translate(62.955 42.371)" fill="#3e4d5d"/>
+          <rect id="Rectangle_2032" data-name="Rectangle 2032" width="11.361" height="6.533" transform="translate(8.014 50.766)" fill="#151b1e"/>
+          <rect id="Rectangle_2033" data-name="Rectangle 2033" width="11.361" height="6.533" transform="translate(8.014 40.528)" fill="#151b1e"/>
+          <path id="Tracé_9206" data-name="Tracé 9206" d="M182.666,177.221a3.043,3.043,0,1,1,3.043,3.043,3.043,3.043,0,0,1-3.043-3.043" transform="translate(-134.559 -128.307)" fill="#5f82ff"/>
+          <path id="Tracé_9207" data-name="Tracé 9207" d="M143.235,177.221a3.043,3.043,0,1,1,3.043,3.043,3.043,3.043,0,0,1-3.043-3.043" transform="translate(-105.512 -128.307)" fill="#31d8ff"/>
+          <path id="Tracé_9208" data-name="Tracé 9208" d="M103.8,177.221a3.043,3.043,0,1,1,3.043,3.043,3.043,3.043,0,0,1-3.043-3.043" transform="translate(-76.465 -128.307)" fill="#7bffb7"/>
+          <rect id="Rectangle_2034" data-name="Rectangle 2034" width="110.467" height="29.215" transform="translate(0 68.471)" fill="#213b57"/>
+          <rect id="Rectangle_2035" data-name="Rectangle 2035" width="106.884" height="5.086" transform="translate(1.791 97.686)" fill="#152338"/>
+          <rect id="Rectangle_2036" data-name="Rectangle 2036" width="39.561" height="13.086" transform="translate(62.955 76.535)" fill="#224860"/>
+          <rect id="Rectangle_2037" data-name="Rectangle 2037" width="11.361" height="6.533" transform="translate(8.014 84.93)" fill="#152338"/>
+          <rect id="Rectangle_2038" data-name="Rectangle 2038" width="11.361" height="6.533" transform="translate(8.014 74.692)" fill="#152338"/>
+          <path id="Tracé_9209" data-name="Tracé 9209" d="M182.666,306.944a3.043,3.043,0,1,1,3.043,3.043,3.043,3.043,0,0,1-3.043-3.043" transform="translate(-134.559 -223.866)" fill="#5f82ff"/>
+          <path id="Tracé_9210" data-name="Tracé 9210" d="M143.235,306.944a3.043,3.043,0,1,1,3.043,3.043,3.043,3.043,0,0,1-3.043-3.043" transform="translate(-105.512 -223.866)" fill="#31d8ff"/>
+          <path id="Tracé_9211" data-name="Tracé 9211" d="M103.8,306.944a3.043,3.043,0,1,1,3.043,3.043,3.043,3.043,0,0,1-3.043-3.043" transform="translate(-76.465 -223.866)" fill="#7bffb7"/>
+          <rect id="Rectangle_2039" data-name="Rectangle 2039" width="110.467" height="29.215" transform="translate(0 102.778)" fill="#1c384c"/>
+          <rect id="Rectangle_2040" data-name="Rectangle 2040" width="106.884" height="5.086" transform="translate(1.791 131.992)" fill="#152338"/>
+          <rect id="Rectangle_2041" data-name="Rectangle 2041" width="39.561" height="13.086" transform="translate(62.955 110.843)" fill="#224860"/>
+          <rect id="Rectangle_2042" data-name="Rectangle 2042" width="11.361" height="6.533" transform="translate(8.014 119.237)" fill="#152338"/>
+          <rect id="Rectangle_2043" data-name="Rectangle 2043" width="11.361" height="6.533" transform="translate(8.014 109)" fill="#152338"/>
+          <path id="Tracé_9212" data-name="Tracé 9212" d="M182.666,437.209a3.043,3.043,0,1,1,3.043,3.043,3.043,3.043,0,0,1-3.043-3.043" transform="translate(-134.559 -319.824)" fill="#5f82ff"/>
+          <path id="Tracé_9213" data-name="Tracé 9213" d="M143.235,437.209a3.043,3.043,0,1,1,3.043,3.043,3.043,3.043,0,0,1-3.043-3.043" transform="translate(-105.512 -319.824)" fill="#31d8ff"/>
+          <path id="Tracé_9214" data-name="Tracé 9214" d="M103.8,437.209a3.043,3.043,0,1,1,3.043,3.043,3.043,3.043,0,0,1-3.043-3.043" transform="translate(-76.465 -319.824)" fill="#7bffb7"/>
+          <rect id="Rectangle_2044" data-name="Rectangle 2044" width="110.467" height="29.215" transform="translate(0 137.056)" fill="#1c384c"/>
+          <rect id="Rectangle_2045" data-name="Rectangle 2045" width="106.884" height="5.086" transform="translate(1.791 166.271)" fill="#152338"/>
+          <rect id="Rectangle_2046" data-name="Rectangle 2046" width="39.561" height="13.086" transform="translate(62.955 145.121)" fill="#224860"/>
+          <rect id="Rectangle_2047" data-name="Rectangle 2047" width="11.361" height="6.533" transform="translate(8.014 153.516)" fill="#152338"/>
+          <rect id="Rectangle_2048" data-name="Rectangle 2048" width="11.361" height="6.533" transform="translate(8.014 143.278)" fill="#152338"/>
+          <path id="Tracé_9215" data-name="Tracé 9215" d="M182.666,567.366a3.043,3.043,0,1,1,3.043,3.043,3.043,3.043,0,0,1-3.043-3.043" transform="translate(-134.559 -415.702)" fill="#5f82ff"/>
+          <path id="Tracé_9216" data-name="Tracé 9216" d="M143.235,567.366a3.043,3.043,0,1,1,3.043,3.043,3.043,3.043,0,0,1-3.043-3.043" transform="translate(-105.512 -415.702)" fill="#31d8ff"/>
+          <path id="Tracé_9217" data-name="Tracé 9217" d="M103.8,567.366a3.043,3.043,0,1,1,3.043,3.043,3.043,3.043,0,0,1-3.043-3.043" transform="translate(-76.465 -415.702)" fill="#7bffb7"/>
+          <rect id="Rectangle_2049" data-name="Rectangle 2049" width="110.467" height="29.215" transform="translate(0 171.363)" fill="#1c384c"/>
+          <rect id="Rectangle_2050" data-name="Rectangle 2050" width="39.561" height="13.086" transform="translate(62.955 179.428)" fill="#224860"/>
+          <rect id="Rectangle_2051" data-name="Rectangle 2051" width="11.361" height="6.533" transform="translate(8.014 187.823)" fill="#152338"/>
+          <rect id="Rectangle_2052" data-name="Rectangle 2052" width="11.361" height="6.533" transform="translate(8.014 177.585)" fill="#152338"/>
+          <path id="Tracé_9218" data-name="Tracé 9218" d="M182.666,697.632a3.043,3.043,0,1,1,3.043,3.043,3.043,3.043,0,0,1-3.043-3.043" transform="translate(-134.559 -511.661)" fill="#5f82ff"/>
+          <path id="Tracé_9219" data-name="Tracé 9219" d="M143.235,697.632a3.043,3.043,0,1,1,3.043,3.043,3.043,3.043,0,0,1-3.043-3.043" transform="translate(-105.512 -511.661)" fill="#31d8ff"/>
+          <path id="Tracé_9220" data-name="Tracé 9220" d="M103.8,697.632a3.043,3.043,0,1,1,3.043,3.043,3.043,3.043,0,0,1-3.043-3.043" transform="translate(-76.465 -511.661)" fill="#7bffb7"/>
+          <rect id="Rectangle_2053" data-name="Rectangle 2053" width="106.884" height="5.086" transform="translate(1.791 200.578)" fill="#152338"/>
+          <rect id="Rectangle_2054" data-name="Rectangle 2054" width="110.467" height="29.215" transform="translate(0 205.528)" fill="#1c384c"/>
+          <rect id="Rectangle_2055" data-name="Rectangle 2055" width="39.561" height="13.086" transform="translate(62.955 213.592)" fill="#224860"/>
+          <rect id="Rectangle_2056" data-name="Rectangle 2056" width="11.361" height="6.533" transform="translate(8.014 221.987)" fill="#152338"/>
+          <rect id="Rectangle_2057" data-name="Rectangle 2057" width="11.361" height="6.533" transform="translate(8.014 211.749)" fill="#152338"/>
+          <path id="Tracé_9221" data-name="Tracé 9221" d="M182.666,827.355a3.043,3.043,0,1,1,3.043,3.043,3.043,3.043,0,0,1-3.043-3.043" transform="translate(-134.559 -607.22)" fill="#5f82ff"/>
+          <path id="Tracé_9222" data-name="Tracé 9222" d="M143.235,827.355a3.043,3.043,0,1,1,3.043,3.043,3.043,3.043,0,0,1-3.043-3.043" transform="translate(-105.512 -607.22)" fill="#31d8ff"/>
+          <path id="Tracé_9223" data-name="Tracé 9223" d="M103.8,827.355a3.043,3.043,0,1,1,3.043,3.043,3.043,3.043,0,0,1-3.043-3.043" transform="translate(-76.465 -607.22)" fill="#7bffb7"/>
+          <rect id="Rectangle_2058" data-name="Rectangle 2058" width="106.884" height="5.086" transform="translate(1.791 234.813)" fill="#152338"/>
+          <rect id="Rectangle_2059" data-name="Rectangle 2059" width="110.467" height="29.215" transform="translate(0 239.763)" fill="#1c384c"/>
+          <rect id="Rectangle_2060" data-name="Rectangle 2060" width="39.561" height="13.086" transform="translate(62.955 247.828)" fill="#224860"/>
+          <rect id="Rectangle_2061" data-name="Rectangle 2061" width="11.361" height="6.533" transform="translate(8.014 256.222)" fill="#152338"/>
+          <rect id="Rectangle_2062" data-name="Rectangle 2062" width="11.361" height="6.533" transform="translate(8.014 245.984)" fill="#152338"/>
+          <path id="Tracé_9224" data-name="Tracé 9224" d="M182.666,957.349a3.043,3.043,0,1,1,3.043,3.043,3.043,3.043,0,0,1-3.043-3.043" transform="translate(-134.559 -702.979)" fill="#5f82ff"/>
+          <path id="Tracé_9225" data-name="Tracé 9225" d="M143.235,957.349a3.043,3.043,0,1,1,3.043,3.043,3.043,3.043,0,0,1-3.043-3.043" transform="translate(-105.512 -702.979)" fill="#31d8ff"/>
+          <path id="Tracé_9226" data-name="Tracé 9226" d="M103.8,957.349a3.043,3.043,0,1,1,3.043,3.043,3.043,3.043,0,0,1-3.043-3.043" transform="translate(-76.465 -702.979)" fill="#7bffb7"/>
+          <rect id="Rectangle_2063" data-name="Rectangle 2063" width="106.884" height="5.086" transform="translate(1.791 269.049)" fill="#152338"/>
+          <rect id="Rectangle_2064" data-name="Rectangle 2064" width="110.467" height="29.215" transform="translate(0 273.999)" fill="#1c384c"/>
+          <rect id="Rectangle_2065" data-name="Rectangle 2065" width="39.561" height="13.086" transform="translate(62.955 282.063)" fill="#224860"/>
+          <rect id="Rectangle_2066" data-name="Rectangle 2066" width="11.361" height="6.533" transform="translate(8.014 290.458)" fill="#152338"/>
+          <rect id="Rectangle_2067" data-name="Rectangle 2067" width="11.361" height="6.533" transform="translate(8.014 280.22)" fill="#152338"/>
+          <path id="Tracé_9227" data-name="Tracé 9227" d="M182.666,1087.344a3.043,3.043,0,1,1,3.043,3.043,3.043,3.043,0,0,1-3.043-3.043" transform="translate(-134.559 -798.738)" fill="#5f82ff"/>
+          <path id="Tracé_9228" data-name="Tracé 9228" d="M143.235,1087.344a3.043,3.043,0,1,1,3.043,3.043,3.043,3.043,0,0,1-3.043-3.043" transform="translate(-105.512 -798.738)" fill="#31d8ff"/>
+          <path id="Tracé_9229" data-name="Tracé 9229" d="M103.8,1087.344a3.043,3.043,0,1,1,3.043,3.043,3.043,3.043,0,0,1-3.043-3.043" transform="translate(-76.465 -798.738)" fill="#7bffb7"/>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

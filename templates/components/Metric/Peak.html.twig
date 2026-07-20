@@ -1,0 +1,25 @@
+<div {{ attributes.defaults({class: 'progress-peak-container'}) }}>
+    {% if showCurrent %}
+        <div  class="">
+            <span class="current-value">{{ peak|raw }}</span>
+        </div>
+    {% endif %}
+    <div class="position-relative">
+        <div class="progress" role="progressbar">
+            <div class="progress-bar" style="width: {{ percent }}%"></div>
+        </div>
+        <div class="text-end text-muted text-uppercase mt-1">{{ max|raw }}</div>
+        <div class="peak" style="left: calc({{ peakLeft }}% - 8px)"></div>
+    </div>
+    <div>
+        <div class="d-flex align-items-center gap-2">
+            <div class="dot bg-primary"></div>
+            <span class="text-muted">Current:</span>
+            <span>{{ current|raw }}</span>
+
+            <div class="dot bg-peak ms-3"></div>
+            <div class="text-muted">Peak:</div>
+            <span>{{ peak|raw }}</span>
+        </div>
+    </div>
+</div>

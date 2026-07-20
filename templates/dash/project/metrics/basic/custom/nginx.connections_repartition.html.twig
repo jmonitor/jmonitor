@@ -1,0 +1,7 @@
+{# @var bag \App\Metrics\Dto\Bag\Nginx\NginxStatusBag #}
+{% set bag = dto.value %}
+<twig:Metric:Metric:List class="mh-15 overflow-y-auto pe-2">
+    <twig:InfoLine label="Waiting" value="{{ bag.waitingConnections }}" />
+    <twig:InfoLine label="Writing" value="{{ bag.writingConnections }}" />
+    <twig:InfoLine label="Reading" value="{{ bag.readingConnections }}" />
+</twig:Metric:Metric:List>

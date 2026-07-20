@@ -1,0 +1,32 @@
+{# @var bag \App\Metrics\Dto\Bag\Php\PhpBag #}
+{% set bag = bag('php') %}
+
+<twig:Metric:Metric:List class="mh-15 overflow-y-auto pe-2">
+    <h6 class="mb-0">[PHP]</h6>
+    <twig:InfoLine label="memory_limit">{{ bag.memoryLimit ? bag.memoryLimit|format_bytes }}</twig:InfoLine>
+    <twig:InfoLine label="max_execution_time"><span {{ stimulus_controller('duration', {seconds: bag.maxExecutionTime}) }}></span></twig:InfoLine>
+
+    <twig:InfoLine label="display_errors">
+        {% if dto.value.displayErrorsBadge %}
+            <twig:Html:Badge:Badge badge="{{ dto.value.displayErrorsBadge }}" />
+        {% else %}
+            {{ bag.displayErrors }}
+        {% endif %}
+    </twig:InfoLine>
+
+    <twig:InfoLine label="log_errors">
+        {% if dto.value.logErrorsBadge %}
+            <twig:Html:Badge:Badge badge="{{ dto.value.logErrorsBadge }}" />
+        {% else %}
+            {{ bag.logErrors }}
+        {% endif %}
+    </twig:InfoLine>
+    <twig:InfoLine label="error_log" value="{{ bag.errorLog }}" />
+    <twig:InfoLine label="error_reporting" value="{{ bag.errorReportingString }}" />
+
+    <twig:InfoLine label="post_max_size" value="{{ bag.postMaxSize }}" />
+    <twig:InfoLine label="upload_max_filesize" value="{{ bag.uploadMaxFilesize }}" />
+
+    <h6 class="mt-3 mb-0">[Date]</h6>
+    <twig:InfoLine label="date.timezone" value="{{ bag.dateTimezone }}" />
+</twig:Metric:Metric:List>

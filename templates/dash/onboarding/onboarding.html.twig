@@ -1,0 +1,43 @@
+{% extends 'dash/base.html.twig' %}
+
+{% block content %}
+<div class="max-w-xl">
+    <twig:Html:H1>Onboarding</twig:Html:H1>
+
+    <div class="d-flex flex-column gap-4 border-start mt-4">
+        <twig:Onboarding:Step :enabled="true">
+            <h4 class="mb-3">Set up my account</h4>
+            <p class="text-body-tertiary">Send me an e-mail...</p>
+            {{ form_start(accountForm) }}
+            {{ form_errors(accountForm) }}
+            {{ form_rest(accountForm) }}
+            <button type="submit" class="btn btn-primary btn-sm">Save</button>
+            {{ form_end(accountForm) }}
+        </twig:Onboarding:Step>
+
+        <twig:Onboarding:Step enabled="{{ step2enabled }}">
+            {% if invitations %}
+                <h4 class="mb-3">Accept inviations</h4>
+                <ul>
+                    {% for invitation in invitations %}
+                        <li>
+                            <div class="d-flex align-items-center gap-3">
+                                <a class="btn btn-primary btn-sm" href="{{ path('invitation.accept', {uniquid: invitation.uniquid}) }}">Join <b>{{ invitation.project.name }}</b> as {{ invitation.role.value }}</a>
+                                <form action="{{ path('invitation.refuse', {uniquid: invitation.uniquid}) }}" method="post" data-turbo-confirm="Please confirm.">
+                                    <button type="submit" class="btn link-danger">Decline</button>
+                                </form>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <h4>Create a project</h4>
+                <turbo-frame id="onboarding-project-create">
+                    {{ include('dash/project/_create_form.html.twig', {form: projectForm}, withContext: false) }}
+                </turbo-frame>
+            {% endif %}
+        </twig:Onboarding:Step>
+    </div>
+</div>
+
+{% endblock %}

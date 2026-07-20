@@ -1,0 +1,107 @@
+# Dev stack — see the README "Development setup" section.
+# Quick start: make setup   (or: docker compose up -d --wait, then composer install
+# and doctrine:migrations:migrate inside the app container).
+name: jmonitor
+
+services:
+  app:
+    build:
+      context: docker/dev
+    command: ["frankenphp", "run", "--config", "/etc/frankenphp/Caddyfile"]
+    environment:
+      # PHP's embed SAPI checks cwd for php.ini before the compiled-in path; without
+      # this, frankenphp (cwd /app via the bind mount) picks up the repo's production
+      # php.ini (Clever Cloud, opcache.preload without preload_user) and fails under uid 0.
+      PHPRC: /usr/local/etc/php
+    ports:
+      - "80:80"
+    volumes:
+      - .:/app
+      - ./docker/dev/Caddyfile:/etc/frankenphp/Caddyfile:ro
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      influxdb:
+        condition: service_started
+    networks:
+      default:
+        aliases:
+          # Public hostnames for containers whose HTTP clients use Docker DNS. Caveat:
+          # libcurl (CLI curl, PHP) force-resolves *.localhost to loopback (RFC 6761)
+          # and bypasses these — cross-container calls must use the service name instead
+          # (see MERCURE_URL in .env.dev). Self-monitoring (JMONITOR_COLLECTOR_URL)
+          # works from inside this container because loopback lands on its own Caddy.
+          - dash.jmonitor.localhost
+          - collector.jmonitor.localhost
+          - admin.jmonitor.localhost
+    extra_hosts:
+      # docker/pg-demo publishes 5433 on the host; host-gateway makes
+      # host.docker.internal work on Linux engines too (native on Docker Desktop).
+      - "host.docker.internal:host-gateway"
+
+  # Optional: synthetic-metrics worker feeding the public demo account
+  # (demo@jmonitor.io / demo), so dashboards are alive without real servers.
+  # Requires the schema (make setup) — start with: docker compose --profile demo up -d
+  demo:
+    build:
+      context: docker/dev
+    profiles: ["demo"]
+    command: ["sh", "-c", "php bin/console app:demo:provision && exec php bin/console app:demo:run"]
+    restart: unless-stopped
+    healthcheck:
+      # The base image's healthcheck targets the web server (:2019); this service runs a console command.
+      disable: true
+    environment:
+      # Same fix as the app service: don't let PHP load the repo-root prod php.ini via cwd.
+      PHPRC: /usr/local/etc/php
+    volumes:
+      - .:/app
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      influxdb:
+        condition: service_started
+
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: jmonitor
+    ports:
+      - "127.0.0.1:3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-proot"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  redis:
+    image: redis:8-alpine
+    ports:
+      - "127.0.0.1:6379:6379"
+
+  influxdb:
+    image: influxdb:2.7
+    environment:
+      DOCKER_INFLUXDB_INIT_MODE: setup
+      DOCKER_INFLUXDB_INIT_USERNAME: admin
+      DOCKER_INFLUXDB_INIT_PASSWORD: jmonitor-dev
+      DOCKER_INFLUXDB_INIT_ORG: jmonitor
+      # Bootstrap bucket required by the setup mode; the app creates its own
+      # per-project buckets through the API and never uses this one.
+      DOCKER_INFLUXDB_INIT_BUCKET: bootstrap
+      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: dev-influxdb-admin-token
+    ports:
+      - "127.0.0.1:8086:8086"
+    volumes:
+      - influxdb-data:/var/lib/influxdb2
+
+volumes:
+  mysql-data:
+  influxdb-data:

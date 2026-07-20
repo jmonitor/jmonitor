@@ -1,0 +1,26 @@
+{# @var bag \App\Metrics\Dto\Bag\Redis\RedisBag #}
+{% set bag = dto.value %}
+<twig:Metric:Metric:List>
+    <twig:InfoLine label="Evicted keys">
+        {% if bag.stats.evictedKeys > 0 %}
+            <twig:Html:Badge:Red>{{ bag.stats.evictedKeys }}</twig:Html:Badge:Red>
+        {% elseif bag.stats.evictedKeys === 0 %}
+            <twig:Html:Badge:Green>0</twig:Html:Badge:Green>
+        {% endif %}
+    </twig:InfoLine>
+    <twig:InfoLine label="Rejected connections">
+        {% if bag.stats.rejectedConnections > 0 %}
+            <twig:Html:Badge:Red>{{ bag.stats.rejectedConnections }}</twig:Html:Badge:Red>
+        {% elseif bag.stats.rejectedConnections === 0 %}
+            <twig:Html:Badge:Green>0</twig:Html:Badge:Green>
+        {% endif %}
+    </twig:InfoLine>
+    <twig:InfoLine label="Total errors">
+        {% if bag.stats.totalErrorReplies > 0 %}
+            <twig:Html:Badge:Red>{{ bag.stats.totalErrorReplies }}</twig:Html:Badge:Red>
+        {% elseif bag.stats.totalErrorReplies === 0 %}
+            <twig:Html:Badge:Green>0</twig:Html:Badge:Green>
+        {% endif %}
+    </twig:InfoLine>
+    <twig:InfoLine label="Clients connected" value="{{ bag.clients.connected }}"/>
+</twig:Metric:Metric:List>

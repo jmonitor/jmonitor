@@ -1,0 +1,33 @@
+{% if app.user.projectUsers|length == 0 %}
+    <a href="{{ path('project.create') }}" class="btn btn-secondary text-start w-100"><i class="fas fa-plus"></i> New project</a>
+{% else %}
+    <div class="dropdown">
+        <button class="btn btn-input text-start w-100 d-flex align-items-center justify-content-between" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            {% if current_project() %}
+                {{ current_project().name }}
+            {% else %}
+                Select a project
+            {% endif %}
+            {{ ux_icon('material-symbols:keyboard-arrow-down', {height: '1.3em', width: '1.3em'}) }}
+        </button>
+        <ul class="dropdown-menu w-100 mt-1">
+            {% for projectUser in app.user.projectUsers %}
+                <li>
+                    <a class="dropdown-item text-truncate" href="{{ path('project.dashboard', {uuid: projectUser.project.uuid}) }}">{{ projectUser.project.name }}</a>
+                </li>
+            {% endfor %}
+            <li><hr class="dropdown-divider"></li>
+            <li>
+                {% if app.user.isDemo %}
+                    <span class="dropdown-item disabled" aria-disabled="true" title="The demo account cannot create projects.">
+                        <i class="fas fa-plus me-2"></i> New project
+                    </span>
+                {% else %}
+                    <a class="dropdown-item" href="{{ path('project.create') }}">
+                        <i class="fas fa-plus me-2"></i> New project
+                    </a>
+                {% endif %}
+            </li>
+        </ul>
+    </div>
+{% endif %}

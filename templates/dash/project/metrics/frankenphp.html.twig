@@ -1,0 +1,56 @@
+{# @var bag \App\Metrics\Dto\Bag\FrankenPhp\FrankenPhpBag #}
+{% extends 'dash/project/metric_layout.twig' %}
+
+{% block metric_content %}
+
+    <div class="row g-4">
+        <div class="col-md-6 col-xxl-3">
+            <twig:Metric:Card metric="frankenphp.version" class="h-100"/>
+        </div>
+        <div class="col-md-6 col-xxl-3">
+            <twig:Metric:Card metric="frankenphp.mode" class="h-100"/>
+        </div>
+    </div>
+
+    <twig:Html:Metrics:H2 :bag="bag" :showRange="true">Threads</twig:Html:Metrics:H2>
+    <div class="row g-4">
+        <div class="col-xl-6">
+            <twig:Metric:Card metric="frankenphp.busy_threads_percent" class="h-100" cardBody:class="d-flex flex-column justify-content-center"/>
+        </div>
+        <div class="col-xl-6">
+            <twig:Metric:Card metric="frankenphp.busy_threads" class="h-100"/>
+        </div>
+        <div class="col-xl-6">
+            <twig:Metric:Card metric="frankenphp.busy_threads_percent" renderer="line" class="h-100"/>
+        </div>
+    </div>
+
+    {# cap to the number of workers allowed by the plan; TODO show an upgrade message for the hidden ones #}
+    {% set workers = bag.workers[:plan(bag.project).nbFrankenPhpWorkers] %}
+
+    {% if workers|length > 0 %}
+        <twig:Html:Metrics:H2 :bag="bag" :showRange="true">Workers</twig:Html:Metrics:H2>
+
+        {% for i, worker in workers %}
+            <twig:Card class="card-transparent h-100" title="{{ worker.shortName }}">
+                <div class="row g-4">
+                    <div class="col-lg-6 col-xxl-3">
+                        <twig:Metric:Card metric="frankenphp.worker_busy_workers_rate" options="{{ {worker: i} }}" class="h-100" />
+                    </div>
+                    <div class="col-lg-6 col-xxl-3">
+                        <div class="d-flex flex-column flex-sm-row flex-lg-column flex-xxl-column gap-4 h-100">
+                            <twig:Metric:Card metric="frankenphp.worker_ready_workers" options="{{ {worker: i} }}" class="flex-fill"/>
+                            <twig:Metric:Card metric="frankenphp.worker_worker_restarts" options="{{ {worker: i} }}" class="flex-fill"/>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <twig:Metric:Card metric="frankenphp.worker_request_per_sec" options="{{ {worker: i} }}" class="h-100" />
+                    </div>
+                    <div class="col-xl-6">
+                        <twig:Metric:Card metric="frankenphp.worker_php_exec_time" options="{{ {worker: i} }}" class="h-100" />
+                    </div>
+                </div>
+            </twig:Card>
+        {% endfor %}
+    {% endif %}
+{% endblock %}

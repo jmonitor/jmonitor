@@ -1,0 +1,81 @@
+{% extends 'dash/base.html.twig' %}
+
+{% block content %}
+    <twig:Html:H1 icon="material-symbols:dashboard-outline">Dashboard</twig:Html:H1>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <twig:Card class="overflow-hidden" cardBody:class="p-0">
+                <div class="d-flex align-items-center gap-0">
+                    <div class="d-none d-xl-block">
+                        <twig:ux:icon name="server-content-colored-bg-wave" width="250px" height="206px" style="margin-left:-50px" />
+                    </div>
+                    <div class="p-4 px-xxl-5">
+                        <h3 class="card-title">Welcome on Jmonitor</h3>
+                        <p class="card-text">
+                            Monitor the health of your servers and applications, optimize their configurations, and anticipate issues before they occur.
+                            <br>Install our agent via Composer to start visualizing your metrics as you push it.
+                        </p>
+                    </div>
+                </div>
+            </twig:Card>
+        </div>
+        {% if is_granted('project.admin') %}
+        <div class="col-lg-4">
+            <twig:Card class="card-transparent h-100" cardBody:class="d-flex flex-column gap-2 justify-content-between">
+                <div>
+                    <div class="p-3 bg-card rounded d-inline-block">
+                        <twig:ux:icon name="material-symbols:vpn-key-outline" class="text-primary" width="2em" height="2em" />
+                    </div>
+                </div>
+                <div>
+                    <h5 class="mb-2">Your API Key</h5>
+                    <twig:Dash:ApiKeyCopyPaster displayFull="{{ true }}" />
+                </div>
+            </twig:Card>
+        </div>
+        {% endif %}
+    </div>
+
+    <div>
+        <h2 class="mb-3">Next step</h2>
+        <p class="text-muted">
+            Install Jmonitor agent with Composer.
+            <br>Choose the option that best suits your project:
+        </p>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-sm-6">
+            <twig:Card class="h-100" cardBody:class="d-flex flex-column gap-4 text-center">
+                <div class="mx-auto p-3 bg-card rounded">
+                    <twig:ux:icon name="mdi:symfony" class="text-primary" width="2em" height="2em" />
+                </div>
+
+                <h6 class="card-title mb-0">Symfony</h6>
+
+                <p class="mx-lg-4 mx-xxl-5">Plug-and-play setup with Symfony-friendly configuration.</p>
+
+                <div class="mt-auto">
+                    <a href="https://github.com/jmonitor/jmonitor-bundle" class="d-block btn btn-outline-primary mx-lg-4 mx-xxl-5" target="_blank">Use jmonitor/jmonitor-bundle <twig:ux:icon name="material-symbols:open-in-new" /></a>
+                </div>
+            </twig:Card>
+        </div>
+        <div class="col-sm-6">
+            <twig:Card class="h-100" cardBody:class="d-flex flex-column gap-4 text-center">
+                <div class="mx-auto p-3 bg-card rounded">
+                    <twig:ux:icon name="devicon-plain:php" class="text-primary" width="2em" height="2em" />
+                </div>
+
+                <h6 class="card-title mb-0">Other / Pure PHP</h6>
+
+                <p class="mx-lg-4 mx-xxl-5">Lightweight setup with manual wiring and full control.</p>
+
+                <div class="mt-auto">
+                    <a href="https://github.com/jmonitor/collector" class="d-block btn btn-outline-primary mx-lg-4 mx-xxl-5" target="_blank">Use jmonitor/collector <twig:ux:icon name="material-symbols:open-in-new" /></a>
+                </div>
+            </twig:Card>
+        </div>
+    </div>
+
+{% endblock %}

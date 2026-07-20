@@ -1,0 +1,39 @@
+{# @var settings \App\Metrics\Dto\Bag\Postgres\PostgresSettingsBag #}
+{% set settings = dto.value %}
+
+<twig:Metric:Metric:List class="mh-15 overflow-y-auto pe-2">
+    <twig:InfoLine label="random_page_cost" value="{{ settings.randomPageCost }}" />
+    <twig:InfoLine label="effective_io_concurrency" value="{{ settings.effectiveIoConcurrency }}" />
+
+    <hr>
+    <twig:InfoLine label="autovacuum">
+        {% if settings.autovacuum == 'on' %}
+            <twig:Html:Badge:Green>on</twig:Html:Badge:Green>
+        {% elseif settings.autovacuum == 'off' %}
+            <twig:Html:Badge:Red>off</twig:Html:Badge:Red>
+        {% else %}
+            {{ settings.autovacuum }}
+        {% endif %}
+    </twig:InfoLine>
+    <twig:InfoLine label="autovacuum_vacuum_scale_factor" value="{{ settings.autovacuumVacuumScaleFactor }}" />
+    <twig:InfoLine label="track_counts">
+        {% if settings.trackCounts == 'on' %}
+            <twig:Html:Badge:Green>on</twig:Html:Badge:Green>
+        {% elseif settings.trackCounts == 'off' %}
+            <twig:Html:Badge:Yellow>off</twig:Html:Badge:Yellow>
+        {% else %}
+            {{ settings.trackCounts }}
+        {% endif %}
+    </twig:InfoLine>
+
+    <hr>
+    <twig:InfoLine label="log_min_duration_statement">
+        {% if settings.logMinDurationStatement is null %}
+        {% elseif settings.logMinDurationStatement == '-1' %}
+            <twig:Html:Badge:Yellow>disabled</twig:Html:Badge:Yellow>
+        {% else %}
+            {{ settings.logMinDurationStatement }} ms
+        {% endif %}
+    </twig:InfoLine>
+    <twig:InfoLine label="TimeZone" value="{{ settings.timeZone }}" />
+</twig:Metric:Metric:List>

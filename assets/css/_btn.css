@@ -1,0 +1,156 @@
+.btn {
+    --bs-btn-padding-x: var(--app-14-px);
+    --bs-btn-padding-y: 0.415rem;
+    --bs-btn-font-weight: 500;
+
+    /* by default buttons have no border, and the background extends under the transparent border */
+    background-clip: border-box;
+    --bs-btn-border-color: transparent;
+    --bs-btn-hover-border-color: transparent;
+    --bs-btn-active-border-color: transparent;
+    --bs-btn-disabled-border-color: transparent;
+
+    transition: none;
+
+    &.btn-sm {
+        --bs-btn-padding-y: 0.25rem;
+        --bs-btn-padding-x: 0.5rem;
+    }
+}
+
+button:has(>svg), .btn:has(>svg) {
+    display: inline-flex!important;
+    align-items: center;
+    gap: 0.5rem;
+}
+.btn:has(>svg) {
+    justify-content: center;
+}
+
+[data-bs-theme="dark"] {
+    .btn-primary {
+        background: linear-gradient(135deg, #2EB9D7, #2E6BDD) padding-box;
+        --bs-btn-padding-y: calc(0.415rem + 1px); /* add back the 1px of the removed border */
+        --bs-btn-border-width: 0;
+
+        --bs-btn-color: var(--app-btn-primary-color);
+        --bs-btn-hover-color: var(--app-btn-primary-color);
+        --bs-btn-focus-shadow-rgb: 74, 223, 255;
+        --bs-btn-active-color: var(--app-btn-primary-color);
+        --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.35);
+        --bs-btn-disabled-color: var(--app-btn-primary-color);
+
+        &:hover {
+            background: linear-gradient(135deg, #2593AB, #1E53BF) padding-box;
+        }
+        &:active {
+            background: linear-gradient(135deg, #077F9C, #184AA9) padding-box;
+        }
+    }
+
+    .btn-outline-primary {
+        --bs-btn-color: var(--bs-primary);
+        --bs-btn-border-color: var(--bs-primary);
+        --bs-btn-hover-color: var(--app-btn-primary-color);
+        --bs-btn-hover-border-color: transparent;
+        --bs-btn-focus-shadow-rgb: 74, 223, 255;
+        --bs-btn-active-color: var(--app-btn-primary-color);
+        --bs-btn-active-border-color: transparent;
+        --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.35);
+        --bs-btn-disabled-color: var(--app-btn-primary-color);
+        --bs-btn-disabled-border-color: transparent;
+        --bs-gradient: none;
+
+        &:hover, &:disabled { /* copied from .btn-primary */
+            background: linear-gradient(135deg, #2EB9D7, #2E6BDD) padding-box;
+        }
+        &:active {
+            background: linear-gradient(135deg, #077F9C, #184AA9) padding-box;
+        }
+    }
+
+    /* a button with no background, just a slightly muted color; hover restores the normal text color */
+    /* used e.g. for the card dropdowns */
+    .btn-transparent {
+        --bs-btn-color: #A2CDFF99;
+        --bs-btn-bg: transparent;
+        --bs-btn-hover-color: var(--app-body-color-full);
+        --bs-btn-hover-bg: transparent;
+        --bs-btn-active-color: var(--app-body-color-full);
+        --bs-btn-active-bg: transparent;
+        --bs-btn-active-shadow: 0 0 0 0 transparent;
+    }
+}
+
+/* modifier applied on top of another btn, only for the login buttons */
+.btn-oauth-login {
+    --bs-btn-bg: transparent;
+    font-weight: 300;
+}
+
+/* a button that looks like an input */
+.btn-input {
+    --bs-btn-color: var(--bs-body-color);
+    --bs-btn-bg: transparent; /* subject to change if inputs get a background */
+    --bs-btn-border-color: var(--bs-border-color);
+    --bs-btn-hover-color: var(--bs-body-color);
+    --bs-btn-hover-bg: var(--bs-tertiary-bg);
+    --bs-btn-hover-border-color: var(--bs-border-color);
+    --bs-btn-focus-shadow-rgb: var(--bs-primary-rgb);
+    --bs-btn-active-color: var(--bs-body-color);
+    --bs-btn-active-bg: var(--bs-tertiary-bg);
+    --bs-btn-active-border-color: var(--bs-border-color);
+    --bs-btn-active-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.075);
+    --bs-btn-disabled-color: var(--bs-secondary-color);
+    --bs-btn-disabled-bg: transparent;
+    --bs-btn-disabled-border-color: var(--bs-border-color);
+}
+
+.btn-danger {
+    --bs-btn-color: var(--app-btn-primary-color);
+    --bs-btn-bg: #FF4B6E;
+    --bs-btn-border-color: #FF4B6E;
+    --bs-btn-hover-color: var(--app-btn-primary-color);
+    --bs-btn-hover-bg: #EB234A;
+    --bs-btn-hover-border-color: #EB234A;
+    --bs-btn-focus-shadow-rgb: 255, 75, 110;
+    --bs-btn-active-color: var(--app-btn-primary-color);
+    --bs-btn-active-bg: #cf1f42;
+    --bs-btn-active-border-color: #cf1f42;
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    --bs-btn-disabled-color: var(--app-btn-primary-color);
+    --bs-btn-disabled-bg: #FF4B6E;
+    --bs-btn-disabled-border-color: #FF4B6E;
+}
+
+/* transparent background, slight background on hover */
+.btn-default {
+    --bs-btn-color: var(--bs-primary);
+    --bs-btn-bg: transparent;
+    --bs-btn-hover-color: var(--bs-primary);
+    --bs-btn-hover-bg: var(--app-card-bg);
+    --bs-btn-focus-shadow-rgb: var(--bs-primary-rgb);
+    --bs-btn-active-color: var(--bs-primary);
+    --bs-btn-active-bg: color-mix(in srgb, var(--app-card-bg) 88%, #000 12%);
+    --bs-btn-active-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.12);
+    --bs-btn-disabled-color: var(--bs-secondary-color);
+    --bs-btn-disabled-bg: transparent;
+}
+
+.btn-light {
+    --bs-btn-color: #FFF;
+    --bs-btn-bg: #BAD2FF33;
+    --bs-btn-hover-color: #FFF;
+    --bs-btn-hover-bg: #BAD2FF80;
+    --bs-btn-focus-shadow-rgb: 186, 210, 255;
+    --bs-btn-active-color: #FFF;
+    --bs-btn-active-bg: #BAD2FFA6;
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.35);
+    --bs-btn-disabled-color: #1D1D1E;
+    --bs-btn-disabled-bg: #BAD2FF33;
+}
+
+.btn-check+.btn-outline-primary:hover {
+    color: var(--bs-btn-hover-color);
+    border-color: var(--bs-btn-hover-border-color);
+}

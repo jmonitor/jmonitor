@@ -1,0 +1,47 @@
+when@prod:
+    sentry:
+        # cloud_only: forced to '' (= Sentry disabled) on the self-hosted
+        # edition — app errors are the JMonitor team's to triage, not the
+        # self-hoster's. See App\DependencyInjection\CloudOnlyEnvVarProcessor.
+        dsn: '%env(cloud_only:SENTRY_DSN)%'
+        options:
+            # Add request headers, cookies, IP address and the authenticated user
+            # see https://docs.sentry.io/platforms/php/data-management/data-collected/ for more info
+            send_default_pii: true
+            ignore_exceptions:
+                - 'Symfony\Component\ErrorHandler\Error\FatalError'
+                - 'Symfony\Component\HttpKernel\Exception\NotFoundHttpException'
+
+                # Accès refusé sur une route protégée (ex: bot/crawler anonyme sur dash.jmonitor.io) :
+                # le firewall redirige vers le login, ce n'est pas une vraie erreur applicative.
+                - 'Symfony\Component\Security\Core\Exception\AccessDeniedException'
+                - 'Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException'
+
+        # If you are using Monolog, you also need this additional configuration to log the errors correctly:
+        # https://docs.sentry.io/platforms/php/guides/symfony/integrations/monolog/
+        register_error_listener: true
+        register_error_handler: true
+#
+    monolog:
+        handlers:
+#            # Use this only if you don't want to use structured logging and instead receive
+#            # certain log levels as errors.
+#            sentry:
+#                type: service
+#                id: Sentry\Monolog\Handler
+#
+            # Use this for structured log integration
+            sentry_logs:
+                type: service
+                id: Sentry\SentryBundle\Monolog\LogsHandler
+#
+#    # Enable one of the two services below, depending on your choice above
+    services:
+#        Sentry\Monolog\Handler:
+#            arguments:
+#                $hub: '@Sentry\State\HubInterface'
+#                $level: !php/const Monolog\Logger::ERROR
+#                $fillExtraContext: true # Enables sending monolog context to Sentry
+        Sentry\SentryBundle\Monolog\LogsHandler:
+            arguments:
+                - !php/const Monolog\Logger::INFO

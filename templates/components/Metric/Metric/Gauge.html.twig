@@ -1,0 +1,19 @@
+<div {{ attributes.defaults({class: 'd-flex flex-column gap-2 align-items-center h-100 justify-content-center'}) }}>
+    <div class="position-relative mw-100 mh-100">
+        {{ render_chart(chart) }}
+    </div>
+    <div class="d-flex align-items-center gap-2 mb-2">
+        <h5 class="card-title mb-0 text-center">{{ dto.cardTitle ?: dto.metric.label }}</h5>
+        {% if options.displayHelp is not same as(false) %}
+            <twig:HelpIcon metric="{{ dto.metric }}" />
+        {% endif %}
+    </div>
+    {% if block('content') is defined and (block('content')|default('')|trim) %}
+        <div class="dl">
+            {{ block('content') }}
+        </div>
+    {% endif %}
+    {% if dto.badge %}
+        <div><twig:Html:Badge:Badge badge="{{ dto.badge }}"/></div>
+    {% endif %}
+</div>

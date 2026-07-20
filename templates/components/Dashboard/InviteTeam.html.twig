@@ -1,0 +1,15 @@
+<twig:Card {{ ...attributes }} cardBody:class="d-flex flex-column gap-4 text-center">
+    <div class="mx-auto p-3 bg-card rounded">
+        <twig:ux:icon name="mdi:user-outline" class="text-primary" width="2em" height="2em" />
+    </div>
+
+    <h6 class="card-title mb-0">Invite your team</h6>
+
+    <p class="mx-lg-4 mx-xxl-5">
+        Invite your team to monitor, troubleshoot and scale your infrastructure together.
+    </p>
+
+    <div class="mt-auto">
+        <a href="{{ path('project.settings.team', {uuid: current_project().uuid}) }}" class="d-block btn btn-outline-primary mx-lg-4 mx-xxl-5">Invite member</a>
+    </div>
+</twig:Card>

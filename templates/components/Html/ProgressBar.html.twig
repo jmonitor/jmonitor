@@ -1,0 +1,9 @@
+<div {{ attributes.defaults({class: 'progress-container'}) }}>
+    <div class="d-flex align-self-center justify-content-between mb-1">
+        <span class="progress-label">{{ label }}</span>
+        <span class="progress-values">{{ value }}/{{ max }}</span>
+    </div>
+    <div class="progress" role="progressbar" aria-label="{{ label }}" aria-valuenow="{{ value }}" aria-valuemin="0" aria-valuemax="{{ max }}" {% if height %}style="height: {{ height }}px"{% endif %}>
+        <div class="progress-bar" style="width: {{ percent }}%">{{ showPercent ? (percent ~ '%') }}</div>
+    </div>
+</div>

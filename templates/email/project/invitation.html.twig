@@ -1,0 +1,19 @@
+{% extends 'email/base.html.twig' %}
+
+{% block content %}
+    <p>
+        Hello,<br>
+        <br>
+        You have been invited to join the project <b>{{ invitation.project.name }}</b> on Jmonitor.
+    </p>
+
+    <p>
+        To accept the invitation, please click on the following link:
+        {% if userExist %}
+            <a href="{{ url('invitation.accept', {uniquid: invitation.uniquid}) }}">accept the invitation</a>
+        {% else %}
+            <a href="{{ url('security.register') }}">accept the invitation</a>
+        {% endif %}
+    </p>
+    <p>If this looks like a mistake, simply ignore this e-mail.</p>
+{% endblock %}

@@ -1,0 +1,38 @@
+.sidebar {
+    --sidebar-width: 100%;
+    width: var(--sidebar-width);
+    transition: width .3s ease;
+
+    @media (min-width: 768px) {
+        --sidebar-width: 320px;
+    }
+}
+.sidebar-left {
+    /* closed by default (on mobile) and fixed */
+    width: 0;
+    position: fixed;
+    overflow-x: hidden; /* hides the padding of the elements inside */
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 10;
+    background: var(--app-sidebar-bg);
+
+    @media (min-width: 768px) {
+        width: var(--sidebar-width);
+        position: sticky;
+        top: 0;
+    }
+
+    hr {
+        border-color: #37404F;
+    }
+
+}
+.sidebar-closed {
+    width: 0;
+}
+.sidebar-open {
+    width: var(--sidebar-width);
+}

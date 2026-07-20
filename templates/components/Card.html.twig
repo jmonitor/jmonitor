@@ -1,0 +1,13 @@
+<div {{ attributes.defaults({class: 'card'}) }}>
+    {% block card_header %}{% endblock %}
+    {% block card_body %}
+        <div {{ attributes.nested('cardBody').defaults({class: 'card-body'}) }}>
+            {% if title %}
+                <h6 class="card-title">{{ title }}</h6>
+            {% endif %}
+
+            {% block content %}{% endblock %}
+        </div>
+    {% endblock %}
+    {% block card_footer %}{% endblock %}
+</div>

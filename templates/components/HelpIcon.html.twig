@@ -1,0 +1,4 @@
+{# todo visible only on mobile, otherwise on hover on desktop (or maybe with an activator)? #}
+<a {{ attributes.defaults({class: 'help-icon text-decoration-none'}) }} {{ stimulus_action('app', 'turboCanvas') }} href="{{ url }}" role="button">
+    {{ ux_icon('material-symbols:info-outline', {width: '1.2em', height: '1.2em'}) }}
+</a>

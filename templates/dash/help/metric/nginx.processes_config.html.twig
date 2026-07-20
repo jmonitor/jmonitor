@@ -1,0 +1,26 @@
+{% extends 'dash/help/metric/layout.html.twig' %}
+
+{% block definition %}
+    <p>This card shows how many connections your server can handle at the same time, based on its current configuration.</p>
+{% endblock %}
+
+{% block why_it_matters %}
+    <p>If the limit is too low, your server may reject requests or slow down under high traffic. If it is too high, it can use too many resources and impact stability.</p>
+{% endblock %}
+
+{% block how_to_read %}
+    <ul class="d-flex flex-column gap-2">
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">worker_processes</twig:Html:Badge:Neutral>
+            <p>This is the number of worker processes running. Each process can handle requests independently. More processes can improve performance, but also use more CPU.</p>
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">worker_connections</twig:Html:Badge:Neutral>
+            <p>This is the maximum number of connections a single worker process can handle at once.</p>
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">Max connections</twig:Html:Badge:Neutral>
+            <p>This is the total number of simultaneous connections your server can handle. It is calculated by multiplying <span class="badge badge-light">worker_processes</span> by <span class="badge badge-light">worker_connections</span>.</p>
+        </li>
+    </ul>
+{% endblock %}

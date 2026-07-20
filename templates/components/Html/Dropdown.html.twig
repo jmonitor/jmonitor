@@ -1,0 +1,10 @@
+<div {{ attributes.defaults({class: 'dropdown'}) }}>
+    <button class="btn btn-transparent btn-sm" type="button" {% if disabled %}disabled{% else %}data-bs-toggle="dropdown"{% endif %} aria-expanded="false">
+        {{ ux_icon('fa7-solid:ellipsis', {width: '1.4em', height: '1.4em'}) }}
+    </button>
+    {% if not disabled %}
+        <ul class="dropdown-menu">
+            {% block content %}{% endblock %}
+        </ul>
+    {% endif %}
+</div>

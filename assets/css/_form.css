@@ -1,0 +1,49 @@
+.form-control {
+    padding:.517rem 1rem;
+    --bs-body-bg: var(--app-input-bg);
+    --bs-border-color: var(--app-input-border-color);
+}
+.form-select {
+    --bs-body-bg: var(--app-input-bg);
+    padding: .517rem 2.25rem .517rem 1rem;
+
+    /* otherwise it's white and unreadable */
+    option, optgroup {
+        background-color: #232a32;
+    }
+
+    @media (prefers-color-scheme: dark) {
+        option, optgroup {
+            background-color: #232a32;
+        }
+    }
+}
+
+.form-check-input {
+    --bs-form-check-bg: var(--app-input-bg);
+    --bs-border-color: var(--app-input-border-color);
+}
+
+label {
+    color: var(--app-form-label-color);
+}
+
+.form-text {
+    color: var(--app-form-help-color);
+    font-weight: 300;
+}
+form[name="auto_refresh"] {
+    .btn {
+        padding: .7rem; /* between p-2 and p-3 */
+    }
+    .form-check.form-switch {
+        display: flex;
+        align-items: center;
+        gap: .6rem;
+        padding-left: 3.5em;
+    }
+    #auto_refresh_autoRefresh {
+        font-size: 1.4rem;
+        margin-bottom: 6px;
+    }
+}

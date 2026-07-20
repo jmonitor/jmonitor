@@ -1,0 +1,13 @@
+<turbo-frame id="account-project-notifications">
+    <twig:Alert type="info">Notifications are sent by email. SMS or push notifications will be available at a later date.</twig:Alert>
+    <p>Select the projects for which you want to receive notifications in case of alerts.</p>
+
+    {{ form_start(form) }}
+    {{ form_errors(form) }}
+    {% for child in form.projectUsers %} {# avoids multiple fieldsets, which each add a bottom margin #}
+        {{ form_widget(child) }}
+    {% endfor %}
+    {{ form_rest(form) }}
+    <button type="submit" class="btn btn-primary btn-sm">Save</button>
+    {{ form_end(form) }}
+</turbo-frame>

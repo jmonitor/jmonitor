@@ -1,0 +1,24 @@
+{% extends 'email/base.html.twig' %}
+
+{% block content %}
+    <h2>Alert triggered</h2>
+    <ul>
+        <li>Project : <b>{{ spottedAlert.alert.project.name }}</b></li>
+        <li>Metric : <b>{{ spottedAlert.alert.alertMetric.label }}</b></li>
+    </ul>
+
+    {{ include([
+        'email/alerting/details/' ~ spottedAlert.alert.alertMetric.value ~ '.html.twig',
+        'email/alerting/details/_default.html.twig',
+    ], {spottedAlert: spottedAlert}) }}
+
+    <h3>Alert paused</h3>
+    <p>Alerts are automatically paused when they are triggered.</p>
+    <p>
+        <b>You won't receive any further notifications for this alert until you re-enable it.</b>
+        <br>You can re-enable it from your dashboard or in the alert settings.
+    </p>
+    <p>
+        <a href="{{ url('project.dashboard', {uuid: spottedAlert.alert.project.uuid}) }}">Go to project dashboard</a>
+    </p>
+{% endblock %}

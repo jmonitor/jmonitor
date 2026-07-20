@@ -1,0 +1,57 @@
+{
+	admin localhost:2019
+	metrics
+	# autres options globales…
+
+	frankenphp {
+		num_threads 8
+		# Threads supplémentaires créés à la demande lors des pics, libérés
+		# après max_idle_time (5s par défaut). 16 × memory_limit (128M) = 2G
+		# max théorique, l'usage réel reste très en dessous.
+		max_threads 16
+		# Sans thread libre au bout de 10s → 504, au lieu d'empiler les
+		# requêtes indéfiniment (effet boule de neige).
+		max_wait_time 10s
+	}
+}
+
+:8080 {
+	root * public/
+	encode zstd br gzip
+
+	header {
+		X-Content-Type-Options "nosniff"
+	}
+
+	mercure {
+		transport local
+
+		# Clé injectée par env var ({$VAR} = substitution au parse du Caddyfile).
+		# Doit correspondre à MERCURE_JWT_SECRET / MERCURE_SUBSCRIBER_JWT_KEY de l'app.
+		publisher_jwt {$MERCURE_JWT_SECRET} HS256
+		subscriber_jwt {$MERCURE_JWT_SECRET} HS256
+
+		# les domaines autorisé à subscribe en js
+		cors_origins https://dash.jmonitor.io
+
+		# pas d'impact car push côté serveur
+		publish_origins https://dash.jmonitor.io
+
+		# Pas d'`anonymous` : un JWT subscriber valide (cookie mercureAuthorization
+		# posé par l'app, scopé au topic du projet) est requis pour s'abonner.
+
+		# expose the subscription web API and dispatch private updates when a subscription between the Hub and a subscriber is established or closed
+		# à priori pas besoin
+		# subscriptions
+	}
+
+	php_server {
+		worker {
+			file ./public/index.php
+			num 4
+			# Labellise les métriques Prometheus et les logs du worker
+			# (utilisé par notre propre collector caddy).
+			name jmonitor
+		}
+	}
+}

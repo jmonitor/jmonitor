@@ -1,0 +1,8 @@
+{# @var bag \App\Metrics\Dto\Bag\Redis\RedisBag #}
+{% set bag = dto.value %}
+
+<div class="text-end">
+    <twig:Html:Badge:Badge style="info" class="fs-5 mb-2">{{ bag.memory.maxMemoryPolicy }}</twig:Html:Badge:Badge>
+
+    <p class="text-muted mb-0">{{ ('metric.redis.max_memory_policy.description.' ~ bag.memory.maxMemoryPolicy)|trans }}</p>
+</div>

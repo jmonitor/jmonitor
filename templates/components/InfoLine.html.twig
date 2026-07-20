@@ -1,0 +1,10 @@
+<div {{ attributes.defaults({class: 'dldt'}) }}>
+    <div class="dl">{% if icon %}{{ ux_icon(icon, {width: '1.1em', height: '1.1em'}) }}{% endif %}  {{ label }}</div>
+    <div class="dt text-truncate">
+    {% if block('content') is defined %}
+        {{ block('content') }}
+    {% else %}
+        {{ value|raw }}
+    {% endif %}
+    </div>
+</div>

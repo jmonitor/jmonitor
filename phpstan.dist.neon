@@ -1,0 +1,11 @@
+parameters:
+    level: 5
+    paths:
+        - src/
+        - tests/
+    ignoreErrors:
+        - identifier: doctrine.columnType
+        - identifier: doctrine.associationType
+
+    symfony:
+            containerXmlPath: var/cache/dev/App_KernelDevDebugContainer.xml

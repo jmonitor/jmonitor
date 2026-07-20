@@ -1,0 +1,119 @@
+{% extends 'dash/project/metric_layout.twig' %}
+
+{% block metric_content %}
+    <div class="row g-4">
+        <div class="col-xxl-4">
+            <div class="d-flex flex-column flex-sm-row flex-xxl-column gap-4 h-100">
+                <twig:Metric:Card metric="postgres.version" class="flex-fill" />
+                <twig:Metric:Card metric="postgres.capacity" class="flex-fill" />
+            </div>
+        </div>
+        <div class="col-lg-6 col-xxl-4">
+            <twig:Metric:Card metric="postgres.config" class="h-100" />
+        </div>
+        <div class="col-lg-6 col-xxl-4">
+            <twig:Metric:Card metric="postgres.tuning" class="h-100" />
+        </div>
+    </div>
+
+    <twig:Html:Metrics:H2 bag="{{ bag }}" :showRange="true">Connections & activity</twig:Html:Metrics:H2>
+
+    <div class="row g-4">
+        <div class="col-xl-4">
+            <twig:Metric:Card metric="postgres.connections_usage" class="h-100" />
+        </div>
+        <div class="col-xl-8">
+            <twig:Metric:Card metric="postgres.connections_states" class="h-100" />
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-xxl-8">
+            <twig:Metric:Card metric="postgres.transactions_per_sec" class="h-100" />
+        </div>
+        <div class="col-xxl-4">
+            <twig:Metric:Card metric="postgres.rollback_ratio" class="h-100" />
+        </div>
+    </div>
+
+    <twig:Html:Metrics:H2 bag="{{ bag }}" :showRange="true">Cache & I/O</twig:Html:Metrics:H2>
+
+    <div class="row g-4">
+        <div class="col-lg-4">
+            <twig:Metric:Card metric="postgres.cache_hit_ratio" class="h-100" />
+        </div>
+        <div class="col-lg-8">
+            <twig:Metric:Card metric="postgres.disk_reads_per_sec" class="h-100" />
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-12">
+            <twig:Metric:Card metric="postgres.temp_files" class="h-100" />
+        </div>
+    </div>
+
+    <twig:Html:Metrics:H2 bag="{{ bag }}" :showRange="true">Throughput</twig:Html:Metrics:H2>
+
+    <div class="row g-4">
+        <div class="col-12">
+            <twig:Metric:Card metric="postgres.rows_written_per_sec" class="h-100" />
+        </div>
+    </div>
+
+    <twig:Html:Metrics:H2 bag="{{ bag }}">Slow queries</twig:Html:Metrics:H2>
+
+    {% if bag('postgresql.slow_queries') is not null %}
+        <twig:Metric:Card metric="postgres.slow_queries_top" class="card-transparent" />
+    {% else %}
+        <p class="text-muted">Slow queries data are not available (pg_stat_statements extension required).</p>
+    {% endif %}
+
+    <twig:Html:Metrics:H2 bag="{{ bag }}" :showRange="true">Maintenance & health</twig:Html:Metrics:H2>
+
+    <div class="row g-4">
+        <div class="col-lg-6 col-xxl-4">
+            <twig:Metric:Card metric="postgres.dead_tuple_ratio" class="h-100" />
+        </div>
+        <div class="col-lg-6 col-xxl-4">
+            <twig:Metric:Card metric="postgres.index_usage_ratio" class="h-100" />
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-xl-8">
+            <twig:Metric:Card metric="postgres.scans_per_sec" class="h-100" />
+        </div>
+        <div class="col-xl-4">
+            <twig:Metric:Card metric="postgres.deadlocks_per_sec" class="h-100" />
+        </div>
+    </div>
+
+    <twig:Html:Metrics:H2 bag="{{ bag }}">Sessions & locks</twig:Html:Metrics:H2>
+
+    <div class="row g-4">
+        <div class="col-md-4">
+            <twig:Metric:Card metric="postgres.blocked_sessions" class="h-100" />
+        </div>
+        <div class="col-md-4">
+            <twig:Metric:Card metric="postgres.oldest_transaction" class="h-100" />
+        </div>
+        <div class="col-md-4">
+            <twig:Metric:Card metric="postgres.idle_in_transaction" class="h-100" />
+        </div>
+    </div>
+
+    <twig:Metric:Card metric="postgres.blocking_chain" class="card-transparent" />
+
+    <twig:Html:Metrics:H2 bag="{{ bag }}" :showRange="true">Storage</twig:Html:Metrics:H2>
+
+    <div class="row g-4">
+        <div class="col-xl-8">
+            <twig:Metric:Card metric="postgres.database_size" class="h-100" />
+        </div>
+        <div class="col-xl-4">
+            <twig:Metric:Card metric="postgres.storage_breakdown" class="h-100" />
+        </div>
+    </div>
+
+{% endblock %}

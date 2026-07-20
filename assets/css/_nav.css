@@ -1,0 +1,86 @@
+.nav-section-title {
+    text-transform: uppercase;
+    color: #BAD2FF;
+    font-weight: 300;
+    margin-bottom: 1.2rem;
+    font-size: var(--app-14-px);
+    letter-spacing: .02rem;
+    opacity: .7;
+}
+
+.nav {
+    --bs-nav-link-font-weight: 500; /*medium*/
+    --bs-nav-link-color: var(--app-body-color-full);
+    --bs-nav-link-hover-color: var(--app-body-color-full);
+    --app-nav-link-active-color: var(--app-body-color-full);
+
+    .nav-item {
+        line-height: 1;
+    }
+
+    .nav-link {
+        letter-spacing: 0.06em;
+        transition: none;
+        text-align: left;
+        &>svg {
+            color: var(--bs-primary);
+        }
+    }
+
+    /* pills (e.g. left sidebar menu) */
+    &.nav-pills {
+        --bs-nav-pills-link-active-bg: #9bb5ff1a;
+
+        .nav-link {
+            &:hover {
+                background: var(--bs-nav-pills-link-active-bg);
+            }
+        }
+    }
+
+    /* underline */
+    &.nav-underline {
+        --bs-nav-underline-gap: 0; /* use the links' padding instead => no dead space between the links and the underlines */
+        --bs-nav-link-padding-x: 1rem;
+        --bs-nav-link-padding-y: 1rem;
+
+        .nav-link {
+            &.active, &:hover {
+                font-weight: 500;
+                border-bottom-color: var(--bs-primary);
+                &>svg {
+                    color: var(--bs-primary);
+                }
+            }
+            &>svg {
+                color: #485263;
+            }
+        }
+    }
+
+    /* tabs */
+    &.nav-tabs {
+        gap: .5rem;
+
+        &.nav-tabs-card {
+            --bs-nav-tabs-border-width: 0;
+            --bs-nav-tabs-link-active-bg: var(--app-card-bg);
+            --bs-nav-tabs-border-radius: var(--app-card-border-radius);
+            --bs-nav-link-padding-x: calc(1rem + 4px);
+            --bs-nav-link-padding-y: .8rem;
+            --bs-nav-link-color: var(--app-body-color-full-opacity-5);
+
+            .nav-item {
+                .nav-link {
+                    background: var(--bs-nav-tabs-link-active-bg);
+                    height: 100%;
+                }
+            }
+        }
+    }
+
+}
+
+.navbar {
+    --bs-navbar-padding-y: .75rem;
+}

@@ -1,0 +1,9 @@
+{# @var bag \App\Metrics\Dto\Bag\Apache\ApacheBag #}
+{% set bag = bag('apache') %}
+<twig:Metric:Metric:List>
+    <twig:InfoLine label="Server version" value="{{ bag.serverVersion }}" />
+    <twig:InfoLine label="Uptime">
+        <span {{ stimulus_controller('duration', {seconds: bag.uptime}) }}></span>
+    </twig:InfoLine>
+    <twig:InfoLine label="Server MPM" value="{{ bag.serverMpm }}" />
+</twig:Metric:Metric:List>

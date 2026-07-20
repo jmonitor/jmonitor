@@ -1,0 +1,7 @@
+{# @var dto \App\Metrics\Renderer\Dto\BasicDto #}
+<div class="text-end">
+    <div class="current-value">{{ dto.value }}</div>
+    <div class="text-muted text-sm">
+        1 connection serves approximately {{ dto.value }} requests.
+    </div>
+</div>

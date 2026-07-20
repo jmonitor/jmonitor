@@ -1,0 +1,9 @@
+<div {{ attributes }}>
+    {% if title %}
+        <h5 class="d-flex align-items-center gap-2 mb-3">
+            {% if icon %}<twig:ux:icon name="{{ icon }}" />{% endif %}
+            {{ title }}
+        </h5>
+    {% endif %}
+    {{ block('content') }}
+</div>

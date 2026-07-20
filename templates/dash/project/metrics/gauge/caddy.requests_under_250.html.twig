@@ -1,0 +1,6 @@
+{# @var bag \App\Metrics\Dto\Bag\Caddy\CaddyBag #}
+<twig:Metric:Metric:Gauge dto="{{ dto }}" chart="{{ chart }}" options="{{ options }}">
+    {% if dto.context.nb250 >= 0 and dto.context.nbTotal > 0 %}
+        {{ dto.context.nb250 }} / {{ dto.context.nbTotal }}
+    {% endif %}
+</twig:Metric:Metric:Gauge>

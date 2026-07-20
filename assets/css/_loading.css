@@ -1,0 +1,36 @@
+/**
+ * A "loading" state on an element, with a spinner
+ */
+.loader-enabled[aria-busy=true] {
+    position: relative;
+}
+.loader-enabled[aria-busy=true] {
+    opacity: .6;
+}
+.loader-enabled[aria-busy=true]:after {
+    content: "◠";
+    position: absolute;
+    top: calc(50% - 1rem);
+    left: calc(50% - 1rem);
+    z-index: 2;
+    font-size: 2rem;
+    display: inline-block;
+    animation-name: spin;
+    animation-duration: 1000ms;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+}
+
+.spin {
+    animation: spin 4s linear infinite;
+    transform-origin: 50% 50%;
+}
+
+@keyframes spin {
+    from {
+        transform:rotate(0deg);
+    }
+    to {
+        transform:rotate(360deg);
+    }
+}

@@ -1,0 +1,23 @@
+<turbo-frame id="embed" data-turbo-action="advance">
+    <div {{ attributes.defaults({class: 'card'}) }}>
+        <div class="card-body">
+            <div class="card-title mb-3 d-flex justify-content-between">
+                <div class="d-flex flex-column gap-1">
+                    <h3 class="mb-0">{{ dto.metric.label }}</h3>
+                    {% if embed.range %}
+                        <small class="d-block text-body-tertiary">{{ embed.range.label }}</small>
+                    {% endif %}
+                </div>
+                <div>
+                    <span class="badge bg-secondary">{{ current_project().name }}</span>
+                </div>
+            </div>
+            {{ block('content') }}
+        </div>
+        <div class="card-footer text-end">
+            <div class="d-inline-flex gap-2 justify-content-end align-items-center">
+                <twig:EmbedAutoRefreshForm embedDto="{{ embed }}" />
+            </div>
+        </div>
+    </div>
+</turbo-frame>

@@ -1,0 +1,38 @@
+{% extends 'dash/help/metric/layout.html.twig' %}
+
+{% block definition %}
+    <p>This card breaks down where your database storage goes, separating the space used by table data from the space used by indexes. It gives a quick picture of how the on-disk footprint is composed at the last collection.</p>
+{% endblock %}
+
+{% block why_it_matters %}
+    <p>Knowing the split between data and indexes helps you understand your storage and spot anomalies. Indexes speed up reads but cost disk space and slow down writes; if they grow disproportionately, you may be over-indexing or suffering from index bloat. A large gap between the total and the live data is a typical sign of dead-row bloat.</p>
+{% endblock %}
+
+{% block how_to_read %}
+    <ul class="d-flex flex-column gap-2">
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">Total size</twig:Html:Badge:Neutral>
+            <p>The combined size of your tables, including their data and associated indexes.</p>
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">Indexes size</twig:Html:Badge:Neutral>
+            <p>The portion of that space taken up by indexes alone. Compare it to the total to see how index-heavy your schema is.</p>
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">Database size</twig:Html:Badge:Neutral>
+            <p>The full on-disk size of the database as reported by PostgreSQL, including everything it keeps allocated.</p>
+        </li>
+    </ul>
+{% endblock %}
+
+{% block actions %}
+    <ul class="d-flex flex-column gap-2">
+        <li>If <strong>indexes</strong> take up a very large share of the total, review whether some are unused (the Index usage metrics help here) or redundant, and drop the ones that no query relies on.</li>
+        <li>If the <strong>database size</strong> is much larger than the live data you expect, suspect bloat: check the Dead tuple ratio and that autovacuum is keeping up.</li>
+        <li>Use this together with the Database size trend to tell one-off growth (a bulk import) apart from steady, structural growth.</li>
+    </ul>
+{% endblock %}
+
+{% block good_to_know %}
+    <p>Index space is not wasted space, indexes are essential for fast queries. The goal is balance: enough indexes to serve your queries, without keeping unused ones that only add write overhead and disk usage. Deleting rows does not immediately shrink these figures, since PostgreSQL keeps freed space for reuse until a <code>VACUUM FULL</code> or table rewrite.</p>
+{% endblock %}

@@ -1,0 +1,36 @@
+{# @var bag \App\Metrics\Dto\Bag\Nginx\NginxBag #}
+<twig:Metric:Metric:GaugeAdvanced dto="{{ dto }}" chart="{{ chart }}" col1:class="col-sm-5" col2:class="col-sm-7 d-flex flex-column justify-content-center" >
+    <twig:block name="subtitle">
+        {{ bag.status.activeConnections }} / {{ bag.config.maxConnections }}
+    </twig:block>
+
+    <div class="d-flex flex-column gap-2">
+        <div class="dldt">
+            <div>Waiting</div>
+            <div class="dl text-end">
+                {{ bag.status.waitingConnections }}
+            </div>
+        </div>
+        <div class="dldt">
+            <div>Writing</div>
+            <div class="dl text-end">
+                {{ bag.status.writingConnections }}
+            </div>
+        </div>
+        <div class="dldt">
+            <div>Reading</div>
+            <div class="dl text-end">
+                {{ bag.status.readingConnections }}
+            </div>
+        </div>
+    </div>
+
+    <hr class="my-3">
+
+    <div class="dldt">
+        <div class="dl">Active connections:</div>
+        <div class="dl text-end">{{ bag.status.activeConnections }}
+        </div>
+    </div>
+    <p class="mb-0"><small class="text-muted">waiting + writing + reading</small></p>
+</twig:Metric:Metric:GaugeAdvanced>

@@ -1,0 +1,42 @@
+{
+  "skillListingBudgetFraction": 0.02,
+  "permissions": {
+    "allow": [
+      "Read",
+      "Glob",
+      "Grep",
+      "Bash(git *)",
+      "Bash(ls *)",
+      "Bash(grep *)",
+      "Bash(perl *)",
+      "Bash(python3 *)",
+      "Bash(php bin/console *)",
+      "Bash(php -r *)",
+      "Bash(composer run *)",
+      "Bash(composer show *)",
+      "Bash(./vendor/bin/phpunit *)",
+      "Bash(./vendor/bin/phpstan *)",
+      "Bash(./vendor/bin/php-cs-fixer *)",
+      "Bash(./vendor/bin/rector *)",
+      "Bash(gh repo *)",
+      "Bash(gh pr *)",
+      "Bash(gh issue *)",
+      "Bash(gh api *)",
+      "WebSearch",
+      "WebFetch(domain:packagist.org)",
+      "WebFetch(domain:symfony.com)",
+      "WebFetch(domain:php.net)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:www.doctrine-project.org)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Skill(update-config)",
+      "PowerShell(tail *)",
+      "PowerShell(composer run *)",
+      "WebFetch(domain:www.clever.cloud)"
+    ]
+  },
+  "enabledPlugins": {
+    "superpowers@claude-plugins-official": true
+  },
+  "extraKnownMarketplaces": {}
+}

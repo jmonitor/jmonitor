@@ -1,0 +1,39 @@
+{# the live component content, so it can be used twice below #}
+{% set content %}
+    {{ form_start(form) }}
+    {{ form_errors(form) }}
+    {{ form_row(form.alertMetric) }}
+
+    {% if form.config is defined %}
+        {{ form_row(form.config) }}
+    {% elseif form.alertMetric.vars.value !== '' %}
+        <p class="text-muted">This alert does not require any configuration.</p>
+    {% endif %}
+    <div class="d-flex justify-content-between">
+        <a href="{{ path('project.settings.alerts', {uuid: current_project().uuid}) }}">Cancel</a>
+
+        <button type="submit" class="btn btn-primary">Save</button>
+    </div>
+
+    {{ form_end(form) }}
+{% endset %}
+
+{#
+    the live component
+    to avoid scrolling to the top on save, the turbo-frame is replaced by the same one reloading its content through src
+    the content is kept as a "placeholder" to avoid a page shift
+#}
+<div {{ attributes }}>
+    {% if isSuccessful %} {# this avoids scrolling to the top after saving the form #}
+        <turbo-stream action="replace" target="tf-alert-{{ component.value }}">
+            <template>
+                <turbo-frame
+                    id="tf-alert-{{ component.value }}"
+                    src="{{ path('project.settings.alerts', {uuid: current_project().uuid}) }}"
+                >{{ content }}</turbo-frame>
+            </template>
+        </turbo-stream>
+    {% else %}
+        {{ content }}
+    {% endif %}
+</div>

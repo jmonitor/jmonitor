@@ -1,0 +1,26 @@
+{% extends 'dash/help/metric/layout.html.twig' %}
+
+{% block how_to_read %}
+    <ul class="d-flex flex-column gap-2">
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">fpm-fcgi</twig:Html:Badge:Neutral>
+            <p>PHP runs as a FastCGI service, commonly used for better performance and scalability.</p>
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">apache2handler</twig:Html:Badge:Neutral>
+            <p>PHP runs directly inside Apache as a module.</p>
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">cli</twig:Html:Badge:Neutral>
+            <p>PHP is executed from the command line, usually for scripts or cron jobs.</p>
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">cgi-fcgi</twig:Html:Badge:Neutral>
+            <p>PHP runs as a CGI process, which is less common and usually less efficient.</p>
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">frankenphp</twig:Html:Badge:Neutral>
+            <p>PHP runs directly inside the web server (Caddy) via FrankenPHP, combining an HTTP server and the PHP runtime for strong performance.</p>
+        </li>
+    </ul>
+{% endblock %}

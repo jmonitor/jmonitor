@@ -1,0 +1,30 @@
+{% extends 'dash/help/metric/layout.html.twig' %}
+
+{% block definition %}
+    <p>This card shows key Redis statistics about memory pressure, connections, and errors.</p>
+{% endblock %}
+
+{% block why_it_matters %}
+    <p>These metrics help detect overload, connection issues, or misconfiguration.</p>
+{% endblock %}
+
+{% block how_to_read %}
+    <ul class="d-flex flex-column gap-2">
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">Evicted keys</twig:Html:Badge:Neutral>
+            <p>Number of keys removed from memory due to the max memory limit. High values may indicate memory pressure.</p>
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">Rejected connections</twig:Html:Badge:Neutral>
+            <p>Number of connections refused by Redis. Usually happens when the maximum number of clients is reached.</p>
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">Total errors</twig:Html:Badge:Neutral>
+            <p>Number of errors returned by Redis. Can indicate issues in commands or application usage.</p>
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">Clients connected</twig:Html:Badge:Neutral>
+            <p>Current number of connected clients. This refers to server-side connections (applications, services, scripts), not end users directly.</p>
+        </li>
+    </ul>
+{% endblock %}

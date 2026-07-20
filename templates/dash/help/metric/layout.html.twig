@@ -1,0 +1,57 @@
+{% if block('definition') is defined %}
+    {% set definition = block('definition') %}
+{% endif %}
+{% if block('why_it_matters') is defined %}
+    {% set why_it_matters = block('why_it_matters') %}
+{% endif %}
+{% if block('how_to_read') is defined %}
+    {% set how_to_read = block('how_to_read') %}
+{% endif %}
+{% if block('actions') is defined %}
+    {% set actions_content = block('actions') %}
+{% endif %}
+{% if block('good_to_know') is defined %}
+    {% set good_to_know = block('good_to_know') %}
+{% endif %}
+
+<twig:Metric:Help metric="{{ metric }}">
+    <twig:block name="definition">
+        {% if definition is defined %}
+            <twig:Metric:Help:Section:Definition>{{ definition|raw }}</twig:Metric:Help:Section:Definition>
+        {% else %}
+            {{ parent() }}
+        {% endif %}
+    </twig:block>
+
+    <twig:block name="why_it_matters">
+        {% if why_it_matters is defined %}
+            <twig:Metric:Help:Section:WhyItMatters>{{ why_it_matters|raw }}</twig:Metric:Help:Section:WhyItMatters>
+        {% else %}
+            {{ parent() }}
+        {% endif %}
+    </twig:block>
+
+    <twig:block name="how_to_read">
+        {% if how_to_read is defined %}
+            <twig:Metric:Help:Section:HowToRead>{{ how_to_read|raw }}</twig:Metric:Help:Section:HowToRead>
+        {% else %}
+            {{ parent() }}
+        {% endif %}
+    </twig:block>
+
+    <twig:block name="actions">
+        {% if actions_content is defined %}
+            <twig:Metric:Help:Section:WhatToDo>{{ actions_content|raw }}</twig:Metric:Help:Section:WhatToDo>
+        {% else %}
+            {{ parent() }}
+        {% endif %}
+    </twig:block>
+
+    <twig:block name="good_to_know">
+        {% if good_to_know is defined %}
+            <twig:Metric:Help:Section:GoodToKnow>{{ good_to_know|raw }}</twig:Metric:Help:Section:GoodToKnow>
+        {% else %}
+            {{ parent() }}
+        {% endif %}
+    </twig:block>
+</twig:Metric:Help>

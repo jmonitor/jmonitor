@@ -1,0 +1,41 @@
+{% extends 'dash/help/metric/layout.html.twig' %}
+
+{% block how_to_read %}
+    <p>Each row represents a query, with:</p>
+
+    <ul class="d-flex flex-column gap-2">
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">exec</twig:Html:Badge:Neutral>: how many times the query was run.
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">avg</twig:Html:Badge:Neutral>: average execution time.
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">max</twig:Html:Badge:Neutral>: longest execution time.
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">sum</twig:Html:Badge:Neutral>: total time spent on this query.
+        </li>
+    </ul>
+
+    <p>At the bottom, you can see the collector configuration.</p>
+    <ul class="d-flex flex-column gap-2">
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">Min avg time</twig:Html:Badge:Neutral>
+            <p>Only queries with an average execution time above this value are included.</p>
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">Min exec count</twig:Html:Badge:Neutral>
+            <p>Only queries executed at least this number of times are included.</p>
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">Sort (order by)</twig:Html:Badge:Neutral>
+            <p>Defines how queries are sorted (for example by avg time or total time).</p>
+        </li>
+    </ul>
+    <p>
+        These settings are configurable in the collector. See:
+        <a href="https://github.com/jmonitor/jmonitor-bundle" target="_blank">https://github.com/jmonitor/jmonitor-bundle</a>
+        ou <a href="https://github.com/jmonitor/collector" target="_blank">https://github.com/jmonitor/collector</a>
+    </p>
+{% endblock %}

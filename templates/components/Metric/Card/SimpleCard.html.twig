@@ -1,0 +1,5 @@
+<turbo-frame id="{{ random() }}" {{ attributes.defaults({class: 'card card-metric'}) }}>
+    <div {{ attributes.nested('cardBody').defaults({class: 'card-body'}) }}>
+        {% block content %}{% endblock %}
+    </div>
+</turbo-frame>

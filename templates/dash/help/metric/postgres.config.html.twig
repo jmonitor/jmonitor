@@ -1,0 +1,47 @@
+{% extends 'dash/help/metric/layout.html.twig' %}
+
+{% block definition %}
+    <p>This card shows the main PostgreSQL settings related to memory allocation and the Write-Ahead Log (WAL).</p>
+{% endblock %}
+
+{% block why_it_matters %}
+    <p>These parameters drive how much RAM queries can use and how PostgreSQL persists changes to disk. Tuning them improves query speed and write throughput, while wrong values cause slow queries, excessive disk I/O, or wasted memory.</p>
+{% endblock %}
+
+{% block how_to_read %}
+    <p class="text-muted small mb-1">Memory</p>
+    <ul class="d-flex flex-column gap-2">
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">max_connections</twig:Html:Badge:Neutral>
+            <p>Maximum number of simultaneous client connections. Each one reserves memory, so raising it too high can exhaust RAM.</p>
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">effective_cache_size</twig:Html:Badge:Neutral>
+            <p>An estimate of the memory available for disk caching (PostgreSQL + OS). It is a hint for the query planner, not an actual allocation. Often set to ~50–75% of total RAM.</p>
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">work_mem</twig:Html:Badge:Neutral>
+            <p>Memory allowed per sort or hash operation. Too low forces slow on-disk sorts; too high can multiply across many concurrent queries and exhaust RAM.</p>
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">maintenance_work_mem</twig:Html:Badge:Neutral>
+            <p>Memory used by maintenance tasks like VACUUM, CREATE INDEX, and ALTER TABLE. Higher values make these operations faster.</p>
+        </li>
+    </ul>
+
+    <p class="text-muted small mb-1 mt-3">Write-Ahead Log (WAL)</p>
+    <ul class="d-flex flex-column gap-2">
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">wal_level</twig:Html:Badge:Neutral>
+            <p>Amount of information written to the WAL. <code>replica</code> (default) supports replication and backups; <code>logical</code> adds logical replication; <code>minimal</code> logs the least but disables those features.</p>
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">max_wal_size</twig:Html:Badge:Neutral>
+            <p>Soft upper limit on WAL size before a checkpoint is triggered. A larger value spreads out checkpoints, smoothing write spikes at the cost of disk space and longer recovery.</p>
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">checkpoint_completion_target</twig:Html:Badge:Neutral>
+            <p>Fraction of the interval over which a checkpoint spreads its writes (0–1). Values near 0.9 smooth out I/O peaks instead of flushing everything at once.</p>
+        </li>
+    </ul>
+{% endblock %}

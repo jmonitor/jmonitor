@@ -1,0 +1,8 @@
+<div class="col-xxl-9 mx-auto">
+    <div class="d-flex flex-column flex-fill align-items-center justify-content-center"> {# todo get the vertical centering to work #}
+        <h6 class="d-flex align-items-center gap-2 mt-4"><twig:ux:icon name="material-symbols:broken-image-outline" width="2em" height="2em" /></h6>
+        <p class="text-center">
+            History charts are not available with the free plan. <br><a href="{{ path('project.settings.plan', {uuid: current_project().uuid}) }}">Upgrade plan</a>
+        </p>
+    </div>
+</div>

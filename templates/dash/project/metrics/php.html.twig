@@ -1,0 +1,105 @@
+{# @var bag \App\Metrics\Dto\Bag\Php\PhpBag #}
+{% extends 'dash/project/metric_layout.twig' %}
+
+{% block metric_content %}
+    <div class="row g-4">
+        <div class="col-xxl-4">
+            <div class="d-flex flex-column flex-sm-row flex-xxl-column gap-4 h-100">
+                <twig:Metric:Card metric="php.version" class="flex-fill"/>
+                <twig:Metric:Card metric="php.sapi" class="flex-fill"/>
+            </div>
+        </div>
+        <div class="col-xl-6 col-xxl-4">
+            <twig:Metric:Card metric="php.base_config" class="h-100"/>
+        </div>
+        <div class="col-xl-6 col-xxl-4">
+            <twig:Metric:Card metric="php.ini_ext"/>
+        </div>
+    </div>
+
+    <div class="d-flex flex-wrap align-items-center gap-2">
+        <h2 class="h4 mb-0">OpCache</h2>
+        <twig:HelpIcon item="opcache" class="me-1" />
+        <twig:Component:Php:OpcacheEnabledBadges />
+        <div class="flex-grow-1"></div>
+        <twig:Dash:LastUpdateNotice bag="{{ bag }}" />
+    </div>
+
+    <div class="row g-4">
+        <div class="col-sm-6 col-md-12 col-xl-6">
+            <twig:Metric:Card metric="php.opcache_memory" class="h-100" cardBody:class="d-flex flex-column justify-content-center"/>
+        </div>
+        <div class="col-sm-6 col-xxl-3">
+            <twig:Metric:Card metric="php.opcache_hit_rate" class="h-100"/>
+        </div>
+        <div class="col-md-6 col-xxl-3">
+            <twig:Metric:Card metric="php.opcache_config" class="h-100"/>
+        </div>
+    </div>
+
+    <div class="d-flex flex-wrap align-items-center gap-2">
+        <h2 class="h4 mb-0">APCu</h2>
+        <twig:HelpIcon item="apcu" class="me-1" />
+        <twig:Component:Php:ApcuEnabledBadges />
+        <div class="flex-fill"></div>
+        <twig:Dash:LastUpdateNotice bag="{{ bag }}" />
+    </div>
+
+    {% if bag.apcu.all %}
+        <div class="row g-4">
+            <div class="col-sm-6 col-xl-4">
+                <twig:Metric:Card metric="php.apcu_memory_usage" class="h-100" />
+            </div>
+            <div class="col-sm-6 col-xl-4">
+                <twig:Metric:Card metric="php.apcu_hit_rate" class="h-100" />
+            </div>
+            <div class="col-xl-4">
+                <twig:Metric:Card metric="php.apcu_config" class="h-100" />
+            </div>
+        </div>
+    {% else %}
+        <p class="text-muted">APCu is disabled.</p>
+    {% endif %}
+
+    <div class="d-flex flex-wrap align-items-center gap-2">
+        <h2 class="h4 mb-0">PHP-FPM</h2>
+        <twig:HelpIcon item="fpm" class="me-1" />
+        <div class="flex-grow-1"></div>
+        <twig:RangeForm />
+    </div>
+
+    {% if bag.fpm.all %}
+        <div class="row g-4">
+            <div class="col-xl-6">
+                <twig:Metric:Card metric="php.fpm_req_per_sec" class="h-100" />
+            </div>
+            <div class="col-md-6 col-xxl-3">
+                <twig:Metric:Card metric="php.fpm_active_processes" class="h-100" />
+            </div>
+            <div class="col-md-6 col-xl-12 col-xxl-3">
+                <div class="d-flex flex-column flex-sm-row flex-md-column flex-xl-row flex-xxl-column gap-4 h-100">
+                    <twig:Metric:Card metric="php.fpm_idle_processes" class="flex-fill" />
+                    <twig:Metric:Card metric="php.fpm_max_children_reached" class="flex-fill" />
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-xl-6">
+                <twig:Metric:Card metric="php.fpm_slow_request" class="h-100" />
+            </div>
+            <div class="col-md-6 col-xxl-3">
+                {% if bag.fpm.memoryPeakPercent is not same as(false) %}
+                    <twig:Metric:Card metric="php.fpm_memory_peak_percent" class="h-100" />
+                {% else %}
+                    <twig:Metric:Card metric="php.fpm_memory_peak_value" class="h-100" />
+                {% endif %}
+            </div>
+            <div class="col-md-6 col-xxl-3">
+                <twig:Metric:Card metric="php.fpm_config" class="h-100" />
+            </div>
+        </div>
+    {% else %}
+        <p class="text-muted">PHP-FPM usage not detected.</p>
+    {% endif %}
+{% endblock %}

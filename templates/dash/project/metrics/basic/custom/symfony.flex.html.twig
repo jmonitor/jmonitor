@@ -1,0 +1,22 @@
+{# @var bag \App\Metrics\Dto\Bag\Symfony\SymfonyBag #}
+{% set bag = bag('symfony') %}
+
+{% if bag.components.flexRecipes.all %}
+    {% if bag.components.flexRecipes.upToDate %}
+        <div class="d-flex align-items-center gap-4">
+            <twig:ux:icon name="server-content-check" width="124px" height="77px"/>
+            <p class="text-muted mb-0">
+                Configuration optimized.
+                <br>No recipe updates required.
+            </p>
+        </div>
+    {% else %}
+        <ul>
+            {% for recipe in bag.components.flexRecipes.outdatedRecipes %}
+                <li>{{ recipe }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    <hr>
+    <div class="text-muted text-sm">Checked once per day, or on worker restart.</div>
+{% endif %}

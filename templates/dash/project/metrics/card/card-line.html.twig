@@ -1,0 +1,26 @@
+{# @var dto \App\Metrics\Renderer\Dto\TimeSerieDto #}
+{# @var renderer \App\Metrics\Renderer #}
+<twig:Card {{ ...attributes.defaults({class: 'card-metric'}) }}>
+    <div class="mb-4">
+        <div class="d-flex align-items-center gap-2 flex-wrap">
+            <h3 class="card-title mb-0">{{ dto.cardTitle ?: dto.metric.label }}</h3>
+            <twig:HelpIcon metric="{{ metric }}" />
+            {# no badge for now #}
+
+            {# if length actions #}
+            <div class="ms-auto">
+                <twig:Metric:Actions dto="{{ dto }}" renderer="{{ renderer }}" />
+            </div>
+        </div>
+        {% if dto.currentValue is not empty %}
+            <div class="mt-2">
+                <span class="consumer_value-value text-start">{{ dto.currentValue[0] }}</span>
+                {% if dto.currentValue[1] !== null %}
+                    <span class="text-primary-light fw-light">{{ dto.currentValue[1] }}</span>
+                {% endif %}
+            </div>
+
+        {% endif %}
+    </div>
+    <twig:Metric metric="{{ metric.value }}" renderer="{{ renderer.value }}" options="{{ options }}" />
+</twig:Card>

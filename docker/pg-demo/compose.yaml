@@ -1,0 +1,31 @@
+# Standalone PostgreSQL instance for testing the Jmonitor PostgreSQL dashboard (dev only).
+# Up:    docker compose -f docker/pg-demo/compose.yaml up -d
+# Down:  docker compose -f docker/pg-demo/compose.yaml down -v
+services:
+  pg-demo:
+    image: postgres:17
+    container_name: jmonitor-pg-demo
+    # pg_stat_statements must be preloaded at server start for the slow_queries collector.
+    command:
+      - "postgres"
+      - "-c"
+      - "shared_preload_libraries=pg_stat_statements"
+      - "-c"
+      - "pg_stat_statements.track=all"
+    environment:
+      POSTGRES_USER: jmonitor
+      POSTGRES_PASSWORD: jmonitor
+      POSTGRES_DB: shop
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./init:/docker-entrypoint-initdb.d:ro
+      - pg-demo-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U jmonitor -d shop"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  pg-demo-data:

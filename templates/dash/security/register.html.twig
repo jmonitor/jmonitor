@@ -1,0 +1,22 @@
+{% extends 'dash/base_login.html.twig' %}
+
+{% block title %}Create an account{% endblock %}
+
+{% block h1 %}Create an account{% endblock %}
+{% block sub_h1 %}
+    Already have an account? <a href="{{ path('security.login') }}">Log in</a>
+{% endblock %}
+
+{% block content %}
+    <twig:Security:OauthLinks />
+    <twig:Security:Ou />
+
+    {{ form_start(form) }}
+    {{ form_rest(form) }}
+    <div class="mb-3">
+        <button type="submit" class="btn btn-primary w-100">Create account</button>
+    </div>
+    {{ form_end(form) }}
+
+    <twig:Security:Terms />
+{% endblock %}

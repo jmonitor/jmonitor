@@ -1,0 +1,59 @@
+.max-w-sm {
+    max-width: var(--container-sm);
+}
+.max-w-md {
+    max-width: var(--container-md);
+}
+.max-w-lg {
+    max-width: var(--container-lg);
+}
+.max-w-xl {
+    max-width: var(--container-xl);
+}
+.max-w-2xl {
+    max-width: var(--container-2xl);
+}
+.max-w-3xl {
+    max-width: var(--container-3xl);
+}
+.max-w-4xl {
+    max-width: var(--container-4xl);
+}
+.max-w-5xl {
+    max-width: var(--container-5xl);
+}
+.max-w-6xl {
+    max-width: var(--container-6xl);
+}
+
+.px-6 {
+    padding-right: 4rem !important;
+    padding-left: 4rem !important;
+}
+@media (min-width: 768px) {
+    .px-md-6 {
+        padding-right: 4rem !important;
+        padding-left: 4rem !important;
+    }
+}
+@media (min-width: 992px) {
+    .px-lg-7 {
+        padding-right: 5rem !important;
+        padding-left: 5rem !important;
+    }
+}
+
+.my-4v5 {
+    margin-top: 2rem !important;
+    margin-bottom: 2rem !important;
+}
+
+.text-sm {
+    font-size: var(--app-14-px);
+}
+.text-xs {
+    font-size: var(--app-13-px);
+}
+.text-codelike {
+    font-family: "IBM Plex Mono", monospace;
+}

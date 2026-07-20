@@ -1,0 +1,4 @@
+{# @var settings \App\Metrics\Dto\Bag\Postgres\PostgresSettingsBag #}
+{% set settings = dto.value %}
+
+<div class="consumer_value-value text-end">{{ settings.sharedBuffers|format_bytes }}</div>

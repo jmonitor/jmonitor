@@ -1,0 +1,132 @@
+{% extends 'dash/project/metric_layout.twig' %}
+
+{% block metric_content %}
+    <div class="row g-4">
+        <div class="col-lg-6 col-xxl-3">
+            <twig:Metric:Card metric="mysql.version" class="h-100" />
+        </div>
+        <div class="col-lg-6 col-xxl">
+            <twig:Metric:Card metric="mysql.config" />
+        </div>
+        <div class="col-xl-6 col-xxl">
+            <twig:Metric:Card metric="mysql.informations" class="h-100" />
+        </div>
+    </div>
+
+    <twig:Html:Metrics:H2 bag="{{ bag }}" :showRange="true">Traffic and pressure</twig:Html:Metrics:H2>
+
+    <div class="row g-4">
+        <div class="col-xl-4 col-xxl-3">
+            <twig:Metric:Card metric="mysql.connections_usage" />
+        </div>
+        <div class="col-xl-8 col-xxl-9">
+            <twig:Metric:Card metric="mysql.max_connections_reached" class="h-100" />
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-xxl-6">
+            <twig:Metric:Card metric="mysql.queries_per_sec" class="h-100" />
+        </div>
+        <div class="col-xxl-6">
+            <twig:Metric:Card metric="mysql.server_queries_by_type" class="h-100" />
+        </div>
+    </div>
+
+    {% set mysqlVarBag = bag('mysql.variables') %}
+    {% set slowQueryBags = bag('mysql.slow_queries') %}
+    <div>
+        <div class="d-flex flex-wrap align-items-center gap-2 my-2">
+            <h2 class="h4 mb-0">Slow queries</h2>
+            <twig:HelpIcon item="slow_queries" class="me-1" />
+            <div class="flex-grow-1"></div>
+            <twig:RangeForm />
+        </div>
+        {% if slowQueryBags and mysqlVarBag and mysqlVarBag.slowQueryLogEnabled is same as(false) %}
+            <p class="text-warning">The slow query log is disabled on your side. Data may not be available or up to date.</p>
+        {% endif %}
+    </div>
+
+    {% if slowQueryBags is not null %}
+        <div class="row g-4">
+            <div class="col-xl-4">
+                <twig:Metric:Card metric="mysql.slow_queries_count" renderer="basic" class="h-100"/>
+            </div>
+            <div class="col-xl-8">
+                <twig:Metric:Card metric="mysql.slow_queries_count" class="h-100" />
+            </div>
+        </div>
+        <twig:Metric:Card metric="mysql.slow_queries_top" class="card-transparent" />
+    {% else %}
+        <p class="text-muted">Slow queries data are not available.</p>
+    {% endif %}
+
+    <twig:Html:Metrics:H2 bag="{{ bag }}" :showRange="true">InnoDB engine</twig:Html:Metrics:H2>
+
+    <div class="row g-4">
+        <div class="col-lg-6 col-xxl-4">
+            <twig:Metric:Card metric="mysql.innodb_buffer_pool_usage" class="h-100"/>
+        </div>
+        <div class="col-lg-6 col-xxl-4">
+            <twig:Metric:Card metric="mysql.innodb_buffer_pool_hit_rate" class="h-100"/>
+        </div>
+        <div class="col-xl-6 col-xxl-4">
+            <twig:Metric:Card metric="mysql.innodb_ram_ratio" class="h-100"/>
+        </div>
+    </div>
+
+    <twig:Card class="card-transparent" title="Disk operations">
+        <div class="row g-4">
+            <div class="col-xl-6">
+                <twig:Metric:Card metric="mysql.innodb_reads_per_sec" class="h-100"/>
+            </div>
+            <div class="col-xl-6">
+                <twig:Metric:Card metric="mysql.innodb_writes_per_sec" class="h-100"/>
+            </div>
+        </div>
+    </twig:Card>
+
+    <twig:Html:Metrics:H2 bag="{{ bag }}" :showRange="true">Efficiency & Friction</twig:Html:Metrics:H2>
+
+    <twig:Card class="card-transparent" title="Table Lock Waits">
+        <div class="row g-4">
+            <div class="col-xl-6">
+                <twig:Metric:Card metric="mysql.tables_lock_waits_per_sec" class="h-100"/>
+            </div>
+            <div class="col-xl-6">
+                <twig:Metric:Card metric="mysql.tables_lock_waits_percent" class="h-100" cardBody:class="d-flex flex-column justify-content-center"/>
+            </div>
+        </div>
+    </twig:Card>
+
+    <twig:Card class="card-transparent" title="Threads">
+        <div class="row g-4">
+            <div class="col-sm-12 col-xl-6 col">
+                <twig:Metric:Card metric="mysql.threads_connected" class="h-100" />
+            </div>
+            <div class="col-sm-12 col-xl-6 col">
+                <twig:Metric:Card metric="mysql.threads_running" class="h-100" />
+            </div>
+            <div class="col-xl-6 col-xxl-3">
+                <twig:Metric:Card metric="mysql.thread_cache_miss" class="h-100" />
+            </div>
+        </div>
+    </twig:Card>
+
+    <div class="row g-4">
+        <div class="col-xl-4 col-xxl-3">
+            <twig:Metric:Card metric="mysql.tmp_tables" class="h-100"/>
+        </div>
+    </div>
+
+    <twig:Html:Metrics:H2 bag="{{ bag }}" :showRange="true">Storage</twig:Html:Metrics:H2>
+
+    <div class="row g-4">
+        <div class="col-xl-6">
+            <twig:Metric:Card metric="mysql.data_weight" />
+        </div>
+        <div class="col-xl-4">
+            <twig:Metric:Card metric="mysql.data_weight_detail" />
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends 'dash/base.html.twig' %}
+
+{% block title %}{{ component.label }} Metrics | {{ current_project().name }}{% endblock %}
+
+{% block content %}
+    <div class="d-flex align-items-center justify-content-between">
+        <twig:Html:H1 icon="{{ component.icon }}">{{ component.label }}</twig:Html:H1>
+        <twig:AutoRefreshForm component="{{ component }}" />
+    </div>
+
+    {% block metric_content %}{% endblock %}
+{% endblock %}

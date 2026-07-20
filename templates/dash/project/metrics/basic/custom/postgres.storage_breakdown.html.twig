@@ -1,0 +1,8 @@
+{# @var bag \App\Metrics\Dto\Bag\Postgres\PostgresDatabaseBag #}
+{% set bag = dto.value %}
+
+<twig:Metric:Metric:List class="mh-15 overflow-y-auto pe-2">
+    <twig:InfoLine label="Total size" value="{{ bag.totalSize is not null ? bag.totalSize|format_bytes : '—' }}" />
+    <twig:InfoLine label="Indexes size" value="{{ bag.indexesSize is not null ? bag.indexesSize|format_bytes : '—' }}" />
+    <twig:InfoLine label="Database size" value="{{ bag.dbSize is not null ? bag.dbSize|format_bytes : '—' }}" />
+</twig:Metric:Metric:List>

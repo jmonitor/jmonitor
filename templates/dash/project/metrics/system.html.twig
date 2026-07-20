@@ -1,0 +1,52 @@
+{% extends 'dash/project/metric_layout.twig' %}
+
+{% block metric_content %}
+    <div class="row g-4">
+        <div class="col-lg-9 col-xl-8">
+            <twig:Card class="h-100" cardBody:class="p-lg-5">
+                <div class="position-absolute top-0 end-0 p-3 pt-4">
+                    <twig:Html:Dropdown class="dropdown-actions">
+                        <li>
+                            <a
+                                class="dropdown-item"
+                                href="{{ path('project.metrics.embed', {uuid: current_project().uuid, embed: {
+                                    m: 'system.ram_usage',
+
+                                }}) }}"
+                                {{ stimulus_action('app', 'turboCanvas') }}
+                            >Embed</a>
+                        </li>
+                    </twig:Html:Dropdown>
+                </div>
+                <div class="row g-4 g-lg-5">
+                    <div class="col-md-4">
+                        <twig:Metric metric="system.ram_usage" renderer="gauge" />
+                    </div>
+                    <div class="col-md-4">
+                        <twig:Metric metric="system.cpu_usage" renderer="gauge" />
+                    </div>
+                    <div class="col-md-4">
+                        <twig:Metric metric="system.disk_usage" renderer="gauge" />
+                    </div>
+                </div>
+            </twig:Card>
+        </div>
+        <div class="col-lg-3 col-xl-4">
+            <twig:Metric:Card metric="system.informations" class="h-100"/>
+        </div>
+    </div>
+
+    <twig:Html:Metrics:H2 :showRange="true" :bag="bag">Evolution</twig:Html:Metrics:H2>
+
+    <div class="row g-4">
+        <div class="col-md-6">
+            <twig:Metric:Card metric="system.ram_usage" renderer="line"/>
+        </div>
+        <div class="col-md-6">
+            <twig:Metric:Card metric="system.cpu_usage" renderer="line"/>
+        </div>
+        <div class="col-md-6">
+            <twig:Metric:Card metric="system.disk_usage" renderer="line" />
+        </div>
+    </div>
+{% endblock %}

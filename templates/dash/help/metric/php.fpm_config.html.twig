@@ -1,0 +1,31 @@
+{% extends 'dash/help/metric/layout.html.twig' %}
+
+{% block definition %}
+    <p>This card shows key PHP-FPM settings and runtime information for the current pool.</p>
+{% endblock %}
+
+{% block why_it_matters %}
+    <p>These settings control how PHP processes are managed. They directly impact performance, resource usage, and how your server handles traffic.</p>
+{% endblock %}
+
+{% block how_to_read %}
+    <ul class="d-flex flex-column gap-2">
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">pool</twig:Html:Badge:Neutral>
+            <p>Name of the PHP-FPM pool. A pool is a group of worker processes with its own configuration.</p>
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">mode (process manager)</twig:Html:Badge:Neutral>
+            <p>Defines how PHP-FPM manages worker processes.</p>
+            <ul>
+                <li><twig:Html:Badge:Neutral>static</twig:Html:Badge:Neutral> A fixed number of workers is always running. Predictable performance, but can waste resources if traffic is low.</li>
+                <li><twig:Html:Badge:Neutral>dynamic</twig:Html:Badge:Neutral> The number of workers adapts to the load. Starts with a few workers and creates more when needed.</li>
+                <li><twig:Html:Badge:Neutral>ondemand</twig:Html:Badge:Neutral> Workers are created only when requests come in and stopped when idle. Saves resources but can add slight delay on first request.</li>
+            </ul>
+        </li>
+        <li>
+            <twig:Html:Badge:Neutral class="fs-6">uptime</twig:Html:Badge:Neutral>
+            <p>Time since the PHP-FPM service started. Helps understand how long the current state has been running.</p>
+        </li>
+    </ul>
+{% endblock %}

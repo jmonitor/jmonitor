@@ -1,0 +1,12 @@
+{# @var bag \App\Metrics\Dto\Bag\Mysql\MysqlStatusBag #}
+{% set bag = bag('mysql.status') %}
+{% set variables = bag('mysql.variables') %}
+
+<div class="text-end">
+    <div class="current-value">{{ bag.slowQueries }}</div>
+</div>
+<hr>
+<twig:Metric:Metric:List>
+    <twig:InfoLine label="slow_query_log" value="{{ variables.slowQueryLog }}" />
+    <twig:InfoLine label="long_query_time" value="{{ variables.longQueryTime }}{{ variables.longQueryTime !== null ? 's' }}" />
+</twig:Metric:Metric:List>

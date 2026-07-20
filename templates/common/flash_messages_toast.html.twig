@@ -1,0 +1,10 @@
+{% if not app.request.headers.has('turbo-frame') %}
+    {% for type, messages in app.flashes %}
+        {% for message in messages %}
+            <script type="module" data-turbo-temporary>
+                import Toast from "toast.js";
+                new Toast("{{ type }}", "{{ message|e('js') }}")
+            </script>
+        {% endfor %}
+    {% endfor %}
+{% endif %}

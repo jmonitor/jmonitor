@@ -1,0 +1,35 @@
+{# Careful: view shared by 2 components #}
+<div {{ attributes }}
+    {{
+        stimulus_controller('auto-refresh', {
+            enabled: refreshDto.autoRefresh,
+            topic: consumed_metric_subscribe_url(),
+            component: component.value,
+        })
+    }}
+>
+    {{ form_start(form, {attr: {onchange: 'this.requestSubmit()'}}) }}
+        <div class="row gx-3 align-items-center justify-content-end">
+            {% if not is_granted('right.autorefresh') %}
+                <div class="col-auto text-muted">
+                    <a href="{{ path('project.help.item', {item: 'pro', uuid: current_project().uuid}) }}" {{ stimulus_action('app', 'turboCanvas') }}>
+                        <twig:Html:Badge:Neutral>Pro</twig:Html:Badge:Neutral>
+                    </a>
+                </div>
+            {% endif %}
+            <div class="col-auto">
+                {{ form_widget(form.autoRefresh) }}
+            </div>
+            <div class="col-auto">
+                <button class="btn btn-primary" type="button" {{ stimulus_target('auto-refresh', 'btn') }} {{ stimulus_action('auto-refresh', 'triggerReload') }}>
+                    <twig:ux:icon name="material-symbols:refresh" data-auto-refresh-target="icon" width="1.2em" height="1.2em" />
+                </button>
+            </div>
+        </div>
+        {# needed for this.requestSubmit() to work #}
+        <div class="d-none"><button type="submit"></button></div>
+    {{ form_end(form) }}
+    {% if bag %}
+        <twig:Dash:LastUpdateNotice bag="{{ bag }}" class="text-end mt-1" />
+    {% endif %}
+</div>

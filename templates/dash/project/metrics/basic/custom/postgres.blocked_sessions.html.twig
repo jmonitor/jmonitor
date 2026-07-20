@@ -1,0 +1,10 @@
+{# @var bag \App\Metrics\Dto\Bag\Postgres\PostgresActivityBag #}
+{% set bag = dto.value %}
+
+<div class="d-flex align-items-baseline gap-2">
+    <span class="display-6 {{ bag.blockedCount > 0 ? 'text-warning' : '' }}">{{ bag.blockedCount }}</span>
+    <span class="text-muted">blocked</span>
+</div>
+{% if bag.maxWaitSeconds is not null %}
+    <div class="text-muted text-sm mt-1">Max wait: {{ bag.maxWaitSeconds }}s</div>
+{% endif %}

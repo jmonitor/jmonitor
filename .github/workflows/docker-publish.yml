@@ -1,0 +1,115 @@
+name: Self-hosted image
+
+on:
+    push:
+        tags: ['v*']
+    pull_request:
+        paths:
+            - 'docker/selfhosted/**'
+            - '.dockerignore'
+            - '.github/workflows/docker-publish.yml'
+            - 'src/**'
+            - 'config/**'
+            - 'templates/**'
+            - 'assets/**'
+            - 'migrations/**'
+            - 'composer.lock'
+            - 'importmap.php'
+            - '.env'
+    workflow_dispatch:
+
+permissions:
+    contents: read
+    packages: write
+
+env:
+    IMAGE: ghcr.io/${{ github.repository }}
+
+jobs:
+    build:
+        name: Build, smoke test & publish
+        runs-on: ubuntu-latest
+        steps:
+            -   uses: actions/checkout@v4
+
+            -   uses: docker/setup-buildx-action@v3
+
+            -   name: Build image (loaded locally for the smoke test)
+                uses: docker/build-push-action@v6
+                with:
+                    context: .
+                    file: docker/selfhosted/Dockerfile
+                    load: true
+                    tags: ${{ env.IMAGE }}:smoke
+                    cache-from: type=gha
+                    cache-to: type=gha,mode=max
+
+            -   name: Smoke test (compose up, app:install, HTTP checks, idempotence)
+                working-directory: docker/selfhosted
+                run: |
+                    cp .env.example .env
+                    sed -i 's/^APP_DOMAIN=.*/APP_DOMAIN=example.com/' .env
+                    sed -i 's/^ADMIN_EMAIL=.*/ADMIN_EMAIL=admin@example.com/' .env
+                    sed -i 's/^ADMIN_PASSWORD=.*/ADMIN_PASSWORD=smoke-admin-pw/' .env
+                    sed -i "s/CHANGE_ME/$(openssl rand -hex 16)/g" .env
+
+                    export JMONITOR_VERSION=smoke
+                    docker compose up -d --wait --wait-timeout 300
+
+                    # Host-header routing + compiled assets
+                    test "$(curl -fsS -o /dev/null -w '%{http_code}' -H 'Host: dash.example.com' http://localhost:8080/login)" = "200"
+                    curl -fsS -H 'Host: dash.example.com' http://localhost:8080/login | grep -q 'assets/'
+
+                    # Install ran
+                    docker compose logs app | grep -q 'Install complete'
+                    docker compose logs app | grep -q 'Admin account created: admin@example.com'
+
+                    # Idempotence: restarting the app re-runs app:install harmlessly
+                    docker compose restart app
+                    docker compose up -d --wait --wait-timeout 300
+                    docker compose logs app | grep -q 'already exists, skipping'
+
+                    # Worker is consuming
+                    test "$(docker compose ps worker --format '{{.State}}')" = "running"
+
+                    # Self-monitoring: project provisioned on first boot
+                    docker compose logs app | grep -q 'Self-monitoring project ready: jmonitor'
+
+                    # ...and metrics flow end-to-end (collector -> DNS alias -> app -> messenger -> worker):
+                    # the worker stamps last_data_push_date when it consumes the first push.
+                    # 0x... = Project::SELF_MONITORING_UUID (uuid is BINARY(16); hex literal avoids nested quoting)
+                    timeout 180 sh -c 'until docker compose exec -T mysql sh -c "mysql -N -p\"\$MYSQL_ROOT_PASSWORD\" jmonitor -e \"SELECT 1 FROM project WHERE uuid = 0x98be4322e5855c5d9aa4c81b0f20b241 AND last_data_push_date IS NOT NULL\"" | grep -q 1; do sleep 5; done'
+
+            -   name: Dump logs on failure
+                if: failure()
+                working-directory: docker/selfhosted
+                run: docker compose logs || true
+
+            -   name: Log in to GitHub Container Registry
+                if: startsWith(github.ref, 'refs/tags/v')
+                uses: docker/login-action@v3
+                with:
+                    registry: ghcr.io
+                    username: ${{ github.actor }}
+                    password: ${{ secrets.GITHUB_TOKEN }}
+
+            -   name: Compute image tags
+                if: startsWith(github.ref, 'refs/tags/v')
+                id: meta
+                uses: docker/metadata-action@v5
+                with:
+                    images: ${{ env.IMAGE }}
+                    tags: |
+                        type=semver,pattern={{version}}
+                        type=semver,pattern={{major}}.{{minor}}
+
+            -   name: Push
+                if: startsWith(github.ref, 'refs/tags/v')
+                uses: docker/build-push-action@v6
+                with:
+                    context: .
+                    file: docker/selfhosted/Dockerfile
+                    push: true
+                    tags: ${{ steps.meta.outputs.tags }}
+                    labels: ${{ steps.meta.outputs.labels }}
+                    cache-from: type=gha

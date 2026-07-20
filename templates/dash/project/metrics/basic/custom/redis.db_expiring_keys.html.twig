@@ -1,0 +1,4 @@
+{# @var bag \App\Metrics\Dto\Bag\Redis\DatabaseBag #}
+{% set bag = dto.value %}
+
+<div class="current-value text-end">{{ bag.expireRatio }}%</div>

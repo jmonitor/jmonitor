@@ -1,0 +1,17 @@
+<div class="offcanvas offcanvas-{% block position %}start{% endblock %} {% block css_class %}{% endblock %}" tabindex="-1" id="{% block id %}{% endblock %}">
+    {% if (block('tf_id') is defined) %}
+        <turbo-frame id="{{ block('tf_id') }}" style="overflow-y: auto">
+    {% endif %}
+        {% block header %}
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title flex-fill">{% block title %}{% endblock %}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+        {% endblock %}
+        <div class="offcanvas-body">
+            {% block body %}{% endblock %}
+        </div>
+    {% if (block('tf_id') is defined) %}
+        </turbo-frame>
+    {% endif %}
+</div>

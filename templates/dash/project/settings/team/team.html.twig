@@ -1,0 +1,140 @@
+{% extends 'dash/project/settings_layout.twig' %}
+
+{% block title %}Team{% endblock %}
+
+{% set current_project_user = current_project_user() %}
+
+{% block settings_content %}
+<twig:Cards :titles="['Members']">
+    <twig:Card>
+        <turbo-frame id="team-members">
+            <table class="table table-borderless mb-0">
+                <thead>
+                <tr>
+                    <th scope="col"><small class="text-body-tertiary fw-normal">Email</small></th>
+                    <th scope="col"><small class="text-body-tertiary fw-normal">Role</small></th>
+                    <th scope="col"></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for projectUser in current_project().projectUsers %}
+                    <tr>
+                        <td>{{ projectUser.user.email }}</td>
+                        <td><span class="badge text-bg-secondary">{{ projectUser.role.value }}</span></td>
+                        <td class="text-end">
+                            {% if not is_granted('project.admin') %}
+                                <twig:Html:Dropdown :disabled="true" />
+                            {% elseif is_granted('project.owner', current_project()) or is_granted('project_user.demote', projectUser) %}
+                                <twig:Html:Dropdown>
+                                    {% if projectUser.role.upgradable and is_granted('project_user.promote', projectUser) %}
+                                        <li>
+                                            <form
+                                                action="{{ path('project.settings.team.member.set_role', {user: projectUser.user.uuid, uuid: current_project().uuid, role: projectUser.role.upgradable.value}) }}"
+                                                method="post"
+                                                data-turbo-confirm="Please confirm promote"
+                                            >
+                                                <input type="hidden" name="_token" value="{{ csrf_token('set_role') }}">
+                                                <button type="submit" class="dropdown-item">Promote to {{ projectUser.role.upgradable.value }}</button>
+                                            </form>
+                                        </li>
+                                    {% endif %}
+
+                                    {% if projectUser.role.downgradable and is_granted('project_user.demote', projectUser) %}
+                                        <li>
+                                            <form
+                                                action="{{ path('project.settings.team.member.set_role', {user: projectUser.user.uuid, uuid: current_project().uuid, role: projectUser.role.downgradable.value}) }}"
+                                                method="post"
+                                                data-turbo-confirm="Please confirm demote"
+                                            >
+                                                <input type="hidden" name="_token" value="{{ csrf_token('set_role') }}">
+                                                <button type="submit" class="dropdown-item">Demote to {{ projectUser.role.downgradable.value }}</button>
+                                            </form>
+                                        </li>
+                                    {% endif %}
+
+                                    {% if is_granted('project_user.demote', projectUser) %}
+                                        <li>
+                                            <form
+                                                action="{{ path('project.settings.team.member.remove', {user: projectUser.user.uuid, uuid: current_project().uuid}) }}"
+                                                method="post"
+                                                data-turbo-confirm="Please confirm"
+                                            >
+                                                <input type="hidden" name="_token" value="{{ csrf_token('remove_member') }}">
+                                                <button type="submit" class="dropdown-item link-danger">Remove member</button>
+                                            </form>
+                                        </li>
+                                    {% endif %}
+                                </twig:Html:Dropdown>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </turbo-frame>
+    </twig:Card>
+</twig:Cards>
+
+<twig:Cards :titles="['Pending invitations']">
+    <twig:Card>
+        <turbo-frame id="team-invitations">
+            {% if current_project().invitations is empty %}
+                <p>There are no pending invites.</p>
+            {% else %}
+                <table class="table table-borderless mb-0">
+                    <thead>
+                    <tr>
+                        <th scope="col"><small class="text-body-tertiary fw-normal">Email</small></th>
+                        <th scope="col"><small class="text-body-tertiary fw-normal">Role</small></th>
+                        <th scope="col"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for invitation in current_project().invitations %}
+                        <tr>
+                            <td>{{ invitation.email }}</td>
+                            <td><span class="badge text-bg-secondary">{{ invitation.role.value }}</span></td>
+                            <td class="text-end">
+                                {% if not is_granted('project.admin') %}
+                                    <twig:Html:Dropdown :disabled="true" />
+                                {% else %}
+                                <twig:Html:Dropdown>
+                                    <li>
+                                        <form
+                                            action="{{ path('project.settings.team.invite.cancel', {invitation: invitation.uniquid, uuid: current_project().uuid}) }}"
+                                            method="post"
+                                            data-turbo-confirm="Please confirm"
+                                        >
+                                            <input type="hidden" name="_token" value="{{ csrf_token('cancel_invitation') }}">
+                                            <button type="submit" class="dropdown-item link-danger {% if not current_project_user.role.canManage(invitation.role) %}disabled{% endif %}">Remove invitation</button>
+                                        </form>
+                                    </li>
+                                </twig:Html:Dropdown>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
+            <a
+                href="{{ path('project.settings.team.invite', {uuid: current_project().uuid}) }}"
+                class="ms-auto btn btn-primary gap-1 btn-sm {% if not is_granted('project.admin') %}disabled{% endif %}"
+            >{{ ux_icon('material-symbols:add', {height: '1em', width: '1em'}) }} Invite</a>
+        </turbo-frame>
+    </twig:Card>
+</twig:Cards>
+
+    <twig:Alert type="info">
+        <div class="text-end">
+            {{ ux_icon('material-symbols:info-outline', {width: '1.2em', height: '1.2em'}) }}
+        </div>
+        <div class="mt-2">
+            {% for case in enum('App\\Entity\\Enums\\ProjectRole').cases %}
+                <p>
+                    <span class="badge text-bg-secondary">{{ case.value }}</span> {{ case.restrictionsDescription }}
+                </p>
+            {% endfor %}
+        </div>
+    </twig:Alert>
+{% endblock %}

@@ -1,0 +1,38 @@
+<twig:Metric:Metric:GaugeAdvanced dto="{{ dto }}" chart="{{ chart }}">
+    <div class="d-flex flex-column gap-3">
+        <div class="dldt">
+            <div class="dl">Threads</div>
+            <div class="dl text-end">{{ bag.totalThreads }}</div>
+        </div>
+
+        <div class="d-flex flex-column gap-2">
+            <div class="dldt">
+                <div>Busy</div>
+                <div class="dl text-end">
+                    {% if bag.totalWorkersThreads > 0 %}
+                        {{ bag.busyThreads - bag.totalWorkersThreads }} + {{ bag.totalWorkersThreads }} workers*
+                    {% else %}
+                        {{ bag.busyThreads }}
+                    {% endif %}
+                </div>
+            </div>
+            <div class="dldt">
+                <div>Free</div>
+                <div class="dl text-end">{{ bag.totalThreads - bag.busyThreads }}</div>
+            </div>
+        </div>
+
+        {% if bag.totalWorkersThreads > 0 %}
+            <p class="text-body-secondary small mb-0">
+                * In worker mode, each worker permanently occupies a thread, even when idle.
+            </p>
+        {% endif %}
+
+        <hr class="my-0">
+
+        <div class="dldt">
+            <div class="dl">Queue depth</div>
+            <div class="text-end {% if bag.queueDepth > 0 %}text-warning{% endif %}">{{ bag.queueDepth }}</div>
+        </div>
+    </div>
+</twig:Metric:Metric:GaugeAdvanced>

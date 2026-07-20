@@ -1,0 +1,6 @@
+webhook:
+    resource: '@FrameworkBundle/Resources/config/routing/webhook.php'
+    prefix: /webhook
+    host: "webhook.%app.domain%"
+    # Le webhook Stripe n'existe qu'en édition cloud.
+    condition: "env('APP_EDITION') == 'cloud'"

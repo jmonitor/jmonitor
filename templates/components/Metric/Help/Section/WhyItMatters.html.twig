@@ -1,0 +1,9 @@
+<twig:Metric:Help:Section icon="material-symbols:search-insights" title="Why it matters">
+    {% if paragraphes %}
+        {% for paragraphe in paragraphes %}
+            <p>{{ paragraphe|raw }}</p>
+        {% endfor %}
+    {% else %}
+        {{ block(outerBlocks.content) }}
+    {% endif %}
+</twig:Metric:Help:Section>

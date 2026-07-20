@@ -1,0 +1,28 @@
+<turbo-frame id="account-projects">
+    {% if app.user.projectUsers|length == 0 %}
+        <p>You have no projects yet</p>
+        <a href="{{ path('project.create') }}" data-turbo-target="_top">Create a project</a>
+    {% else %}
+        <div class="table-responsive">
+            <table class="table table-borderless mb-0">
+                <tbody>
+                {% for projectUser in app.user.projectUsers %}
+                    <tr style="vertical-align: middle">
+                        <td>{{ projectUser.project.name }}</td>
+                        <td><span class="badge text-bg-secondary">{{ projectUser.role.value }}</span></td>
+                        <td class="text-end">
+                            <form
+                                action="{{ path('account.projects.leave', {uuid: projectUser.project.uuid}) }}"
+                                method="post"
+                                data-turbo-confirm="Please confirm you want to leave this project"
+                            >
+                                <button type="submit" class="btn btn-link link-danger"{% if app.user.isDemo %} disabled title="The demo account cannot leave the demo project."{% endif %}>Leave</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+</turbo-frame>

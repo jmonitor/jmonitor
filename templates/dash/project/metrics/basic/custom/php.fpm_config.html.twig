@@ -1,0 +1,9 @@
+{# @var bag \App\Metrics\Dto\Bag\Php\PhpBag #}
+{% set bag = bag('php') %}
+<twig:Metric:Metric:List>
+    <twig:InfoLine label="Pool">{{ bag.fpm.pool }}</twig:InfoLine>
+    <twig:InfoLine label="Mode">{{ bag.fpm.processManager }}</twig:InfoLine>
+    <twig:InfoLine label="Uptime">
+        <span {{ stimulus_controller('duration', {seconds: bag.fpm.uptime}) }}></span>
+    </twig:InfoLine>
+</twig:Metric:Metric:List>

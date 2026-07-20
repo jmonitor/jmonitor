@@ -1,0 +1,6 @@
+{% for meta in metas().all() %}
+    <meta {% for propertyName, propertyValue in meta %}{{ propertyName }}="{{ propertyValue }}" {% endfor %}>
+{% endfor %}
+{% for link in metas().getLinks() %}
+    <link {% for propertyName, propertyValue in link %}{{ propertyName }}="{{ propertyValue }}"{% endfor %}>
+{% endfor %}

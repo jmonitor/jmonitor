@@ -1,0 +1,14 @@
+<div class="text-muted text-center justify-content-around">
+    <div class="d-flex align-items-center gap-2 lh-1">
+        <span class="fw-light text-uppercase">No datas</span>
+        <twig:HelpIcon item="why_no_datas"></twig:HelpIcon>
+    </div>
+    {% if mode.value === 'extended' %}
+        <p class="text-center">
+            Maybe...<br>
+            - It's not ready yet,<br>
+            - You didn't sent it,<br>
+            - Something else.
+        </p>
+    {% endif %}
+</div>

@@ -1,0 +1,63 @@
+# yaml-language-server: $schema=../../vendor/symfony/dependency-injection/Loader/schema/services.schema.json
+# Le bundle JmonitorBundle n'est enregistré qu'en dev/prod (voir config/bundles.php) :
+# la config est donc scopée sous when@dev / when@prod pour ne pas casser le boot en test.
+when@dev:
+    jmonitor:
+        project_api_key: '%env(JMONITOR_API_KEY)%'
+        http_client: 'jmonitor_http_client'
+        logger: logger
+        collectors:
+            # Real collectors: the app runs in a Linux container (FrankenPHP + Caddy),
+            # so dev mirrors the prod collector set (see when@prod below).
+            system: ~
+            mysql:
+                db_name: 'jmonitor'
+                slow_queries:
+                    limit: 10
+                    min_exec_count: 5
+                    min_avg_time_ms: 5 # Minimum average execution time in ms for a query to be included.
+                    order_by: 'avg'
+            php:
+                # Served by the `localhost` host of docker/dev/Caddyfile.
+                endpoint: 'http://localhost/jmonitor/php-metrics'
+            caddy:
+                endpoint: 'http://localhost:2019/metrics'
+                frankenphp: true
+            redis:
+                dsn: '%env(REDIS_CACHE_DSN)%'
+            symfony: ~
+            # Optional test instance of PostgreSQL:
+            #   docker compose -f docker/pg-demo/compose.yaml up -d
+            # then uncomment to collect it.
+            #postgresql:
+            #    connection: 'app.pg_demo_connection'
+            #    schema: 'public'
+            #    slow_queries:
+            #        auto_create_extension: true
+            #        limit: 10
+            #        min_avg_time_ms: 0
+            #        order_by: 'avg'
+
+when@prod:
+    jmonitor:
+        # Empty var on self-hosted => falls back to the self-monitoring project's key (SelfMonitoringEnvVarProcessor).
+        project_api_key: '%env(selfmonitoring:JMONITOR_API_KEY)%'
+        http_client: 'jmonitor_http_client'
+        logger: logger
+        collectors:
+            system: ~
+            mysql:
+                # Cloud: DB name injected by the Clever Cloud MySQL add-on.
+                # Self-hosted: MYSQL_ADDON_DB does not exist => falls back to
+                # the app.jmonitor_mysql_db parameter ('jmonitor').
+                db_name: '%env(default:app.jmonitor_mysql_db:MYSQL_ADDON_DB)%'
+            php:
+                endpoint: '%env(default:app.jmonitor_php_endpoint:JMONITOR_PHP_ENDPOINT)%'
+            caddy:
+                endpoint: '%env(default:app.jmonitor_caddy_endpoint:JMONITOR_CADDY_ENDPOINT)%'
+                frankenphp: true
+            redis:
+                dsn: '%env(REDIS_CACHE_DSN)%'
+            symfony:
+                messenger:
+                    command: "php bin/console messenger:stats --format=json"

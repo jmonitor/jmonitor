@@ -1,0 +1,22 @@
+<twig:Card {{ ...attributes }}>
+    <div class="d-flex align-items-center gap-2 mb-4">
+        <twig:ux:icon name="material-symbols:ecg-heart" width="1.5em" height="1.5em" class="text-primary"/>
+        <h6 class="card-title mb-0">Collector status</h6>
+        <twig:Html:Badge:Badge badge="{{ lastPushStatus.badge }}" class="ms-auto" />
+    </div>
+
+    {% if lastPush %}
+        <twig:Metric:Metric:List>
+            <twig:InfoLine label="Version">{{ lastPush.collectorVersion }}</twig:InfoLine>
+            <twig:InfoLine label="Last push">
+                <span {{ stimulus_controller('relative-time', {timestamp: lastPush.lastPushAt.timestamp}) }}></span>
+            </twig:InfoLine>
+        </twig:Metric:Metric:List>
+    {% else %}
+        <twig:Metric:Metric:List>
+            <twig:InfoLine label="Last push">
+                {{ current_project().lastDataPushDate?.format('Y-m-d') }}
+            </twig:InfoLine>
+        </twig:Metric:Metric:List>
+    {% endif %}
+</twig:Card>

@@ -1,0 +1,68 @@
+{% extends 'dash/project/settings_layout.twig' %}
+
+{% block title %}Settings{% endblock %}
+
+{% block settings_content %}
+
+    <twig:Cards :titles="['Project', 'Danger Zone']">
+        <twig:block name="block_1">
+            {% set can_edit = is_granted('project.admin') %}
+            <twig:Card title="Rename project">
+                {{ form_start(form) }}
+                <fieldset {% if not can_edit %}disabled{% endif %}>
+                    <twig:Form:InputGroup form="{{ form.name }}">
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </twig:Form:InputGroup>
+                    {{ form_rest(form) }}
+                </fieldset>
+                {{ form_end(form) }}
+
+                <hr class="my-4v5">
+
+                <h3 class="card-title">My stack</h3>
+                <p>Choose the components that will appear in your menu.<br>Metrics received from disabled components will be discarded.</p>
+                <div class="row g-3">
+                    {% for component in components %}
+                        <div class="col-sm-6 col-lg-4">
+                            <form method="post" action="{{ path('project.settings.project.toggle_component', {component: component.value, uuid: current_project().uuid}) }}" class="h-100" data-turbo-frame="_top">
+                                <button type="submit" class="text-truncate btn {% if current_project().hasComponent(component) %}btn-primary{% else %}btn-outline-primary{% endif %} w-100 h-100" {% if not can_edit %}disabled{% endif %}>
+                                    {{ ux_icon(component.icon, {width: '1.2em', height: '1.2em'}) }} {{ component.label }}
+                                </button>
+                            </form>
+                        </div>
+                    {% endfor %}
+                </div>
+            </twig:Card>
+        </twig:block>
+
+        <twig:block name="block_2">
+            <twig:Card title="Reset metrics">
+                <twig:Alert type="danger">
+                    <span class="fw-semibold">This action is irreversible.</span> It will permanently delete all metrics collected for this project.
+                </twig:Alert>
+
+                <div class="d-flex align-items-center justify-content-between">
+                    <p class="mb-0">You can delete all your metrics for a fresh start!</p>
+                    <form action="{{ path('project.settings.clear_datas', {uuid: current_project().uuid}) }}" method="post" data-turbo-confirm="Please confirm. This action is irreversible.">
+                        <input type="hidden" name="_token" value="{{ csrf_token('clear_datas') }}">
+                        <button type="submit" class="btn btn-danger" {% if not is_granted('project.admin') %}disabled{% endif %}>{{ ux_icon('material-symbols:delete-outline', {width: '1.2em', height: '1.2em'}) }} Delete all metrics</button>
+                    </form>
+                </div>
+
+                <hr class="my-4v5">
+
+                <h3 class="card-title">Delete the project</h3>
+                <twig:Alert type="danger">
+                    <span class="fw-semibold">This action is irreversible.</span> Deleting the project is permanent and will permanently erase all associated data.
+                </twig:Alert>
+                <div class="d-flex align-items-center justify-content-between">
+                    <p class="mb-0">This is not (yet) a soft deletion. Please be certain.</p>
+                    <form action="{{ path('project.delete', {uuid: current_project().uuid}) }}" method="post" data-turbo-confirm="Please confirm. This action is irreversible." data-turbo-frame="_top">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete_project') }}">
+                        <button type="submit" class="btn btn-danger" {% if not is_granted('project.delete', current_project()) %}disabled{% endif %}>{{ ux_icon('material-symbols:delete-outline', {width: '1.2em', height: '1.2em'}) }} Delete this project</button>
+                    </form>
+                </div>
+            </twig:Card>
+        </twig:block>
+    </twig:Cards>
+{% endblock %}

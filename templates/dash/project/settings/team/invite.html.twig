@@ -1,0 +1,6 @@
+<turbo-frame id="team-invitations">
+    {{ form_start(form) }}
+    {{ form_rest(form) }}
+    <twig:Form:Submit label="Invite" cancelUrl="{{ path('project.settings.team', {uuid: current_project().uuid}) }}" />
+    {{ form_end(form) }}
+</turbo-frame>

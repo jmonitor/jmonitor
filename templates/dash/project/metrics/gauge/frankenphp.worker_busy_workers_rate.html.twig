@@ -1,0 +1,7 @@
+{# @var dto \App\Metrics\Renderer\Dto\BasicDto #}
+{# @var worker \App\Metrics\Dto\Bag\FrankenPhp\FrankenPhpWorkerBag #}
+{% set worker = dto.context.worker %}
+
+<twig:Metric:Metric:Gauge dto="{{ dto }}" chart="{{ chart }}" options="{{ options }}">
+    {{ worker.busyWorker }} / {{ worker.totalWorker }}
+</twig:Metric:Metric:Gauge>

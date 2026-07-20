@@ -1,0 +1,15 @@
+{% extends 'dash/base.html.twig' %}
+
+{% block content %}
+    <twig:Html:H1 icon="material-symbols:settings-outline">Project settings</twig:Html:H1>
+
+    <div class="mt-4">
+        <turbo-frame id="settings" class="d-flex flex-column gap-4" data-turbo-action="advance">
+            {{ renderMenu('project.settings', options: {project: current_project()}) }} {# TODO a menu component, so a class can be passed for the ul (e.g. flex-nowrap and overflow-x auto) #}
+
+            <div class="mt-2 d-flex flex-column gap-5 {% block max_width_css_class %}max-w-3xl{% endblock %}">
+                {% block settings_content %}{% endblock %}
+            </div>
+        </turbo-frame>
+    </div>
+{% endblock %}

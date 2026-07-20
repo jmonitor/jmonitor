@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <body class="min-vh-100 bg-body" {{ stimulus_controller('app')|stimulus_controller('toast-header') }}>
+        <div class="d-flex">
+            <nav>
+                <div class="sidebar sidebar-left {% if app.request.cookies.get('sidebar_state') == 'false' %}sidebar-closed{% endif %}" {{ stimulus_target('app', 'sidebar') }}>
+                    <aside class="min-vh-100 d-flex flex-column px-4">
+                        {% block sidebar %}{{ include('dash/common/_sidebar.html.twig') }}{% endblock %}
+                    </aside>
+                </div>
+            </nav>
+            <div class="flex-fill" style="min-width: 0;">
+                {{ include('dash/common/header.html.twig') }}
+                <div class="p-2 py-md-4 my-md-2 px-md-3 px-lg-4 px-xxl-5 mx-xl-2 mx-xxl-5 {% block container_max_width_css_class %}{% endblock %}">
+                    <div class="container-fluid d-flex flex-column gap-4">
+                        {% block content %}{% endblock %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# TODO render the offcanvas only when needed instead of always keeping it (empty) in the DOM #}
+        {{ include('dash/common/_turbo_offcanvas_end.html.twig') }}
+
+        {{ include('common/flash_messages_toast.html.twig') }}
+    </body>
+{% endblock %}

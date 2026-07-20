@@ -1,0 +1,5 @@
+<div {{ attributes.defaults({class: 'text-muted'}) }}>
+    Last update:
+    <span {{ stimulus_controller('relative-time', {timestamp: bag.receivedAt.getTimestamp(), live: true}) }}></span>
+    <twig:HelpIcon item="last_update_notice" class="mx-1" />
+</div>

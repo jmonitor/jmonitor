@@ -1,0 +1,9 @@
+.bg-body {
+    background: var(--app-body-bg)!important;
+}
+.bg-navbar {
+    background: var(--app-navbar-bg)!important;
+}
+.bg-card {
+    background: var(--app-card-bg)!important;
+}

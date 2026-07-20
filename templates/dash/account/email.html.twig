@@ -1,0 +1,12 @@
+<turbo-frame id="account-email">
+    {% if app.user.isDemo %}
+        <div class="text-secondary">{{ app.user.email }}</div>
+        <p class="text-secondary mt-2 mb-0"><small>The demo account e-mail cannot be changed.</small></p>
+    {% else %}
+        {{ form_start(form) }}
+        <twig:Form:InputGroup form="{{ form.email }}" class="max-w-lg">
+            <button type="submit" class="btn btn-primary">Save</button>
+        </twig:Form:InputGroup>
+        {{ form_end(form) }}
+    {% endif %}
+</turbo-frame>

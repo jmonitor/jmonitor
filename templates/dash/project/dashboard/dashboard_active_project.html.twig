@@ -1,0 +1,121 @@
+{% extends 'dash/base.html.twig' %}
+
+{% block content %}
+    <twig:Html:H1 icon="material-symbols:dashboard-outline">Dashboard</twig:Html:H1>
+
+    <div class="row g-4">
+        <div class="col-xxl-9 d-flex flex-column gap-4">
+            <div class="row g-4">
+                <div class="col-sm-6">
+                    <twig:Dashboard:Status class="h-100" />
+                </div>
+                <div class="col-sm-6">
+                    {% if nb_alerts === 0 %}
+                        <twig:Card class="h-100" cardBody:class="d-flex flex-column gap-4 text-center">
+                            <div class="mx-auto p-3 bg-card rounded">
+                                <twig:ux:icon name="material-symbols:notifications-outline" class="text-primary" width="2em" height="2em" />
+                            </div>
+
+                            <h6 class="card-title mb-0">Set alerts</h6>
+
+                            <p class="mx-lg-4 mx-xxl-5">
+                                Never miss a critical issue.
+                                <br>Set up real-time alerts now to prevent bottlenecks and maximize uptime.
+                            </p>
+
+                            <div class="mt-auto">
+                                <a href="{{ path('project.settings.alerts', {uuid: current_project().uuid}) }}" class="d-block btn btn-outline-primary mx-lg-4 mx-xxl-5">Set alerts</a>
+                            </div>
+                        </twig:Card>
+                    {% else %}
+                        <twig:Dashboard:PausedAlerts class="h-100" />
+                    {% endif %}
+                </div>
+            </div>
+
+            {# Help us improve #}
+            <twig:Card class="card-transparent">
+                <div class="d-flex align-items-center gap-4">
+                    <twig:ux:icon name="server-content-colored-bg" width="229px" height="188px" class="d-none d-lg-block"/>
+                    <div class="">
+                        <div class="container-fluid">
+                            <h3 class="card-title mb-5">Help us improve</h3>
+                            <div class="row g-4">
+                                <div class="col-sm-6">
+                                    <div class="d-flex flex-column gap-4 h-100">
+                                        <div class="text-primary-light text-uppercase fw-light">Suggestions</div>
+                                        <p class="text-muted mb-0">We're always working to improve your experience. Have an idea or a suggestion? <br>We'd love to hear from you!</p>
+                                        <a href="https://github.com/orgs/jmonitor/discussions/categories/2-feedback-feature-requests" class="btn btn-outline-primary align-self-start mt-auto" target="_blank">Send feedback <twig:ux:icon name="material-symbols:open-in-new" /></a>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-6">
+                                    <div class="d-flex flex-column gap-4 h-100">
+                                        <div class="text-primary-light text-uppercase fw-light">Something broken?</div>
+                                        <p class="text-muted mb-0">Please let us know if something isn't working as expected.<br>We're here to help!</p>
+                                        <a href="https://github.com/orgs/jmonitor/discussions/categories/3-issues-bug-reports" class="btn btn-outline-primary align-self-start mt-auto" target="_blank">Report issue <twig:ux:icon name="material-symbols:open-in-new" /></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </twig:Card>
+        </div>
+        <div class="col-xxl-3 d-flex flex-column gap-4">
+
+            <div class="row g-4">
+                {% if is_cloud() %}
+                <div class="col-6 col-xxl-12">
+                    {# Card PLAN #}
+                    <twig:Card cardBody:class="d-flex flex-column gap-4 text-center">
+                        {{ ux_icon(plan.icon, {class: 'mx-auto', width: '97px', height: '60px'}) }}
+
+                        <h5 class="card-title mb-0">{{ plan.label }}</h5>
+
+                        <small class="text-primary-light text-uppercase opacity-75 fw-light">{{ plan.subtitle }}</small>
+
+                        {% if subscription %}
+                            {% if not subscription.stripeSubscriptionId %}
+                                <div>
+                                    <span class="badge text-bg-info">Trial</span>
+                                </div>
+                            {% endif %}
+
+                            {% set label = subscription.autoRenew ? 'Days left until auto-renewal' : 'Days left' %}
+                            <twig:Html:ProgressBar class="progress-primary" value="{{ subscription.nbDaysLeft }}" max="{{ subscription.nbDaysInPeriod }}" label="{{ label }}" showPercent="{{ false }}" height="8" />
+
+                            {% if subscription.stripeSubscriptionId %}
+                                <a href="{{ stripe_portal_url }}">Manage subscription <twig:ux:icon name="material-symbols:open-in-new" /></a>
+                            {% endif %}
+                        {% endif %}
+
+                        <div class="mt-4"></div>
+                        <div class="mt-auto">
+                            <div>
+                                {% if subscription and not subscription.stripeSubscriptionId %}
+                                    {# current plan not linked to Stripe (trial): offer to subscribe, the remaining days are credited #}
+                                    <a href="{{ path('project.settings.plan.subscribe', {plan: plan.value, uuid: current_project().uuid}) }}" class="btn btn-primary w-75" target="_top">Subscribe to {{ plan.label }}</a>
+                                {% elseif plan.upgradeTo %}
+                                    {% if subscription and subscription.stripeSubscriptionId %}
+                                        {# plan switch (with proration) is handled by the Stripe portal, synced back by webhook #}
+                                        <a href="{{ stripe_portal_url }}" class="btn btn-primary w-75" target="_blank">Upgrade to {{ plan.upgradeTo.label }} <twig:ux:icon name="material-symbols:open-in-new" /></a>
+                                    {% else %}
+                                        <a href="{{ path('project.settings.plan.subscribe', {plan: plan.upgradeTo.value, uuid: current_project().uuid}) }}" class="btn btn-primary w-75" target="_top">Upgrade to {{ plan.upgradeTo.label }}</a>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                            <div class="mt-3">
+                                <a href="{{ path('project.settings.plan', {uuid: current_project().uuid}) }}" class="opacity-75">Learn more</a>
+                            </div>
+                        </div>
+                    </twig:Card>
+                </div>
+                {% endif %}
+                <div class="col-6 col-xxl-12">
+                    <twig:Dashboard:InviteTeam class="h-100" />
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

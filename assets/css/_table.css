@@ -1,0 +1,10 @@
+.table {
+    --bs-table-bg: transparent;
+
+    th {
+        font-weight: 400;
+        color: var(--app-primary-light);
+        font-size: var(--app-14-px);
+        text-transform: uppercase;
+    }
+}

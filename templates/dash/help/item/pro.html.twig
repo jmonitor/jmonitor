@@ -1,0 +1,8 @@
+{% extends 'dash/common/_turbo_offcanvas_end.html.twig' %}
+
+{% block title %}Pro feature{% endblock %}
+
+{% block body %}
+    <p>This feature is available on the Pro plan.</p>
+    <p><a href="{{ path('project.settings.plan', {uuid: current_project().uuid}) }}" target="_top">Upgrade to Pro</a></p>
+{% endblock %}

@@ -1,0 +1,19 @@
+login.or: or
+login.not_registred?: Not registered?
+password_lost.intro: Enter your email address below and we'll send you a link to reset your password.
+password_lost.submit: Send
+password_lost.check_mail: Check your email
+password_lost.back_to_login: Back to login
+register.email.label: Email
+register.password.label: Password
+register.password.confirmation.label: Confirm password
+password-retrieve.new_password.label: New password
+password-retrieve.new_password_verification.label: Confirm new password
+metric.redis.max_memory_policy.description.noeviction: When memory is full and a new write is attempted, Redis rejects the operation and returns an error.
+metric.redis.max_memory_policy.description.allkeys-lru: When memory is full and a new write is attempted, Redis evicts the least recently used keys from the entire dataset.
+metric.redis.max_memory_policy.description.volatile-lru: When memory is full and a new write is attempted, Redis evicts the least recently used keys among those with an expiration set.
+metric.redis.max_memory_policy.description.allkeys-lfu: When memory is full and a new write is attempted, Redis evicts the least frequently used keys from the entire dataset.
+metric.redis.max_memory_policy.description.volatile-lfu: When memory is full and a new write is attempted, Redis evicts the least frequently used keys among those with an expiration set.
+metric.redis.max_memory_policy.description.allkeys-random: When memory is full and a new write is attempted, Redis evicts random keys from the entire dataset.
+metric.redis.max_memory_policy.description.volatile-random: When memory is full and a new write is attempted, Redis evicts random keys among those with an expiration set.
+metric.redis.max_memory_policy.description.volatile-ttl: When memory is full and a new write is attempted, Redis evicts keys with an expiration set, prioritizing those with the shortest remaining TTL.

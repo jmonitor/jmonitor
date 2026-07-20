@@ -1,0 +1,45 @@
+# Native HTTPS overlay — no reverse proxy needed: the Caddy already inside the
+# app image terminates TLS itself, with automatic Let's Encrypt certificates.
+# Enable it by adding to .env:
+#   COMPOSE_FILE=compose.yaml:compose.https.yaml
+# Requires ports 80 and 443 free on this host and reachable from the internet
+# (Let's Encrypt validates the domains over them). No public domain? Set
+# JMONITOR_TLS in .env to use Caddy's internal CA instead — see README.md.
+#
+# Compose-internal traffic (server-side Mercure publishing, php-metrics, the
+# self-monitoring collector pushes) moves to a plain-HTTP listener on :2021,
+# not published outside the Docker network: port 80 then only serves the
+# HTTP→HTTPS redirects (and the ACME challenge).
+
+services:
+  app:
+    ports: !override
+      - "80:80"
+      - "443:443"
+      # HTTP/3
+      - "443:443/udp"
+    environment:
+      # Public hosts only — the :2021 internal site is declared in the
+      # Caddyfile itself (adding addresses of another listener here would
+      # duplicate the FrankenPHP worker pool).
+      JMONITOR_SITE_ADDRESS: "dash.${APP_DOMAIN:?}, collector.${APP_DOMAIN:?}, admin.${APP_DOMAIN:?}"
+      MERCURE_URL: http://app:2021/.well-known/mercure
+    volumes:
+      # Certificates and ACME account state. Without it every container
+      # recreation re-issues certificates and eventually hits Let's Encrypt
+      # rate limits.
+      - caddy-data:/data
+      - caddy-config:/config
+
+  worker:
+    environment:
+      MERCURE_URL: http://app:2021/.well-known/mercure
+
+  collector:
+    environment:
+      JMONITOR_COLLECTOR_URL: http://collector.${APP_DOMAIN:?}:2021
+      JMONITOR_PHP_ENDPOINT: http://app:2021/jmonitor/php-metrics
+
+volumes:
+  caddy-data:
+  caddy-config:

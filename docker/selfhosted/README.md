@@ -1,7 +1,8 @@
 # Self-hosting JMonitor
 
 Run your own JMonitor instance with Docker Compose, using the prebuilt image
-from GitHub Container Registry (`ghcr.io/jmonitor/jmonitor`). The stack:
+from Docker Hub ([`jmonitor/jmonitor`](https://hub.docker.com/r/jmonitor/jmonitor),
+also mirrored on `ghcr.io/jmonitor/jmonitor`). The stack:
 
 | Service | Role |
 |---|---|

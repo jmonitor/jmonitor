@@ -5,7 +5,7 @@ It's designed to simplify the visualization of server and stack metrics (PHP, My
 
 This project is the SaaS and main application. It contains the endpoint for collecting metrics, and consumes them to generate dashboards and alerts.
 
-The project follows an **open-core** model: one public repo (AGPL-3.0) serving two editions — the paid **cloud** edition (this production deployment) and a free **self-hosted** edition distributed as a Docker image (`ghcr.io/jmonitor/jmonitor`). See "Editions" below.
+The project follows an **open-core** model: one public repo (AGPL-3.0) serving two editions — the paid **cloud** edition (this production deployment) and a free **self-hosted** edition distributed as a Docker image (`jmonitor/jmonitor` on Docker Hub, mirrored on ghcr.io). See "Editions" below.
 
 Two other PHP packages are part of the project, included as composer dependencies (in the vendor folder):
 - [collector](https://github.com/jmonitor/collector) contains collectors (written in PHP) which are used to collect metrics from servers.
@@ -25,7 +25,7 @@ Behavior is gated by the `APP_EDITION` env var (`cloud` default / `selfhosted`) 
 - **Plan seam:** `App\Plan\PlanResolver` is the single entry point for resolving a project's plan (instead of `Project::getCurrentPlan()`). Self-hosted resolves to `Plan::SELF_HOSTED` (unlimited, fixed 1-year InfluxDB retention).
 - **Cloud-only gating:** billing/webhook routes return 404, billing menus/screens hidden, Stripe commands neutralized in self-hosted. Rate limiter uses a `no_limit` policy.
 - **Errors:** Sentry is force-disabled in self-hosted (`CloudOnlyEnvVarProcessor` empties `SENTRY_DSN`); prod errors go by email instead, driven by `ERROR_MAIL_TO` (NullHandler if empty).
-- **Packaging:** `docker/selfhosted/` (multi-stage Dockerfile, compose stack, entrypoint, own php.ini + README). `app:install` (idempotent, `src/Install/`: `EnvChecker`, `AdminProvisioner`, `SelfMonitoringProvisioner`) bootstraps a fresh install. Image published on ghcr.io by `.github/workflows/docker-publish.yml` on `v*` tags, with a compose smoke test.
+- **Packaging:** `docker/selfhosted/` (multi-stage Dockerfile, compose stack, entrypoint, own php.ini + README). `app:install` (idempotent, `src/Install/`: `EnvChecker`, `AdminProvisioner`, `SelfMonitoringProvisioner`) bootstraps a fresh install. Image published on Docker Hub (+ ghcr.io mirror) by `.github/workflows/docker-publish.yml` on `v*` tags (multi-arch amd64/arm64), with a compose smoke test.
 
 ## Architecture
 

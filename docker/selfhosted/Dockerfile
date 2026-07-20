@@ -1,6 +1,6 @@
 # Self-hosted production image. Build from the REPOSITORY ROOT:
-#   docker build -t ghcr.io/jmonitor/jmonitor:dev -f docker/selfhosted/Dockerfile .
-# Published to ghcr.io by .github/workflows/docker-publish.yml on version tags.
+#   docker build -t jmonitor/jmonitor:dev -f docker/selfhosted/Dockerfile .
+# Published to Docker Hub (+ ghcr.io mirror) by .github/workflows/docker-publish.yml on version tags.
 # The dev image is separate (docker/dev/, bind-mounted sources, no worker mode).
 
 FROM dunglas/frankenphp:1-php8.4 AS base

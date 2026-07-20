@@ -25,7 +25,7 @@ x-app-environment: &app-environment
 
 services:
   app:
-    image: ghcr.io/jmonitor/jmonitor:${JMONITOR_VERSION:-latest}
+    image: jmonitor/jmonitor:${JMONITOR_VERSION:-latest}
     restart: unless-stopped
     ports:
       - "${JMONITOR_HTTP_BIND:-127.0.0.1}:${JMONITOR_HTTP_PORT:-8080}:80"
@@ -56,7 +56,7 @@ services:
         condition: service_healthy
 
   worker:
-    image: ghcr.io/jmonitor/jmonitor:${JMONITOR_VERSION:-latest}
+    image: jmonitor/jmonitor:${JMONITOR_VERSION:-latest}
     restart: unless-stopped
     # Async messages (metrics ingestion, alerts, emails) + scheduled tasks.
     # --time-limit: exit cleanly every hour, compose restarts a fresh process.
@@ -79,7 +79,7 @@ services:
         condition: service_healthy
 
   collector:
-    image: ghcr.io/jmonitor/jmonitor:${JMONITOR_VERSION:-latest}
+    image: jmonitor/jmonitor:${JMONITOR_VERSION:-latest}
     restart: unless-stopped
     # Self-monitoring agent (jmonitor:collect). The sleep-infinity guard keeps
     # the container idle instead of restart-looping when SELF_MONITORING=0

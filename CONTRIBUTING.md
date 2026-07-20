@@ -10,18 +10,57 @@ Thanks for your interest in contributing!
 
 ## Development setup
 
-The dev environment is the Docker stack described in the [Development setup](README.md#development-setup) section of the README.
+Requirements: [Docker](https://docs.docker.com/get-docker/) (Compose v2) and `make`.
+On Windows, use Docker Desktop with the WSL2 backend and clone the repository **inside the
+WSL2 filesystem** (e.g. `~/jmonitor`, not `C:\...`) — bind-mount I/O on NTFS is very slow.
 
-## Quality checks
+```bash
+git clone git@github.com:jmonitor/jmonitor.git
+cd jmonitor
+make setup
+```
+
+That's it. The stack (FrankenPHP + Caddy + Mercure, MySQL, Redis, InfluxDB) is up:
+
+- http://dash.jmonitor.localhost — user dashboard
+- http://admin.jmonitor.localhost — admin panel
+- http://collector.jmonitor.localhost — metrics collection API
+- http://localhost:8086 — InfluxDB UI (`admin` / `jmonitor-dev`)
+
+Subdomains of `.localhost` resolve to your machine natively — no hosts file, no TLS setup.
+Dev defaults (committed, throwaway) live in `.env.dev`; personal overrides go to
+`.env.dev.local`. In the `dev` environment messages are handled synchronously — no
+Messenger worker is needed.
+
+Want populated dashboards without owning a server? `make demo` starts a worker feeding
+synthetic metrics to the public demo account — log in with `demo@jmonitor.io` / `demo`.
+
+Want real metrics from your dev stack? `make monitor` runs the collector loop in the
+foreground, pushing the dev stack's own metrics (FrankenPHP, MySQL, Redis, ...) into a
+dedicated dev project — log in with `dev@jmonitor.io` / `dev` (provisioned by
+`make setup`, API key preset in `.env.dev`). Once the demo project exists (`make demo`),
+run `make provision` to also link this login to it, so you can browse synthetic data for
+every component.
+
+Common commands: `make sh` (shell in the app container), `make monitor`, `make test`,
+`make phpstan`, `make cs`, `make down`. If a host port collides (80, 3306, 6379, 8086),
+override it in a gitignored `compose.override.yaml`.
+
+Prefer running without Docker? See `compose.yaml` for the required services and
+`.env.dev` for the expected DSNs, and point `APP_DOMAIN` subdomains at your own server.
+
+## Tests & quality checks
 
 Every pull request must pass CI, which runs the equivalent of:
 
 ```bash
 make cs       # PHP-CS-Fixer (@PER-CS style)
 make phpstan  # static analysis
-make test     # test suite
+make test     # PHPUnit test suite
 # or, inside the container (make sh):
-composer run lint:check / phpstan / phpunit
+composer run lint:check / phpstan / phpunit / rector:check
+php bin/console lint:twig templates
+php bin/console lint:yaml config
 ```
 
 Use `composer run lint:fix` (inside the container, via `make sh`) to fix style issues

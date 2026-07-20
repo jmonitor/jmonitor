@@ -90,6 +90,7 @@ jobs:
                     # CA stands in for Let's Encrypt: CI cannot pass an ACME challenge,
                     # but everything else (TLS termination, redirects, the :2021 internal
                     # listener) is the exact production code path.
+                    export JMONITOR_VERSION=smoke  # step env does not carry over from the previous step
                     echo 'COMPOSE_FILE=compose.yaml:compose.https.yaml' >> .env
                     echo 'JMONITOR_TLS=tls internal' >> .env
                     docker compose up -d --wait --wait-timeout 300

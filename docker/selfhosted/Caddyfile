@@ -66,15 +66,14 @@
 	metrics /metrics
 }
 
-# Compose-internal plain-HTTP listener (the port is not published). In native
-# HTTPS mode the internal traffic (server-side Mercure publishing, php-metrics,
-# self-monitoring pushes) lands here — compose.https.yaml points it at :2021;
-# in the default HTTP mode it goes through :80 and this site sits unused.
-# Plain php_server on purpose: a `worker` here would double the PHP worker
-# pool (FrankenPHP sums workers across listeners) for a handful of internal
-# requests per minute. The mercure handler shares the main site's hub: the
-# module pools transports process-wide, so events published here reach the
-# browsers subscribed through the public site.
+# Compose-internal plain-HTTP site (port never published): in native HTTPS
+# mode compose.https.yaml points Mercure publishing, php-metrics and the
+# self-monitoring pushes here; in the default HTTP mode they use :80 and this
+# site sits unused. Plain php_server on purpose: FrankenPHP sums `worker`
+# pools across listeners, so a worker here would double PHP memory for a
+# handful of internal requests per minute. The mercure handler shares the main
+# site's hub (the module pools transports process-wide), so events published
+# here reach browsers subscribed through the public site.
 http://app:2021, http://collector.{$APP_DOMAIN:localhost}:2021 {
 	root * public/
 

@@ -2,14 +2,12 @@
 # app image terminates TLS itself, with automatic Let's Encrypt certificates.
 # Enable it by adding to .env:
 #   COMPOSE_FILE=compose.yaml:compose.https.yaml
-# Requires ports 80 and 443 free on this host and reachable from the internet
-# (Let's Encrypt validates the domains over them). No public domain? Set
-# JMONITOR_TLS in .env to use Caddy's internal CA instead — see README.md.
-#
-# Compose-internal traffic (server-side Mercure publishing, php-metrics, the
-# self-monitoring collector pushes) moves to a plain-HTTP listener on :2021,
-# not published outside the Docker network: port 80 then only serves the
-# HTTP→HTTPS redirects (and the ACME challenge).
+# Ports 80/443 are deliberately bound on all interfaces (unlike the base
+# compose's loopback default): Let's Encrypt must reach them from the internet
+# — no public domain? Use Caddy's internal CA via JMONITOR_TLS, see README.md.
+# Compose-internal traffic moves to the Caddyfile's plain-HTTP :2021 site
+# (never published): port 80 then only serves the HTTP→HTTPS redirects and
+# the ACME challenge.
 
 services:
   app:

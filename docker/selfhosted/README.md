@@ -18,10 +18,10 @@ also mirrored on `ghcr.io/jmonitor/jmonitor`). The stack:
 - Docker with Compose v2, on any Linux host (2 GB RAM is a comfortable start).
 - A (sub)domain you control, with **three DNS records** (see below) — not
   needed for a local test (`.localhost` works without any DNS).
-- Something terminating TLS in front of the stack: a reverse proxy you run
-  (Caddy, nginx, Traefik…) or Cloudflare's proxy (see below) — the stack
-  itself speaks plain HTTP on a local port, which is also fine on its own for
-  local tests and private networks.
+- For HTTPS, the simplest path is built in: the stack serves HTTPS itself with
+  automatic Let's Encrypt certificates (see step 3) — it just needs ports 80
+  and 443. Alternatives: your own reverse proxy (Caddy, nginx, Traefik…),
+  Cloudflare's proxy, or plain HTTP for local tests and private networks.
 
 ## 1. DNS
 
@@ -42,19 +42,20 @@ all.
 (e.g. `APP_DOMAIN=jmonitor.localhost`). Browsers resolve any subdomain of
 `.localhost` to your own machine, so after `docker compose up -d` the
 dashboard is at `http://dash.jmonitor.localhost:8080` — you can also skip
-the reverse proxy step entirely.
+the HTTPS step entirely.
 
-> **Warning:** without a TLS proxy, the real-time dashboard updates are
-> degraded: the stack assumes `https://` for Mercure (server-sent events), so
-> the browser cannot subscribe and dashboards only refresh on page reload.
-> Everything else works normally. For full parity, put a local TLS proxy in
-> front (e.g. Caddy with `tls internal`) and follow the production steps.
+> **Warning:** over plain HTTP, the real-time dashboard updates are degraded:
+> the stack assumes `https://` for Mercure (server-sent events), so the
+> browser cannot subscribe and dashboards only refresh on page reload.
+> Everything else works normally. For full parity, enable native HTTPS with
+> `JMONITOR_TLS=tls internal` (see step 3) — it works fine on `.localhost`.
 
 ## 2. Configure
 
 ```bash
 mkdir jmonitor && cd jmonitor
 curl -fsSLO https://raw.githubusercontent.com/jmonitor/jmonitor/master/docker/selfhosted/compose.yaml
+curl -fsSLO https://raw.githubusercontent.com/jmonitor/jmonitor/master/docker/selfhosted/compose.https.yaml
 curl -fsSL -o .env https://raw.githubusercontent.com/jmonitor/jmonitor/master/docker/selfhosted/.env.example
 ```
 
@@ -68,11 +69,49 @@ Set `TZ` to your timezone now rather than later (see [Timezone](#timezone)).
 
 The app refuses to start while a `CHANGE_ME` placeholder remains.
 
-## 3. Reverse proxy
+## 3. HTTPS
 
-> **Note:** this step is optional, but recommended — it is what serves
-> JMonitor over HTTPS. Skipping it is fine for local tests and private
-> networks (see "No TLS at all?" at the end of this section).
+Pick one of the options below. HTTPS is recommended: credentials travel over
+these hosts, and the real-time dashboard updates require it (see "No TLS at
+all?" for what plain HTTP means).
+
+### Native HTTPS — recommended, nothing to install
+
+The stack serves HTTPS itself: the Caddy server already inside the app
+container obtains and renews **Let's Encrypt certificates automatically** (one
+per host, HTTP challenge) and redirects HTTP to HTTPS. It needs ports **80 and
+443** free on the host and reachable from the internet, plus the DNS records
+from step 1. Enable it in `.env`:
+
+```
+COMPOSE_FILE=compose.yaml:compose.https.yaml
+```
+
+That's it — skip to step 4. In this mode the stack binds ports 80/443 directly
+(`JMONITOR_HTTP_PORT` / `JMONITOR_HTTP_BIND` are ignored).
+
+**Private network or no public domain?** Let's Encrypt cannot reach you; add
+to `.env`:
+
+```
+JMONITOR_TLS=tls internal
+```
+
+Certificates are then signed by Caddy's own local CA. Browsers warn until they
+trust that CA — export it and install it on your machines:
+
+```bash
+docker compose cp app:/data/caddy/pki/authorities/local/root.crt jmonitor-ca.crt
+```
+
+Real-time dashboards work in this mode too (they only need `https://`, not a
+publicly trusted certificate — accepting the browser warning is enough).
+
+**Bringing your own certificates** (corporate CA, wildcard you already own):
+mount them into the `app` service via a compose override and set
+`JMONITOR_TLS=tls /certs/cert.pem /certs/key.pem` in `.env`.
+
+### Your own reverse proxy
 
 Forward the three hosts to the stack's HTTP port (default `8080`), preserving
 the `Host` header. TLS certificates are handled by your proxy (three individual
@@ -118,7 +157,9 @@ You'll also need to set `JMONITOR_HTTP_BIND=0.0.0.0` in `.env` (the port binds
 to `127.0.0.1` only by default) — and firewall the port, since it's now
 reachable from outside the host.
 
-**Cloudflare** — if your DNS is on Cloudflare, you can skip running a proxy
+### Cloudflare
+
+If your DNS is on Cloudflare, you can skip running a proxy
 altogether: enable the proxy ("orange cloud") on the three records and
 Cloudflare terminates TLS at its edge. Set the SSL/TLS mode to *Flexible* (or
 *Full* with a Cloudflare origin certificate, to also encrypt the
@@ -126,7 +167,9 @@ Cloudflare→server leg), expose the stack on port 80 (`JMONITOR_HTTP_PORT=80`,
 `JMONITOR_HTTP_BIND=0.0.0.0` in `.env`), and ideally firewall the port to
 [Cloudflare's IP ranges](https://www.cloudflare.com/ips/).
 
-**No TLS at all?** The stack also works over plain HTTP — nothing breaks
+### No TLS at all?
+
+The stack also works over plain HTTP — nothing breaks
 except the real-time dashboard updates, which assume `https://` (same
 degradation as the local-test case, see the warning in the DNS section).
 Credentials then travel unencrypted, so keep that for local tests and private
@@ -236,6 +279,11 @@ docker compose exec -T influxdb sh -c 'rm -rf /tmp/backup && influx backup /tmp/
   header (`proxy_set_header Host $host;` for nginx). The app routes by host name.
 - **Login loops / mixed-content errors** — the proxy must forward
   `X-Forwarded-Proto` so the app generates `https://` URLs.
+- **Native HTTPS: no certificate, connection refused/reset on 443** — Let's
+  Encrypt could not validate the domains: check the DNS records and that ports
+  80/443 are open from the internet, then look at
+  `docker compose logs app | grep -i acme`. Certificates are stored in the
+  `caddy-data` volume once issued.
 - **Dashboards don't refresh in real time** — SSE buffered by the proxy: see
   the `proxy_buffering off` / `proxy_read_timeout` lines in the nginx example.
 - **InfluxDB UI** — not published by default; `http://<host>:8086` inside the

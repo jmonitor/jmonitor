@@ -2,9 +2,13 @@
 # FrankenPHP worker mode, same-process Mercure hub, admin API on :2019 (the
 # image healthcheck and the caddy collector target it).
 #
-# TLS terminates at the self-hoster's reverse proxy (see README.md): this
-# container speaks plain HTTP on :80. Symfony routes by Host header
-# (config/routes.yaml), so one site block serves dash. / collector. / admin.
+# Two TLS modes, selected by JMONITOR_SITE_ADDRESS (see README.md):
+# - default (:80): plain HTTP, TLS terminates at the self-hoster's reverse proxy.
+# - native HTTPS (compose.https.yaml): the address lists the three public hosts,
+#   Caddy obtains/renews the certificates itself (Let's Encrypt, or its internal
+#   CA via JMONITOR_TLS); compose-internal traffic moves to the :2021 site below.
+# Symfony routes by Host header (config/routes.yaml), so one site block serves
+# dash. / collector. / admin. in both modes.
 {
 	admin localhost:2019
 	metrics
@@ -21,9 +25,13 @@
 	}
 }
 
-:80 {
+{$JMONITOR_SITE_ADDRESS::80} {
 	root * public/
 	encode zstd br gzip
+
+	# Native HTTPS mode only, empty otherwise: "tls internal" (Caddy's local CA,
+	# for private networks) or "tls /path/cert.pem /path/key.pem" (own certs).
+	{$JMONITOR_TLS:}
 
 	header {
 		X-Content-Type-Options "nosniff"
@@ -36,7 +44,7 @@
 		publisher_jwt {$MERCURE_JWT_SECRET} HS256
 		subscriber_jwt {$MERCURE_JWT_SECRET} HS256
 
-		# Browsers subscribe from the dashboard origin (TLS terminated upstream).
+		# Browsers subscribe from the dashboard origin (https:// in both TLS modes).
 		cors_origins https://dash.{$APP_DOMAIN}
 		publish_origins https://dash.{$APP_DOMAIN}
 	}
@@ -56,4 +64,26 @@
 # only: the port is not published). The admin API stays on localhost:2019.
 :2020 {
 	metrics /metrics
+}
+
+# Compose-internal plain-HTTP site (port never published): in native HTTPS
+# mode compose.https.yaml points Mercure publishing, php-metrics and the
+# self-monitoring pushes here; in the default HTTP mode they use :80 and this
+# site sits unused. Plain php_server on purpose: FrankenPHP sums `worker`
+# pools across listeners, so a worker here would double PHP memory for a
+# handful of internal requests per minute. The mercure handler shares the main
+# site's hub (the module pools transports process-wide), so events published
+# here reach browsers subscribed through the public site.
+http://app:2021, http://collector.{$APP_DOMAIN:localhost}:2021 {
+	root * public/
+
+	mercure {
+		transport local
+		publisher_jwt {$MERCURE_JWT_SECRET} HS256
+		subscriber_jwt {$MERCURE_JWT_SECRET} HS256
+		cors_origins https://dash.{$APP_DOMAIN}
+		publish_origins https://dash.{$APP_DOMAIN}
+	}
+
+	php_server
 }

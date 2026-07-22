@@ -48,7 +48,7 @@ This repository is the server application: it ingests the metrics, stores time s
 
 ## Self-hosting
 
-JMonitor is free to self-host: the full stack (app, worker, MySQL, Redis, InfluxDB) runs from a prebuilt Docker image published on Docker Hub ([`jmonitor/jmonitor`](https://hub.docker.com/r/jmonitor/jmonitor)). See the **[self-hosting guide](docker/selfhosted/README.md)**.
+JMonitor is free to self-host: the full stack (app, worker, MySQL, Redis, InfluxDB) runs from a prebuilt Docker image published on Docker Hub ([`jmonitor/jmonitor`](https://hub.docker.com/r/jmonitor/jmonitor)). See the **[self-hosting guide](docker/selfhosted/README.md)** — or the **[container platform guide](docs/paas.md)** to deploy through Coolify and similar PaaS.
 
 ## Stack
 

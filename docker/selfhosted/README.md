@@ -1,8 +1,18 @@
 # Self-hosting JMonitor
 
-Run your own JMonitor instance with Docker Compose, using the prebuilt image
+[JMonitor](https://jmonitor.io) is an easy-to-use monitoring tool for PHP web
+stacks: it turns your server metrics (PHP, MySQL, Redis, Nginx…) into clear
+dashboards and alerts. See [jmonitor.io](https://jmonitor.io) for an overview,
+try the [live demo](https://dash.jmonitor.io) (`demo@jmonitor.io` / `demo`),
+or browse the source on [GitHub](https://github.com/jmonitor/jmonitor)
+(AGPL-3.0).
+
+This guide runs your own instance with Docker Compose, using the prebuilt image
 from Docker Hub ([`jmonitor/jmonitor`](https://hub.docker.com/r/jmonitor/jmonitor),
-also mirrored on `ghcr.io/jmonitor/jmonitor`). The stack:
+also mirrored on `ghcr.io/jmonitor/jmonitor`). Deploying through a container
+platform instead (Coolify, CapRover…)? See the
+[container platform guide](https://github.com/jmonitor/jmonitor/blob/master/docs/paas.md).
+The stack:
 
 | Service | Role |
 |---|---|
@@ -47,8 +57,16 @@ the HTTPS step entirely.
 > **Warning:** over plain HTTP, the real-time dashboard updates are degraded:
 > the stack assumes `https://` for Mercure (server-sent events), so the
 > browser cannot subscribe and dashboards only refresh on page reload.
-> Everything else works normally. For full parity, enable native HTTPS with
-> `JMONITOR_TLS=tls internal` (see step 3) — it works fine on `.localhost`.
+> Everything else works normally. For full parity, enable native HTTPS in its
+> "private network" variant — **both** lines in `.env` (details in step 3):
+>
+> ```
+> COMPOSE_FILE=compose.yaml:compose.https.yaml
+> JMONITOR_TLS=tls internal
+> ```
+>
+> The dashboard is then at `https://dash.jmonitor.localhost` — no `:8080`,
+> the stack now listens on the standard HTTPS port.
 
 ## 2. Configure
 
@@ -79,9 +97,9 @@ all?" for what plain HTTP means).
 
 The stack serves HTTPS itself: the Caddy server already inside the app
 container obtains and renews **Let's Encrypt certificates automatically** (one
-per host, HTTP challenge) and redirects HTTP to HTTPS. It needs ports **80 and
-443** free on the host and reachable from the internet, plus the DNS records
-from step 1. Enable it in `.env`:
+per host) and redirects HTTP to HTTPS. It needs ports **80 and 443** free on
+the host and reachable from the internet, plus the DNS records from step 1.
+Enable it in `.env`:
 
 ```
 COMPOSE_FILE=compose.yaml:compose.https.yaml
@@ -90,12 +108,15 @@ COMPOSE_FILE=compose.yaml:compose.https.yaml
 That's it — skip to step 4. In this mode the stack binds ports 80/443 directly
 (`JMONITOR_HTTP_PORT` / `JMONITOR_HTTP_BIND` are ignored).
 
-**Private network or no public domain?** Let's Encrypt cannot reach you; add
-to `.env`:
+**Private network or no public domain?** Let's Encrypt cannot reach you;
+keep the `COMPOSE_FILE` line above and **also** add:
 
 ```
 JMONITOR_TLS=tls internal
 ```
+
+(`JMONITOR_TLS` has no effect without the `COMPOSE_FILE` line — the stack
+would silently stay HTTP-only.)
 
 Certificates are then signed by Caddy's own local CA. Browsers warn until they
 trust that CA — export it and install it on your machines:
@@ -188,6 +209,31 @@ Every later start re-runs the same sequence, which is idempotent: upgrades
 apply migrations automatically, and the admin is never recreated.
 
 Then log in at `https://dash.<APP_DOMAIN>` with `ADMIN_EMAIL` / `ADMIN_PASSWORD`.
+You'll already see metrics: the stack monitors itself out of the box (see
+[Self-monitoring](#self-monitoring)).
+
+## 5. Monitor your own servers
+
+To monitor **your own servers and apps**, create a project in the dashboard,
+grab its API key, and install a collector in the PHP project(s) you want to
+monitor — it's a Composer package that reports the whole stack around the app
+(PHP, MySQL, Redis, web server…):
+
+- [jmonitor/collector](https://github.com/jmonitor/collector) — for any PHP project
+- [jmonitor/jmonitor-bundle](https://github.com/jmonitor/jmonitor-bundle) — Symfony integration
+
+By default the collector sends its metrics to the cloud service
+(`collector.jmonitor.io`). To point it at **your** instance instead, set one
+environment variable in the monitored app:
+
+```
+JMONITOR_COLLECTOR_URL=https://collector.<APP_DOMAIN>
+```
+
+In a Symfony app, add that line to the `.env` file. Anywhere else, set it as a
+regular environment variable — it must be visible to the process that runs the
+collector (cron job, systemd service, container…). Use `http://` instead if
+your instance runs without TLS.
 
 ## Self-monitoring
 
@@ -207,18 +253,6 @@ Re-enabling later is manual: the project is only auto-created on the very
 first start — create a project in the dashboard, put its API key in `.env`
 as `JMONITOR_API_KEY` (and remove `SELF_MONITORING=0` if set), then recreate
 the service so it picks up the new `.env`: `docker compose up -d collector`.
-
-## 5. Send metrics
-
-To monitor **your own servers and apps**, create a project in the dashboard,
-grab its API key, and install a collector in the PHP project(s) you want to
-monitor — it's a Composer package that reports the whole stack around the app
-(PHP, MySQL, Redis, web server…):
-
-- [jmonitor/collector](https://github.com/jmonitor/collector) — for any PHP project
-- [jmonitor/jmonitor-bundle](https://github.com/jmonitor/jmonitor-bundle) — Symfony integration
-
-Point the collector at `https://collector.<APP_DOMAIN>`.
 
 ## Email & error reporting
 
@@ -260,9 +294,10 @@ once the app is healthy again.
 
 ## Backup
 
-All state lives in three named volumes: `mysql-data`, `influxdb-data`,
-`redis-data` (losing the Redis one drops sessions and any queued-but-unprocessed
-messages — alerts/emails in flight — but no persistent data). Consistent dumps:
+All application state lives in three named volumes: `mysql-data`,
+`influxdb-data`, `redis-data` (losing the Redis one drops sessions and any
+queued-but-unprocessed messages — alerts/emails in flight — but no persistent
+data). Consistent dumps:
 
 ```bash
 docker compose exec -T mysql sh -c 'mysqldump -p"$MYSQL_ROOT_PASSWORD" jmonitor' > jmonitor-mysql.sql
@@ -270,6 +305,12 @@ docker compose exec -T influxdb sh -c 'rm -rf /tmp/backup && influx backup /tmp/
 ```
 
 (`-T` disables the pseudo-TTY whose ONLCR translation corrupts redirected binary output; `rm -rf` prevents stale accumulation; `1>&2` keeps influx progress output out of the tar stream.)
+
+In native HTTPS mode there are two more volumes: `caddy-data` (certificates
+and Let's Encrypt account) and `caddy-config`. Nothing irreplaceable —
+certificates are re-issued automatically if lost — but including `caddy-data`
+in your backups avoids re-issuing them on every restore, which can hit
+Let's Encrypt rate limits.
 
 ## Troubleshooting
 
@@ -284,6 +325,10 @@ docker compose exec -T influxdb sh -c 'rm -rf /tmp/backup && influx backup /tmp/
   80/443 are open from the internet, then look at
   `docker compose logs app | grep -i acme`. Certificates are stored in the
   `caddy-data` volume once issued.
+- **Set `JMONITOR_TLS` but the stack stays on HTTP** — `JMONITOR_TLS` has no
+  effect without the native-HTTPS overlay: also add
+  `COMPOSE_FILE=compose.yaml:compose.https.yaml` to `.env`, then re-run
+  `docker compose up -d`.
 - **Dashboards don't refresh in real time** — SSE buffered by the proxy: see
   the `proxy_buffering off` / `proxy_read_timeout` lines in the nginx example.
 - **InfluxDB UI** — not published by default; `http://<host>:8086` inside the

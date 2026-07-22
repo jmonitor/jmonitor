@@ -29,7 +29,8 @@
         {# needed for this.requestSubmit() to work #}
         <div class="d-none"><button type="submit"></button></div>
     {{ form_end(form) }}
-    {% if bag %}
+    {# EmbedAutoRefreshForm does not expose a bag #}
+    {% if bag is defined and bag %}
         <twig:Dash:LastUpdateNotice bag="{{ bag }}" class="text-end mt-1" />
     {% endif %}
 </div>

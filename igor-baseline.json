@@ -108,6 +108,23 @@
                 "message": "Mutation of state 'paused' in Alert::setPaused()"
             }
         ],
+        "src/Entity/Embed.php": [
+            {
+                "message": "Mutation of state 'project' in Embed::setProject()"
+            },
+            {
+                "message": "Mutation of state 'createdBy' in Embed::setCreatedBy()"
+            },
+            {
+                "message": "Mutation of state 'config' in Embed::setDto()"
+            },
+            {
+                "message": "Mutation of state 'revokedAt' in Embed::revoke()"
+            },
+            {
+                "message": "Mutation of state 'lastUsedAt' in Embed::touchLastUsed()"
+            }
+        ],
         "src/Entity/Order.php": [
             {
                 "message": "Mutation of state 'createdAt' in Order::setCreatedAt()"

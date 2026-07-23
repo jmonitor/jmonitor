@@ -1,7 +1,5 @@
 <?php
 
-// src/Controller/Dash/Project/Settings/SettingsEmbedController.php
-
 declare(strict_types=1);
 
 namespace App\Controller\Dash\Project\Settings;

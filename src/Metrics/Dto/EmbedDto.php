@@ -27,6 +27,28 @@ readonly class EmbedDto implements JsonSerializable
         public ?array $chartConfig = null,
     ) {}
 
+    /**
+     * Rebuilds a DTO from the array shape produced by jsonSerialize() (DB-stored embed config).
+     *
+     * @param array<string, mixed> $data
+     */
+    public static function fromArray(array $data): self
+    {
+        $chartConfig = $data['cc'] ?? null;
+
+        if (is_array($chartConfig) && isset($chartConfig['aspectRatio'])) {
+            $chartConfig['aspectRatio'] = is_numeric($chartConfig['aspectRatio']) ? (float) $chartConfig['aspectRatio'] : null;
+        }
+
+        return new self(
+            metric: Metric::from($data['m']),
+            renderer: isset($data['re']) ? Renderer::from($data['re']) : null,
+            range: isset($data['ra']) ? TimeRange::from($data['ra']) : null,
+            autoRefresh: (bool) ($data['ar'] ?? false),
+            chartConfig: $chartConfig,
+        );
+    }
+
     public function with(?Renderer $renderer = null, ?TimeRange $range = null, ?bool $autoRefresh = null, ?array $chartConfig = null): self
     {
         return new self(

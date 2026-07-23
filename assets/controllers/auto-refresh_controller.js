@@ -7,7 +7,8 @@ export default class extends Controller {
     static values = {
         enabled: Boolean,
         topic: String,
-        component: String
+        component: String,
+        withCredentials: { type: Boolean, default: true }
     };
 
     connect() {
@@ -23,8 +24,9 @@ export default class extends Controller {
     enable() {
         this.#clearReconnectTimer();
 
-        // withCredentials: sends the Mercure authorization cookie (subscriber JWT scoped to the project)
-        this.eventSource = new EventSource(this.topicValue, { withCredentials: true });
+        // withCredentials sends the Mercure authorization cookie (dashboard pages).
+        // Public embeds pass the JWT in the URL instead and disable credentials.
+        this.eventSource = new EventSource(this.topicValue, { withCredentials: this.withCredentialsValue });
         this.eventSource.onmessage = this.#onMessage.bind(this);
         this.eventSource.onerror  = this.#onError.bind(this);
         this.eventSource.onopen = this.#onOpen.bind(this);
@@ -38,6 +40,10 @@ export default class extends Controller {
         this.eventSource = null;
 
         this.disableLoaderState();
+    }
+
+    toggle(event) {
+        this.enabledValue = event.target.checked;
     }
 
     #onMessage(event) {

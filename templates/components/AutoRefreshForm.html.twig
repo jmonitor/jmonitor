@@ -1,4 +1,3 @@
-{# Careful: view shared by 2 components #}
 <div {{ attributes }}
     {{
         stimulus_controller('auto-refresh', {
@@ -29,8 +28,7 @@
         {# needed for this.requestSubmit() to work #}
         <div class="d-none"><button type="submit"></button></div>
     {{ form_end(form) }}
-    {# EmbedAutoRefreshForm does not expose a bag #}
-    {% if bag is defined and bag %}
+    {% if bag %}
         <twig:Dash:LastUpdateNotice bag="{{ bag }}" class="text-end mt-1" />
     {% endif %}
 </div>

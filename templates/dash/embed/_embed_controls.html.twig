@@ -1,0 +1,29 @@
+{# templates/dash/embed/_embed_controls.html.twig #}
+{# Live toggle + manual refresh for an embed card. Pure client-side: no form, no POST. #}
+<div class="d-inline-flex gap-3 align-items-center"
+    {{
+        stimulus_controller('auto-refresh', {
+            enabled: enabled,
+            topic: subscribeUrl,
+            component: embed.metric.component.value,
+            withCredentials: withCredentials,
+        })
+    }}
+>
+    {% if showProBadge %}
+        <a href="{{ path('project.help.item', {item: 'pro', uuid: current_project().uuid}) }}" {{ stimulus_action('app', 'turboCanvas') }}>
+            <twig:Html:Badge:Neutral>Pro</twig:Html:Badge:Neutral>
+        </a>
+    {% endif %}
+    <div class="form-check form-switch mb-0">
+        <input type="checkbox" class="form-check-input"
+            {{ stimulus_action('auto-refresh', 'toggle', 'change') }}
+            {% if enabled %}checked{% endif %}
+            {% if not canAutoRefresh %}disabled{% endif %}
+        >
+        <label class="form-check-label checkbox-switch">Live</label>
+    </div>
+    <button class="btn btn-primary" type="button" {{ stimulus_target('auto-refresh', 'btn') }} {{ stimulus_action('auto-refresh', 'triggerReload') }}>
+        <twig:ux:icon name="material-symbols:refresh" data-auto-refresh-target="icon" width="1.2em" height="1.2em" />
+    </button>
+</div>

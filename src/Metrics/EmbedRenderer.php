@@ -17,7 +17,7 @@ readonly class EmbedRenderer
     ) {}
 
     #[AsTwigFilter('render_embed', isSafe: ['html'])]
-    public function render(EmbedDto $embed): string
+    public function render(EmbedDto $embed, bool $public = false): string
     {
         $rendererOptions = EmbedRendererOptionsBuilder::fromEmbedDto($embed);
 
@@ -30,6 +30,7 @@ readonly class EmbedRenderer
         return $this->twig->render('dash/embed/_embed.html.twig', [
             'inner' => $inner,
             'embed' => $embed,
+            'public' => $public,
         ]);
     }
 }

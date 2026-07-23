@@ -18,7 +18,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class AutoRefreshType extends AbstractType
 {
     public const string NAME = 'auto_refresh';
-    public const string EMBED_NAME = 'embed_auto_refresh';
 
     private readonly Security $security;
 

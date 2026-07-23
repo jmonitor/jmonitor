@@ -15,9 +15,26 @@
             {{ block('content') }}
         </div>
         <div class="card-footer text-end">
-            <div class="d-inline-flex gap-2 justify-content-end align-items-center">
-                <twig:EmbedAutoRefreshForm embedDto="{{ embed }}" />
-            </div>
+            {% if public %}
+                {# Embeddable plans are all PRO+, so auto-refresh is always allowed here. #}
+                {{ include('dash/embed/_embed_controls.html.twig', {
+                    embed: embed,
+                    enabled: embed.autoRefresh,
+                    canAutoRefresh: true,
+                    showProBadge: false,
+                    subscribeUrl: consumed_metric_public_subscribe_url(),
+                    withCredentials: false,
+                }) }}
+            {% else %}
+                {{ include('dash/embed/_embed_controls.html.twig', {
+                    embed: embed,
+                    enabled: embed.autoRefresh and is_granted('right.autorefresh'),
+                    canAutoRefresh: is_granted('right.autorefresh'),
+                    showProBadge: not is_granted('right.autorefresh'),
+                    subscribeUrl: consumed_metric_subscribe_url(),
+                    withCredentials: true,
+                }) }}
+            {% endif %}
         </div>
     </div>
 </turbo-frame>

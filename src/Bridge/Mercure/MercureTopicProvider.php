@@ -51,6 +51,34 @@ readonly class MercureTopicProvider
         return $this->hub->getPublicUrl() . '?topic=' . rawurlencode($topic);
     }
 
+    /**
+     * EventSource subscription URL for public embed pages (no session): the subscriber
+     * JWT rides in the `authorization` query parameter instead of a cookie, because
+     * cookies are not sent from cross-site iframes.
+     */
+    #[AsTwigFunction('consumed_metric_public_subscribe_url')]
+    public function getPublicConsumedMetricSubscribeUrl(?Project $project = null): string
+    {
+        $project ??= $this->projectContext->getCurrentProject();
+        $topic = $this->getConsumedMetricUrl($project);
+
+        $url = $this->hub->getPublicUrl() . '?topic=' . rawurlencode($topic);
+
+        // Subscribe-only, single-topic, expiring token. The page re-mints one on each
+        // (auto-)refresh, so a short lifetime does not break long-running widgets.
+        $jwt = $this->hub->getFactory()?->create(
+            subscribe: [$topic],
+            publish: [],
+            additionalClaims: ['exp' => new \DateTimeImmutable('+1 day')],
+        );
+
+        if ($jwt !== null) {
+            $url .= '&authorization=' . rawurlencode($jwt);
+        }
+
+        return $url;
+    }
+
     private function authorizeSubscription(string $topic): void
     {
         $request = $this->requestStack->getMainRequest();

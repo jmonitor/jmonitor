@@ -1,0 +1,23 @@
+{# Minimal head for public embeds: no sidebar, no manifest, no app chrome. #}
+<!DOCTYPE html>
+<html lang="{{ app.locale }}" data-bs-theme="dark">
+    <head>
+        <meta charset="UTF-8">
+        <title>{{ block('title') is defined ? block('title') ~ ' | Jmonitor' : 'Jmonitor' }}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="robots" content="noindex">
+        <meta name="turbo-cache-control" content="no-preview">
+
+        {{ importmap('app') }}
+
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&family=IBM+Plex+Sans:ital,wght@0,300..600;1,300..600&family=Outfit:wght@300..600&display=swap" rel="stylesheet">
+
+        <link rel="icon" href="{{ asset('im/favicons/logo-96x96.png') }}" sizes="96x96" type="image/png">
+        <link rel="icon" type="image/svg+xml" href="{{ asset('im/favicons/logo.svg') }}" />
+    </head>
+    <body class="bg-body p-2">
+        {% block body %}{% endblock %}
+    </body>
+</html>

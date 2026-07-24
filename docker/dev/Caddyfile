@@ -8,14 +8,24 @@
 	metrics
 }
 
-# One HTTP site block for every host: Symfony routes by Host header (config/routes.yaml).
-# `localhost` serves in-container calls (the php-metrics endpoint fetched by the php
-# collector); `app` (the compose service name) serves cross-container server-side calls
-# like Mercure publishing (MERCURE_URL) — *.localhost can't be used for those because
-# libcurl force-resolves it to loopback (RFC 6761), bypassing Docker DNS.
-http://dash.jmonitor.localhost, http://collector.jmonitor.localhost, http://admin.jmonitor.localhost, http://webhook.jmonitor.localhost, http://localhost, http://app {
+# One site block for every host: Symfony routes by Host header (config/routes.yaml).
+#
+# Two modes, selected by DEV_SITE_ADDRESS (see CONTRIBUTING.md "HTTPS in dev"):
+# - default: plain HTTP on :80, and this block also serves the in-container calls
+#   (`localhost` for the php-metrics endpoint fetched by the php collector, `app` —
+#   the compose service name — for cross-container calls like Mercure publishing;
+#   *.localhost can't be used for those because libcurl force-resolves it to
+#   loopback (RFC 6761), bypassing Docker DNS).
+# - HTTPS (compose.https.yaml): the address lists the public hosts only, Caddy
+#   issues the certificates from its internal CA (DEV_TLS), and the in-container
+#   calls move to the plain-HTTP :2021 site below.
+{$DEV_SITE_ADDRESS:http://dash.jmonitor.localhost, http://collector.jmonitor.localhost, http://admin.jmonitor.localhost, http://webhook.jmonitor.localhost, http://localhost, http://app} {
 	root * public/
 	encode zstd br gzip
+
+	# HTTPS mode only, empty otherwise: "tls internal" (Caddy's local CA).
+	{$DEV_TLS:}
+
 	header {
 		X-Content-Type-Options "nosniff"
 	}
@@ -27,7 +37,7 @@ http://dash.jmonitor.localhost, http://collector.jmonitor.localhost, http://admi
 		publisher_jwt "!ChangeThisDevMercureSecret-min-32-bytes!" HS256
 		subscriber_jwt "!ChangeThisDevMercureSecret-min-32-bytes!" HS256
 
-		cors_origins http://dash.jmonitor.localhost
+		cors_origins {$DEV_DASH_ORIGIN:http://dash.jmonitor.localhost}
 
 		# No `anonymous`: a valid subscriber JWT (cookie set by the app, scoped to the
 		# project topic) is required to subscribe, just like prod.
@@ -49,4 +59,35 @@ http://dash.jmonitor.localhost, http://collector.jmonitor.localhost, http://admi
 			watch ./vendor/composer
 		}
 	}
+}
+
+# HTTP->HTTPS redirect, HTTPS mode only (compose.https.yaml sets the address to the
+# public hosts on :80). Caddy's automatic redirect can't be used: it targets :443,
+# which is not the port published on the host — the dev ports are remapped. Defining
+# this site suppresses the automatic one. In HTTP mode the address falls back to the
+# unpublished :2022 and the block sits inert.
+{$DEV_REDIRECT_ADDRESS::2022} {
+	redir https://{host}:{$JMONITOR_DEV_HTTPS_PORT:8443}{uri} permanent
+}
+
+# Compose-internal plain-HTTP site (port never published). In HTTPS mode the site
+# above answers a 308 redirect on :80, which would break the server-side calls, so
+# compose.https.yaml points Mercure publishing, php-metrics and the self-monitoring
+# pushes here instead; in the default HTTP mode they use :80 and this site sits
+# unused. Plain php_server on purpose: FrankenPHP sums `worker` pools across
+# listeners, so a worker here would double PHP memory for a handful of internal
+# requests. The mercure handler shares the main site's hub (the module pools
+# transports process-wide), so events published here reach browsers subscribed
+# through the public site.
+:2021 {
+	root * public/
+
+	mercure {
+		transport local
+		publisher_jwt "!ChangeThisDevMercureSecret-min-32-bytes!" HS256
+		subscriber_jwt "!ChangeThisDevMercureSecret-min-32-bytes!" HS256
+		cors_origins {$DEV_DASH_ORIGIN:http://dash.jmonitor.localhost}
+	}
+
+	php_server
 }

@@ -46,6 +46,30 @@ Common commands: `make sh` (shell in the app container), `make monitor`, `make t
 `make phpstan`, `make cs`, `make down`. If a host port collides (80, 3306, 6379, 8086),
 override it in a gitignored `compose.override.yaml`.
 
+### HTTPS in dev
+
+The stack is HTTP by default. To run it over HTTPS instead — closer to production
+(secure cookies, `https://` Mercure) — enable the `compose.https.yaml` overlay:
+Caddy issues the certificates itself from its internal CA, no external tool needed.
+
+```bash
+export JMONITOR_HTTPS=1   # add it to your shell profile to make it permanent
+make up
+make ca                   # exports the root CA + prints how to trust it
+```
+
+`make ca` writes `caddy-root-ca.crt` (gitignored) and prints the one-off command to
+add it to your certificate store; do it once and restart the browser. The CA lives
+in a named volume, so it survives `make down` — only `docker compose down -v` throws
+it away, and you would then have to trust the new one.
+
+The overlay publishes the standard 80/443; remap them in your `compose.override.yaml`
+as usual. Port 80 only serves the HTTP→HTTPS redirects, so keep it published if you
+want old bookmarks to redirect. If you map HTTPS somewhere other than 8443, export
+`JMONITOR_DEV_HTTPS_PORT` too — the browser subscribes to Mercure on that exact
+origin. Server-side traffic (Mercure publishing, self-monitoring pushes, php-metrics)
+moves to a plain-HTTP `:2021` site inside the container, never published.
+
 Prefer running without Docker? See `compose.yaml` for the required services and
 `.env.dev` for the expected DSNs, and point `APP_DOMAIN` subdomains at your own server.
 

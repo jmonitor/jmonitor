@@ -41,4 +41,6 @@ phpstan.neon
 
 # local docker compose overrides
 /compose.override.yaml
+# Caddy dev root CA exported by `make ca`
+/caddy-root-ca.crt
 /docker/selfhosted/.env

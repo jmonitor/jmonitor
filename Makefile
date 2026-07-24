@@ -1,5 +1,24 @@
 # Dev environment (Docker) — see compose.yaml and README "Development setup".
-DC = docker compose
+#
+# JMONITOR_HTTPS=1 adds the HTTPS overlay (see CONTRIBUTING.md "HTTPS in dev").
+# `export JMONITOR_HTTPS=1` in your shell profile makes it permanent. The files are
+# passed explicitly because -f disables compose's automatic pickup of the
+# (gitignored, personal) compose.override.yaml — it stays last, so it keeps winning.
+COMPOSE_FILES = -f compose.yaml
+ifeq ($(JMONITOR_HTTPS),1)
+COMPOSE_FILES += -f compose.https.yaml
+endif
+ifneq ($(wildcard compose.override.yaml),)
+COMPOSE_FILES += -f compose.override.yaml
+endif
+
+DC = docker compose $(COMPOSE_FILES)
+
+ifeq ($(JMONITOR_HTTPS),1)
+DASH_URL = https://dash.jmonitor.localhost:$(or $(JMONITOR_DEV_HTTPS_PORT),8443)
+else
+DASH_URL = http://dash.jmonitor.localhost
+endif
 
 # Pretty output — ANSI colors, auto-disabled when NO_COLOR is set (https://no-color.org).
 # Values hold raw escapes; they are always emitted via printf, which interprets them.
@@ -11,7 +30,7 @@ C_STEP := \033[1;36m
 C_OK   := \033[1;32m
 endif
 
-.PHONY: up down setup provision demo monitor sh test phpstan cs cs-fix perms
+.PHONY: up down setup provision demo monitor sh test phpstan cs cs-fix perms ca
 
 up:
 	$(DC) up -d --wait
@@ -32,7 +51,7 @@ setup:
 	@printf "\n$(C_OK)══════════════════════════════════════════════$(C_OFF)\n"
 	@printf "$(C_OK)  ✔  Environment ready$(C_OFF)\n"
 	@printf "$(C_OK)══════════════════════════════════════════════$(C_OFF)\n\n"
-	@printf "  $(C_BOLD)Dashboard$(C_OFF)   http://dash.jmonitor.localhost\n"
+	@printf "  $(C_BOLD)Dashboard$(C_OFF)   $(DASH_URL)\n"
 	@printf "  $(C_BOLD)Login$(C_OFF)       dev@jmonitor.io / dev\n\n"
 	@printf "  $(C_BOLD)Next steps$(C_OFF)\n"
 	@printf "    $(C_DIM)make monitor$(C_OFF)     runs jmonitor:collect -vv in the app container (real self-monitoring metrics, live output)\n"
@@ -52,6 +71,17 @@ demo:
 # -vv surfaces the collector's info/notice logs (pushes, retries, limits) via the dev `console` monolog handler.
 monitor:
 	$(DC) exec app php bin/console jmonitor:collect -vv
+
+## Export Caddy's internal root CA (HTTPS mode) so the browser trusts the dev certificates.
+ca:
+	@$(DC) exec -T app cat /data/caddy/pki/authorities/local/root.crt > caddy-root-ca.crt
+	@printf "\n$(C_OK)  ✔  caddy-root-ca.crt exported$(C_OFF)\n\n"
+	@printf "  Trust it once — Windows (browser side of WSL2), no admin needed:\n"
+	@printf "    $(C_DIM)certutil.exe -addstore -user Root caddy-root-ca.crt$(C_OFF)\n"
+	@printf "  Linux:\n"
+	@printf "    $(C_DIM)sudo cp caddy-root-ca.crt /usr/local/share/ca-certificates/ && sudo update-ca-certificates$(C_OFF)\n"
+	@printf "  Firefox keeps its own store: Settings → Certificates → Import.\n\n"
+	@printf "  $(C_DIM)Restart the browser afterwards, then open $(DASH_URL)$(C_OFF)\n\n"
 
 sh:
 	$(DC) exec app bash

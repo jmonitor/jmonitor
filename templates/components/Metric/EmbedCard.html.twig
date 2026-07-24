@@ -15,7 +15,13 @@
             {{ block('content') }}
         </div>
         <div class="card-footer text-end">
-            {% if public %}
+            {% if preview %}
+                {{ include('dash/embed/_embed_preview_controls.html.twig', {
+                    embed: embed,
+                    canAutoRefresh: is_granted('right.autorefresh'),
+                    showProBadge: not is_granted('right.autorefresh'),
+                }) }}
+            {% elseif public %}
                 {# Embeddable plans are all PRO+, so auto-refresh is always allowed here. #}
                 {{ include('dash/embed/_embed_controls.html.twig', {
                     embed: embed,

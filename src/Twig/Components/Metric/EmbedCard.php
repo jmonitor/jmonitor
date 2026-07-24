@@ -14,6 +14,7 @@ class EmbedCard
 {
     public EmbedDto $embed;
     public bool $public = false;
+    public bool $preview = false;
 
     private readonly MetricDtoProvider $dtoProvider;
 

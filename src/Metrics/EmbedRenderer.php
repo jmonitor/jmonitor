@@ -17,7 +17,7 @@ readonly class EmbedRenderer
     ) {}
 
     #[AsTwigFilter('render_embed', isSafe: ['html'])]
-    public function render(EmbedDto $embed, bool $public = false): string
+    public function render(EmbedDto $embed, bool $public = false, bool $preview = false): string
     {
         $rendererOptions = EmbedRendererOptionsBuilder::fromEmbedDto($embed);
 
@@ -31,6 +31,7 @@ readonly class EmbedRenderer
             'inner' => $inner,
             'embed' => $embed,
             'public' => $public,
+            'preview' => $preview,
         ]);
     }
 }

@@ -18,6 +18,7 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -67,7 +68,7 @@ class MetricsControllerTest extends TestCase
         $project = new Project();
         $dto = new EmbedDto(Metric::SystemCpuUsage, null, null, false, null);
         $repository = $this->createMock(EmbedRepository::class);
-        $repository->method('findOneBy')->willReturn(null);
+        $repository->expects($this->once())->method('findOneBy')->with(['token' => 'unknown', 'project' => $project])->willReturn(null);
 
         $this->expectException(NotFoundHttpException::class);
 
@@ -82,15 +83,45 @@ class MetricsControllerTest extends TestCase
 
         $newDto = new EmbedDto(Metric::SystemCpuUsage, Renderer::Line, null, true, null);
         $repository = $this->createMock(EmbedRepository::class);
-        $repository->method('findOneBy')->willReturn($embed);
+        $repository->expects($this->once())->method('findOneBy')->with(['token' => $token, 'project' => $project])->willReturn($embed);
         $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->once())->method('flush');
 
-        $response = $this->makeController(csrfValid: true)->updateEmbed($project, $token, $newDto, new Request(), $repository, $em, new PlanResolver(Edition::SELF_HOSTED));
+        $csrfTokenManager = $this->createMock(CsrfTokenManagerInterface::class);
+        $csrfTokenManager->method('isTokenValid')->willReturn(true);
+
+        $router = $this->createMock(UrlGeneratorInterface::class);
+        $router->expects($this->once())->method('generate')->with('project.metrics.embed', $this->callback(fn(array $params): bool => ($params['edit'] ?? null) === $token && ($params['updated'] ?? null) === 1))->willReturn('/redirected');
+
+        $container = new Container();
+        $container->set('security.csrf.token_manager', $csrfTokenManager);
+        $container->set('router', $router);
+
+        $controller = new MetricsController();
+        $controller->setContainer($container);
+
+        $response = $controller->updateEmbed($project, $token, $newDto, new Request(), $repository, $em, new PlanResolver(Edition::SELF_HOSTED));
 
         $this->assertEquals($newDto, $embed->getDto());
         $this->assertSame($token, $embed->getToken());
         $this->assertInstanceOf(RedirectResponse::class, $response);
+    }
+
+    public function testUpdateEmbedRejectsAMetricChange(): void
+    {
+        $project = new Project();
+        $embed = new Embed()->setProject($project)->setDto(new EmbedDto(Metric::SystemCpuUsage, Renderer::Gauge, null, false, null));
+        $token = $embed->getToken();
+
+        $newDto = new EmbedDto(Metric::SystemRamUsage, Renderer::Gauge, null, false, null);
+        $repository = $this->createMock(EmbedRepository::class);
+        $repository->method('findOneBy')->willReturn($embed);
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->expects($this->never())->method('flush');
+
+        $this->expectException(BadRequestHttpException::class);
+
+        $this->makeController(csrfValid: true)->updateEmbed($project, $token, $newDto, new Request(), $repository, $em, new PlanResolver(Edition::SELF_HOSTED));
     }
 
     private function makeController(bool $csrfValid): MetricsController

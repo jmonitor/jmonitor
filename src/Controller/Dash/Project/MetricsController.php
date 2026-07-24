@@ -20,6 +20,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -168,6 +169,10 @@ class MetricsController extends AbstractController
 
         $embed = $embedRepository->findOneBy(['token' => $token, 'project' => $project])
             ?? throw $this->createNotFoundException();
+
+        if ($embedDto->metric !== $embed->getDto()->metric) {
+            throw new BadRequestHttpException('The metric of an embed cannot be changed.');
+        }
 
         $embed->setDto($embedDto);
         $em->flush();

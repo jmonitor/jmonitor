@@ -32,6 +32,7 @@
                     withCredentials: false,
                 }) }}
             {% else %}
+                {# Currently unreachable: every render_embed call site passes public or preview. Kept for future in-dashboard embed cards. #}
                 {{ include('dash/embed/_embed_controls.html.twig', {
                     embed: embed,
                     enabled: embed.autoRefresh and is_granted('right.autorefresh'),

@@ -116,6 +116,7 @@ A public, read-only demo account (`demo@jmonitor.io` / `demo`, project `"Demo pr
 - **Worker-safe services:** the app runs under FrankenPHP worker mode — shared services must not accumulate per-request state (reset mutated properties or make them readonly); `igor-php` enforces this
 - Comments and docs: short and factual (1-3 sentences), no hosting-provider details in public-facing code/docs
 - Never use Yoda conditions (`$var === 'x'`, not `'x' === $var`)
+- **Keep docs in sync with code:** whenever a change modifies, contradicts, or leaves incomplete anything documented in this `CLAUDE.md`, the root `README.md`, `docker/selfhosted/README.md`, or `CONTRIBUTING.md`, update that doc in the same change — stale or contradictory docs are treated as part of the diff, not a follow-up
 
 ## Frontend Stack
 

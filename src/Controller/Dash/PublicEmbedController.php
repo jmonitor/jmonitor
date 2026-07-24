@@ -29,10 +29,6 @@ class PublicEmbedController extends AbstractController
         EntityManagerInterface $em,
         ClockInterface $clock,
     ): Response {
-        if ($embed->isRevoked()) {
-            throw $this->createNotFoundException();
-        }
-
         $project = $embed->getProject();
 
         if (!$planResolver->resolve($project)->embedable()) {

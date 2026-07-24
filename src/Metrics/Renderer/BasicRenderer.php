@@ -6,6 +6,7 @@ namespace App\Metrics\Renderer;
 
 use App\Metrics\Metric\BasicMetricInterface;
 use App\Metrics\Metric\MetricInterface;
+use App\Metrics\MetricsBagProvider;
 use App\Metrics\Renderer;
 use App\Metrics\Renderer\Dto\BasicDto;
 use App\Metrics\Renderer\Options\DefaultRendererOptions;
@@ -13,12 +14,12 @@ use App\Metrics\Renderer\Options\RendererOptionsInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsTaggedItem;
 use Twig\Environment;
 
-// TODO could add a renderUnavailable or renderEmpty function..
 #[AsTaggedItem(Renderer::Basic->value)]
 readonly class BasicRenderer implements MetricRendererInterface
 {
     public function __construct(
         private Environment $twig,
+        private MetricsBagProvider $bagProvider,
     ) {}
 
     /**
@@ -44,6 +45,13 @@ readonly class BasicRenderer implements MetricRendererInterface
         $dto = new BasicDto($metric->getMetric());
 
         $metric->configureBasicDto($dto, $dtoOptions);
+
+        // Custom templates read their component bag directly via bag(); mark the
+        // card unavailable when no bag was collected so the no-data view renders
+        // instead of the template dereferencing a null bag.
+        if (!$this->bagProvider->getComponentBags($metric->getMetric()->component())) {
+            $dto->setValueAvailable(false);
+        }
 
         return $dto;
     }

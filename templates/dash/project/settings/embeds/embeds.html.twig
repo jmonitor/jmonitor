@@ -7,7 +7,7 @@
 
     <twig:Alert type="warning" class="mb-0">
         Anyone with an embed link can view the embedded metric without logging in.
-        Revoke a link to cut off access immediately.
+        Delete a link to cut off access immediately.
     </twig:Alert>
 
     <twig:Cards title="Embed links">
@@ -17,60 +17,65 @@
                     No embed link yet. Open a metric card menu and choose <b>Embed</b> to create one.
                 </p>
             {% else %}
-                <div class="table-responsive">
-                    <table class="table table-borderless mb-0 align-middle">
-                        <thead>
+                <table class="table table-borderless align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th scope="col"><small class="text-body-tertiary fw-normal">Metric</small></th>
+                            <th scope="col"><small class="text-body-tertiary fw-normal">Created</small></th>
+                            <th scope="col"><small class="text-body-tertiary fw-normal">Last used</small></th>
+                            <th scope="col"></th>
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in embeds %}
+                            {% set dto = item.dto %}
+                            {% set embed_url = url('embed.public', {token: item.token}) %}
                             <tr>
-                                <th>Metric</th>
-                                <th>Link</th>
-                                <th>Created</th>
-                                <th>Last used</th>
-                                <th>Status</th>
-                                {% if can_edit %}<th class="text-end">Actions</th>{% endif %}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for item in embeds %}
-                                {% set dto = item.dto %}
-                                <tr>
-                                    <td>{{ dto.metric.label ?? dto.metric.value }}</td>
-                                    <td>
-                                        <input type="text" class="form-control form-control-sm" readonly
-                                            onclick="this.select()" value="{{ url('embed.public', {token: item.token}) }}">
-                                    </td>
-                                    <td>
-                                        {{ item.createdAt|date('Y-m-d') }}
-                                        {% if item.createdBy %}<small class="d-block text-body-tertiary">by {{ item.createdBy.email }}</small>{% endif %}
-                                    </td>
-                                    <td>{{ item.lastUsedAt ? item.lastUsedAt|date('Y-m-d H:i') : 'never' }}</td>
-                                    <td>
-                                        {% if item.revoked %}
-                                            <span class="badge bg-secondary">Revoked</span>
-                                        {% else %}
-                                            <span class="badge bg-success">Active</span>
-                                        {% endif %}
-                                    </td>
-                                    {% if can_edit %}
-                                        <td class="text-end">
-                                            <div class="d-inline-flex gap-2">
-                                                {% if not item.revoked %}
-                                                    <form method="post" action="{{ path('project.settings.embeds.revoke', {uuid: current_project().uuid, token: item.token}) }}">
-                                                        <input type="hidden" name="_token" value="{{ csrf_token('embed-action') }}">
-                                                        <button class="btn btn-sm btn-outline-warning">Revoke</button>
-                                                    </form>
-                                                {% endif %}
-                                                <form method="post" action="{{ path('project.settings.embeds.delete', {uuid: current_project().uuid, token: item.token}) }}">
+                                <td>
+                                    {{ dto.metric.label ?? dto.metric.value }}
+                                    <small class="d-block text-body-tertiary">
+                                        {{ ux_icon(dto.metric.component.icon, {width: '1em', height: '1em'}) }} {{ dto.metric.component.label }}
+                                    </small>
+                                </td>
+                                <td>
+                                    {{ item.createdAt|date('Y-m-d') }}
+                                    {% if item.createdBy %}<small class="d-block text-body-tertiary">by {{ item.createdBy.email }}</small>{% endif %}
+                                </td>
+                                <td>{{ item.lastUsedAt ? item.lastUsedAt|date('Y-m-d H:i') : 'never' }}</td>
+                                <td>
+                                    <span data-controller="clipboard" data-clipboard-success-content-value="Copied!">
+                                        <span hidden data-clipboard-target="source">{{ embed_url }}</span>
+                                        <button
+                                            type="button"
+                                            class="btn btn-sm btn-outline-primary"
+                                            data-clipboard-target="button"
+                                            data-action="clipboard#copy"
+                                        >{{ ux_icon('material-symbols:content-copy-outline', {width: '1em', height: '1em'}) }} Copy link</button>
+                                    </span>
+                                </td>
+                                <td class="text-end">
+                                    {% if not can_edit %}
+                                        <twig:Html:Dropdown :disabled="true" />
+                                    {% else %}
+                                        <twig:Html:Dropdown>
+                                            <li>
+                                                <form
+                                                    action="{{ path('project.settings.embeds.delete', {uuid: current_project().uuid, token: item.token}) }}"
+                                                    method="post"
+                                                    data-turbo-confirm="Please confirm"
+                                                >
                                                     <input type="hidden" name="_token" value="{{ csrf_token('embed-action') }}">
-                                                    <button class="btn btn-sm btn-outline-danger">Delete</button>
+                                                    <button type="submit" class="dropdown-item link-danger">Delete</button>
                                                 </form>
-                                            </div>
-                                        </td>
+                                            </li>
+                                        </twig:Html:Dropdown>
                                     {% endif %}
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             {% endif %}
         </twig:Card>
     </twig:Cards>

@@ -21,16 +21,6 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class PublicEmbedControllerTest extends TestCase
 {
-    public function testRevokedEmbedIs404(): void
-    {
-        $embed = new Embed()->setProject($this->projectWithPlan(Plan::PRO));
-        $embed->revoke();
-
-        $this->expectException(NotFoundHttpException::class);
-
-        $this->invoke($embed);
-    }
-
     public function testFreePlanProjectIs404(): void
     {
         $embed = new Embed()->setProject($this->projectWithPlan(Plan::FREE));

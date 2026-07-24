@@ -28,31 +28,6 @@ class SettingsEmbedController extends AbstractController
         ]);
     }
 
-    #[Route('/{token}/revoke', name: 'project.settings.embeds.revoke', methods: ['POST'])]
-    #[IsGranted(ProjectVoter::PROJECT_ADMIN, subject: 'project')]
-    public function revoke(
-        Project $project,
-        #[MapEntity(mapping: ['token' => 'token'])]
-        Embed $embed,
-        EntityManagerInterface $em,
-        Request $request,
-    ): Response {
-        if ($embed->getProject() !== $project) {
-            throw $this->createNotFoundException();
-        }
-
-        if (!$this->isCsrfTokenValid('embed-action', (string) $request->request->get('_token'))) {
-            throw $this->createAccessDeniedException();
-        }
-
-        $embed->revoke();
-        $em->flush();
-
-        $this->addFlash('success', 'Embed link revoked');
-
-        return $this->redirectToRoute('project.settings.embeds', ['uuid' => $project->getUuid()]);
-    }
-
     #[Route('/{token}/delete', name: 'project.settings.embeds.delete', methods: ['POST'])]
     #[IsGranted(ProjectVoter::PROJECT_ADMIN, subject: 'project')]
     public function delete(

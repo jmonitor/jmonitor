@@ -87,6 +87,12 @@ class InstallCommand extends Command
             return Command::FAILURE;
         }
 
+        // MySQL implicitly commits on every DDL statement, which leaves Doctrine's
+        // transaction nesting level out of sync after the schema migrations above.
+        // Reconnect before provisioning so the admin/self-monitoring flushes don't
+        // die on a phantom "SAVEPOINT DOCTRINE_2 does not exist".
+        $this->connection->close();
+
         try {
             $admin = $this->adminProvisioner->provision($this->adminEmail, $this->adminPassword);
         } catch (\RuntimeException $e) {

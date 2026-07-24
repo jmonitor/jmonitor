@@ -60,6 +60,9 @@
                                     {% else %}
                                         <twig:Html:Dropdown>
                                             <li>
+                                                <a class="dropdown-item" href="{{ path('project.metrics.embed', {uuid: current_project().uuid, edit: item.token}) }}" {{ stimulus_action('app', 'turboCanvas') }}>Edit</a>
+                                            </li>
+                                            <li>
                                                 <form
                                                     action="{{ path('project.settings.embeds.delete', {uuid: current_project().uuid, token: item.token}) }}"
                                                     method="post"

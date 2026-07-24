@@ -1,0 +1,22 @@
+{# Sidebar-preview controls: the Live toggle drives the embed form's hidden autoRefresh
+   field via the embed-form controller. No Mercure connection is opened here. #}
+<div class="d-inline-flex gap-3 align-items-center">
+    {% if showProBadge %}
+        <a href="{{ path('project.help.item', {item: 'pro', uuid: current_project().uuid}) }}" {{ stimulus_action('app', 'turboCanvas') }}>
+            <twig:Html:Badge:Neutral>Pro</twig:Html:Badge:Neutral>
+        </a>
+    {% endif %}
+    <div class="form-check form-switch mb-0">
+        <label class="form-check-label checkbox-switch">
+            <input type="checkbox" class="form-check-input"
+                {{ stimulus_action('embed-form', 'toggleLive', 'change') }}
+                {% if embed.autoRefresh %}checked{% endif %}
+                {% if not canAutoRefresh %}disabled{% endif %}
+            >
+            Live
+        </label>
+    </div>
+    <button class="btn btn-primary" type="button" {{ stimulus_action('embed-form', 'refreshPreview') }}>
+        <twig:ux:icon name="material-symbols:refresh" width="1.2em" height="1.2em" />
+    </button>
+</div>

@@ -5,85 +5,79 @@ declare(strict_types=1);
 namespace App\Form\Embed;
 
 use App\Chart\TimeRange;
-use App\Metrics\Dto\EmbedDto;
 use App\Metrics\Metric;
 use App\Metrics\Renderer;
-use App\Project\ProjectContext;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfonycasts\DynamicForms\DependentField;
 use Symfonycasts\DynamicForms\DynamicFormBuilder;
 
 /**
- * @extends AbstractType<EmbedDto>
+ * Options for the embed sidebar. The metric is fixed by the entry point (metric card
+ * menu or an existing embed) and passed as the "metric" form option.
  */
 class EmbedType extends AbstractType
 {
-    private readonly ProjectContext $projectContext;
-
-    public function __construct(ProjectContext $projectContext)
-    {
-        $this->projectContext = $projectContext;
-    }
-
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder = new DynamicFormBuilder($builder);
+        /** @var Metric $metric */
+        $metric = $options['metric'];
+        $renderers = $metric->availableRenderers();
 
-        $builder->add('metric', EnumType::class, [
-            'label' => 'Metric',
-            'class' => Metric::class,
-            'choice_label' => fn(Metric $metric): string => $metric->getLabel() ?? $metric->value,
-            'choice_filter' => fn(Metric $metric): bool => $this->projectContext->getCurrentProject()->hasComponent($metric->component()),
-            'group_by' => fn(Metric $metric): string => $metric->component()->label(),
-            'constraints' => new NotBlank(),
-        ]);
+        if (count($renderers) >= 2) {
+            $builder = new DynamicFormBuilder($builder);
 
-        $builder->addDependent('renderer', 'metric', function (DependentField $field, ?Metric $metric): void {
-            if (!$metric) {
-                return;
-            }
-
-            $availableRenderers = $metric->availableRenderers();
-            $field->add(ChoiceType::class, [
+            $builder->add('renderer', ChoiceType::class, [
                 'label' => 'Style',
-                'choices' => $availableRenderers,
+                'choices' => $renderers,
                 'choice_label' => fn(Renderer $renderer): string => $renderer->styleLabel(),
+                'choice_value' => static fn(?Renderer $renderer): ?string => $renderer?->value,
             ]);
-        });
 
-        $builder->addDependent('range', 'renderer', function (DependentField $field, ?Renderer $renderer): void {
-            if (!$renderer || !$renderer->supportRange()) {
-                return;
-            }
+            $builder->addDependent('range', 'renderer', function (DependentField $field, ?Renderer $renderer): void {
+                if (!$renderer || !$renderer->supportRange()) {
+                    return;
+                }
 
-            $field->add(EnumType::class, [
+                $field->add(EnumType::class, [
+                    'label' => 'Range',
+                    'class' => TimeRange::class,
+                    'choice_label' => static fn(TimeRange $range): string => $range->label(),
+                    'required' => false,
+                ]);
+            });
+
+            $builder->addDependent('chartConfig', 'renderer', function (DependentField $field, ?Renderer $renderer): void {
+                if (!$renderer || !$renderer->supportRange()) {
+                    return;
+                }
+
+                $field->add(ChartConfigType::class, [
+                    'label' => false,
+                    'renderer' => $renderer,
+                ]);
+            });
+        } elseif ($renderers[0]->supportRange()) {
+            $builder->add('range', EnumType::class, [
                 'label' => 'Range',
                 'class' => TimeRange::class,
                 'choice_label' => static fn(TimeRange $range): string => $range->label(),
                 'required' => false,
             ]);
-        });
 
-        $builder->addDependent('chartConfig', 'renderer', function (DependentField $field, ?Renderer $renderer): void {
-            if (!$renderer || !$renderer->supportRange()) {
-                return;
-            }
-
-            $field->add(ChartConfigType::class, [
+            $builder->add('chartConfig', ChartConfigType::class, [
                 'label' => false,
-                'renderer' => $renderer,
+                'renderer' => $renderers[0],
             ]);
-        });
+        }
 
-        $builder->add('autoRefresh', CheckboxType::class, [
-            'label' => 'AutoRefresh',
-            'required' => false,
+        // Driven by the preview's Live toggle (embed-form Stimulus controller), '1' or ''.
+        $builder->add('autoRefresh', HiddenType::class, [
+            'attr' => ['data-embed-form-target' => 'autoRefreshInput'],
         ]);
     }
 
@@ -93,8 +87,12 @@ class EmbedType extends AbstractType
             'data_class' => null,
             'attr' => [
                 'onchange' => 'this.requestSubmit()',
+                'data-embed-form-target' => 'form',
             ],
             'allow_extra_fields' => true,
         ]);
+
+        $resolver->setRequired('metric');
+        $resolver->setAllowedTypes('metric', Metric::class);
     }
 }

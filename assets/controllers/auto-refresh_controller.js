@@ -7,7 +7,8 @@ export default class extends Controller {
     static values = {
         enabled: Boolean,
         topic: String,
-        component: String
+        component: String,
+        withCredentials: { type: Boolean, default: true }
     };
 
     connect() {
@@ -23,8 +24,9 @@ export default class extends Controller {
     enable() {
         this.#clearReconnectTimer();
 
-        // withCredentials: sends the Mercure authorization cookie (subscriber JWT scoped to the project)
-        this.eventSource = new EventSource(this.topicValue, { withCredentials: true });
+        // withCredentials sends the Mercure authorization cookie (dashboard pages).
+        // Public embeds pass the JWT in the URL instead and disable credentials.
+        this.eventSource = new EventSource(this.topicValue, { withCredentials: this.withCredentialsValue });
         this.eventSource.onmessage = this.#onMessage.bind(this);
         this.eventSource.onerror  = this.#onError.bind(this);
         this.eventSource.onopen = this.#onOpen.bind(this);
@@ -38,6 +40,10 @@ export default class extends Controller {
         this.eventSource = null;
 
         this.disableLoaderState();
+    }
+
+    toggle(event) {
+        this.enabledValue = event.target.checked;
     }
 
     #onMessage(event) {
@@ -63,6 +69,14 @@ export default class extends Controller {
 
     #scheduleReconnect() {
         this.#clearReconnectTimer();
+
+        // Sustained failure: the subscribe token may have expired (public embeds carry a
+        // short-lived JWT). Reopening with the same stale URL would be rejected forever, so
+        // once the backoff hits its ceiling we reload the page to mint a fresh subscribe URL.
+        if (this.reconnectDelayMs >= this.maxReconnectDelayMs) {
+            this.triggerReload();
+            return;
+        }
 
         this.reconnectTimer = window.setTimeout(() => {
             if (!this.enabledValue) return;

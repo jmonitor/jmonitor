@@ -4,13 +4,18 @@ declare(strict_types=1);
 
 namespace App\Controller\Dash\Project;
 
+use App\Entity\Embed;
 use App\Entity\Enums\Component;
 use App\Entity\Project;
+use App\Entity\User;
 use App\Form\Embed\EmbedType;
 use App\Metrics\CollectorContext;
 use App\Metrics\Dto\EmbedDto;
 use App\Metrics\MetricsBagProvider;
+use App\Plan\PlanResolver;
+use App\Repository\EmbedRepository;
 use App\Security\Voter\ProjectVoter;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -43,8 +48,14 @@ class MetricsController extends AbstractController
 
     #[Route('/embed/', name: 'project.metrics.embed')]
     #[IsGranted(ProjectVoter::PROJECT_USER, subject: 'project')]
-    public function embed(Project $project, #[MapQueryString(key: 'embed')] EmbedDto $embedDto, Request $request): Response
-    {
+    public function embed(
+        Project $project,
+        #[MapQueryString(key: 'embed')]
+        EmbedDto $embedDto,
+        Request $request,
+        EmbedRepository $embedRepository,
+        PlanResolver $planResolver,
+    ): Response {
         $form = $this->createForm(EmbedType::class, [
             'metric' => $embedDto->metric,
             'renderer' => $embedDto->renderer,
@@ -65,9 +76,53 @@ class MetricsController extends AbstractController
             $embedDto = new EmbedDto($metric, $renderer, $range, $autoRefresh, $chartConfig);
         }
 
+        $createdEmbed = null;
+        $createdToken = $request->query->getString('created');
+
+        if ($createdToken !== '') {
+            $createdEmbed = $embedRepository->findOneBy(['token' => $createdToken, 'project' => $project]);
+        }
+
         return $this->render('dash/project/metrics/embed/embed.html.twig', [
             'embed' => $embedDto,
             'form' => $form,
+            'createdEmbed' => $createdEmbed,
+            'canCreateEmbed' => $planResolver->resolve($project)->embedable() && $this->isGranted(ProjectVoter::PROJECT_ADMIN, $project),
+        ]);
+    }
+
+    #[Route('/embed/create', name: 'project.metrics.embed.create', methods: ['POST'])]
+    #[IsGranted(ProjectVoter::PROJECT_ADMIN, subject: 'project')]
+    public function createEmbed(
+        Project $project,
+        #[MapQueryString(key: 'embed')]
+        EmbedDto $embedDto,
+        Request $request,
+        EntityManagerInterface $em,
+        PlanResolver $planResolver,
+    ): Response {
+        if (!$planResolver->resolve($project)->embedable()) {
+            throw $this->createAccessDeniedException('Embeds are not available with the current plan.');
+        }
+
+        if (!$this->isCsrfTokenValid('create-embed', (string) $request->request->get('_token'))) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $user = $this->getUser();
+
+        $embed = new Embed()
+            ->setProject($project)
+            ->setCreatedBy($user instanceof User ? $user : null)
+            ->setDto($embedDto);
+
+        $em->persist($embed);
+        $em->flush();
+
+        return $this->redirectToRoute('project.metrics.embed', [
+            'uuid' => $project->getUuid(),
+            'embed' => $embedDto->jsonSerialize(),
+            'created' => $embed->getToken(),
         ]);
     }
 }

@@ -23,10 +23,12 @@ class EmbedRendererOptionsBuilder implements RendererOptionsBuilderInterface
 
     public static function fromEmbedDto(EmbedDto $embedDto): self
     {
+        $aspectRatio = $embedDto->chartConfig['aspectRatio'] ?? null;
+
         $builder = new self();
         $builder
             ->range($embedDto->range)
-            ->aspectRatio($embedDto->chartConfig['aspectRatio'] ?? null)
+            ->aspectRatio(is_numeric($aspectRatio) ? (float) $aspectRatio : null)
             ->displayHelp(false);
 
         return $builder;

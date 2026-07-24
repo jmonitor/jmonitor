@@ -1,0 +1,7 @@
+{% extends 'dash/embed/public_base.html.twig' %}
+
+{% block title %}{{ embed.metric.label ?? embed.metric.value }}{% endblock %}
+
+{% block body %}
+    {{ embed|render_embed(true) }}
+{% endblock %}

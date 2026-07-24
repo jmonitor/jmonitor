@@ -1,0 +1,77 @@
+{% extends 'dash/project/settings_layout.twig' %}
+
+{% block title %}Embeds{% endblock %}
+
+{% block settings_content %}
+    {% set can_edit = is_granted('project.admin') %}
+
+    <twig:Alert type="warning" class="mb-0">
+        Anyone with an embed link can view the embedded metric without logging in.
+        Revoke a link to cut off access immediately.
+    </twig:Alert>
+
+    <twig:Cards title="Embed links">
+        <twig:Card>
+            {% if embeds is empty %}
+                <p class="text-body-tertiary mb-0">
+                    No embed link yet. Open a metric card menu and choose <b>Embed</b> to create one.
+                </p>
+            {% else %}
+                <div class="table-responsive">
+                    <table class="table table-borderless mb-0 align-middle">
+                        <thead>
+                            <tr>
+                                <th>Metric</th>
+                                <th>Link</th>
+                                <th>Created</th>
+                                <th>Last used</th>
+                                <th>Status</th>
+                                {% if can_edit %}<th class="text-end">Actions</th>{% endif %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in embeds %}
+                                {% set dto = item.dto %}
+                                <tr>
+                                    <td>{{ dto.metric.label ?? dto.metric.value }}</td>
+                                    <td>
+                                        <input type="text" class="form-control form-control-sm" readonly
+                                            onclick="this.select()" value="{{ url('embed.public', {token: item.token}) }}">
+                                    </td>
+                                    <td>
+                                        {{ item.createdAt|date('Y-m-d') }}
+                                        {% if item.createdBy %}<small class="d-block text-body-tertiary">by {{ item.createdBy.email }}</small>{% endif %}
+                                    </td>
+                                    <td>{{ item.lastUsedAt ? item.lastUsedAt|date('Y-m-d H:i') : 'never' }}</td>
+                                    <td>
+                                        {% if item.revoked %}
+                                            <span class="badge bg-secondary">Revoked</span>
+                                        {% else %}
+                                            <span class="badge bg-success">Active</span>
+                                        {% endif %}
+                                    </td>
+                                    {% if can_edit %}
+                                        <td class="text-end">
+                                            <div class="d-inline-flex gap-2">
+                                                {% if not item.revoked %}
+                                                    <form method="post" action="{{ path('project.settings.embeds.revoke', {uuid: current_project().uuid, token: item.token}) }}">
+                                                        <input type="hidden" name="_token" value="{{ csrf_token('embed-action') }}">
+                                                        <button class="btn btn-sm btn-outline-warning">Revoke</button>
+                                                    </form>
+                                                {% endif %}
+                                                <form method="post" action="{{ path('project.settings.embeds.delete', {uuid: current_project().uuid, token: item.token}) }}">
+                                                    <input type="hidden" name="_token" value="{{ csrf_token('embed-action') }}">
+                                                    <button class="btn btn-sm btn-outline-danger">Delete</button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    {% endif %}
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+        </twig:Card>
+    </twig:Cards>
+{% endblock %}

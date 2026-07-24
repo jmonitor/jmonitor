@@ -38,6 +38,15 @@ class ProjectContext implements ResetInterface
     }
 
     /**
+     * Forces the current project (public embed pages, where the viewer has no session).
+     * Callers are responsible for authorization; the membership check is bypassed.
+     */
+    public function setCurrentProject(Project $project): void
+    {
+        $this->project = $project;
+    }
+
+    /**
      * Tries to find a project linked to the logged-in user.
      */
     private function getDefaultProject(): ?Project

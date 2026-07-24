@@ -14,5 +14,28 @@
 
     {{ embed|render_embed }}
 
-    <textarea class="form-control mt-4" rows="4">{{ embed|embed_url }}</textarea>
+    <hr>
+    {% if createdEmbed %}
+        <twig:Alert type="success" class="mb-3">Embed link created.</twig:Alert>
+        <textarea class="form-control" rows="3" readonly onclick="this.select()">{{ url('embed.public', {token: createdEmbed.token}) }}</textarea>
+        <p class="text-body-tertiary mt-2 mb-0">
+            <small>
+                Anyone with this link can view this metric without logging in.
+                Manage links in the <a href="{{ path('project.settings.embeds', {uuid: current_project().uuid}) }}" target="_top">Embeds settings</a>.
+            </small>
+        </p>
+    {% elseif canCreateEmbed %}
+        <form method="post" action="{{ path('project.metrics.embed.create', {uuid: current_project().uuid, embed: embed.jsonSerialize}) }}">
+            <input type="hidden" name="_token" value="{{ csrf_token('create-embed') }}">
+            <button class="btn btn-primary">Create embed link</button>
+        </form>
+        <p class="text-body-tertiary mt-2 mb-0"><small>Generates a public read-only link for this card.</small></p>
+    {% else %}
+        <p class="text-body-tertiary mb-0">
+            <a href="{{ path('project.help.item', {item: 'pro', uuid: current_project().uuid}) }}" {{ stimulus_action('app', 'turboCanvas') }}>
+                <twig:Html:Badge:Neutral>Pro</twig:Html:Badge:Neutral>
+            </a>
+            <small>Embed links are not available with the free plan, or you need admin rights on this project.</small>
+        </p>
+    {% endif %}
 {% endblock %}

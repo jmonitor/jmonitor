@@ -67,6 +67,30 @@ class MercureTopicProviderTest extends TestCase
         $this->assertStringStartsWith(self::HUB_URL . '?topic=', $url);
     }
 
+    public function testPublicSubscribeUrlScopesJwtToTheComponentSubTopicOnly(): void
+    {
+        $project = new Project();
+        $projectTopic = sprintf('https://%s/metrics/consumed/%s', self::DOMAIN, $project->getUuid());
+        $componentTopic = $projectTopic . '/mysql';
+
+        // No request: public URL generation must not depend on a request/cookie.
+        $provider = $this->createProvider(new RequestStack());
+
+        $url = $provider->getPublicConsumedMetricSubscribeUrl('mysql', $project);
+
+        $this->assertStringStartsWith(self::HUB_URL . '?topic=' . rawurlencode($componentTopic) . '&authorization=', $url);
+
+        parse_str((string) parse_url($url, PHP_URL_QUERY), $query);
+        $claims = $this->decodeJwtClaims((string) $query['authorization']);
+
+        // Scoped to the embedded component's sub-topic, never the project-wide topic:
+        // a public viewer must not be able to read the whole project's component stream.
+        $this->assertSame([$componentTopic], $claims['mercure']['subscribe']);
+        $this->assertNotContains($projectTopic, $claims['mercure']['subscribe']);
+        $this->assertSame([], $claims['mercure']['publish']);
+        $this->assertArrayHasKey('exp', $claims, 'Public JWTs must expire to bound the impact of a leak');
+    }
+
     private function createProvider(RequestStack $requestStack, ?LoggerInterface $logger = null): MercureTopicProvider
     {
         $hub = new Hub(
@@ -104,7 +128,16 @@ class MercureTopicProviderTest extends TestCase
         $this->assertArrayHasKey('', $cookies, 'A cookie must be set for the default hub');
 
         $jwt = $cookies['']->getValue();
-        $payload = explode('.', (string) $jwt)[1];
+
+        return $this->decodeJwtClaims((string) $jwt);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function decodeJwtClaims(string $jwt): array
+    {
+        $payload = explode('.', $jwt)[1];
         $decoded = json_decode(base64_decode(strtr($payload, '-_', '+/'), true), true);
 
         $this->assertIsArray($decoded);

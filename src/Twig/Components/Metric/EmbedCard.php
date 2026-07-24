@@ -6,7 +6,6 @@ namespace App\Twig\Components\Metric;
 
 use App\Metrics\Dto\EmbedDto;
 use App\Metrics\MetricDtoProvider;
-use DateTimeImmutable;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 use Symfony\UX\TwigComponent\Attribute\ExposeInTemplate;
 
@@ -14,6 +13,7 @@ use Symfony\UX\TwigComponent\Attribute\ExposeInTemplate;
 class EmbedCard
 {
     public EmbedDto $embed;
+    public bool $public = false;
 
     private readonly MetricDtoProvider $dtoProvider;
 
@@ -26,12 +26,5 @@ class EmbedCard
     public function getDto()
     {
         return $this->dtoProvider->getDto($this->embed->metric, $this->embed->renderer);
-    }
-
-    #[ExposeInTemplate]
-    public function getLastUpdate(): DateTimeImmutable
-    {
-        // stub: embeds don't track their real last-update time yet
-        return new DateTimeImmutable('-5 seconds');
     }
 }

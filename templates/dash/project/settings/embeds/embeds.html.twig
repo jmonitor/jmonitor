@@ -24,6 +24,7 @@
                             <th scope="col"><small class="text-body-tertiary fw-normal">Created</small></th>
                             <th scope="col"><small class="text-body-tertiary fw-normal">Last used</small></th>
                             <th scope="col"></th>
+                            <th scope="col"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -42,23 +43,22 @@
                                     {% if item.createdBy %}<small class="d-block text-body-tertiary">by {{ item.createdBy.email }}</small>{% endif %}
                                 </td>
                                 <td>{{ item.lastUsedAt ? item.lastUsedAt|date('Y-m-d H:i') : 'never' }}</td>
+                                <td>
+                                    <span data-controller="clipboard" data-clipboard-success-content-value="Copied!">
+                                        <span hidden data-clipboard-target="source">{{ embed_url }}</span>
+                                        <button
+                                            type="button"
+                                            class="btn btn-sm btn-outline-primary"
+                                            data-clipboard-target="button"
+                                            data-action="clipboard#copy"
+                                        >{{ ux_icon('material-symbols:content-copy-outline', {width: '1em', height: '1em'}) }} Copy link</button>
+                                    </span>
+                                </td>
                                 <td class="text-end">
                                     {% if not can_edit %}
                                         <twig:Html:Dropdown :disabled="true" />
                                     {% else %}
-                                        <twig:Html:Dropdown
-                                            data-controller="clipboard"
-                                            data-clipboard-success-content-value="Copied!"
-                                        >
-                                            <li>
-                                                <span hidden data-clipboard-target="source">{{ embed_url }}</span>
-                                                <button
-                                                    type="button"
-                                                    class="dropdown-item"
-                                                    data-clipboard-target="button"
-                                                    data-action="clipboard#copy"
-                                                >Copy link</button>
-                                            </li>
+                                        <twig:Html:Dropdown>
                                             <li>
                                                 <form
                                                     action="{{ path('project.settings.embeds.delete', {uuid: current_project().uuid, token: item.token}) }}"

@@ -1,41 +1,44 @@
 {% extends 'dash/common/_turbo_offcanvas_end.html.twig' %}
 
-{% block title %}Embed a metric{% endblock %}
+{% block title %}Embed — {{ embed.metric.label ?? embed.metric.value }}{% endblock %}
 
 {% block body %}
-    <h6 class="mb-3">Options</h6>
+    <div {{ stimulus_controller('embed-form') }}>
+        {% if form.renderer is defined or form.range is defined %}
+            <h6 class="mb-3">Options</h6>
+        {% endif %}
 
-    {{ form_start(form) }}
-    {{ form_rest(form) }}
-    {{ form_end(form) }}
+        {{ form_start(form) }}
+        {{ form_rest(form) }}
+        {{ form_end(form) }}
 
-    <hr>
-    <h6 class="mb-3">Preview</h6>
+        <h6 class="mb-3">Preview</h6>
 
-    {{ embed|render_embed }}
+        {{ embed|render_embed(preview: true) }}
 
-    <hr>
-    {% if createdEmbed %}
-        <twig:Alert type="success" class="mb-3">Embed link created.</twig:Alert>
-        <textarea class="form-control" rows="3" readonly onclick="this.select()">{{ url('embed.public', {token: createdEmbed.token}) }}</textarea>
-        <p class="text-body-tertiary mt-2 mb-0">
-            <small>
-                Anyone with this link can view this metric without logging in.
-                Manage links in the <a href="{{ path('project.settings.embeds', {uuid: current_project().uuid}) }}" target="_top">Embeds settings</a>.
-            </small>
-        </p>
-    {% elseif canCreateEmbed %}
-        <form method="post" action="{{ path('project.metrics.embed.create', {uuid: current_project().uuid, embed: embed.jsonSerialize}) }}">
-            <input type="hidden" name="_token" value="{{ csrf_token('create-embed') }}">
-            <button class="btn btn-primary">Create embed link</button>
-        </form>
-        <p class="text-body-tertiary mt-2 mb-0"><small>Generates a public read-only link for this card.</small></p>
-    {% else %}
-        <p class="text-body-tertiary mb-0">
-            <a href="{{ path('project.help.item', {item: 'pro', uuid: current_project().uuid}) }}" {{ stimulus_action('app', 'turboCanvas') }}>
-                <twig:Html:Badge:Neutral>Pro</twig:Html:Badge:Neutral>
-            </a>
-            <small>Embed links are not available with the free plan, or you need admin rights on this project.</small>
-        </p>
-    {% endif %}
+        <hr>
+        {% if createdEmbed %}
+            <twig:Alert type="success" class="mb-3">Embed link created.</twig:Alert>
+            <textarea class="form-control" rows="3" readonly onclick="this.select()">{{ url('embed.public', {token: createdEmbed.token}) }}</textarea>
+            <p class="text-body-tertiary mt-2 mb-0">
+                <small>
+                    Anyone with this link can view this metric without logging in.
+                    Manage links in the <a href="{{ path('project.settings.embeds', {uuid: current_project().uuid}) }}" target="_top">Embeds settings</a>.
+                </small>
+            </p>
+        {% elseif canCreateEmbed and not editedEmbed %}
+            <form method="post" action="{{ path('project.metrics.embed.create', {uuid: current_project().uuid, embed: embed.jsonSerialize}) }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('create-embed') }}">
+                <button class="btn btn-primary">Create embed link</button>
+            </form>
+            <p class="text-body-tertiary mt-2 mb-0"><small>Generates a public read-only link for this card.</small></p>
+        {% elseif not editedEmbed %}
+            <p class="text-body-tertiary mb-0">
+                <a href="{{ path('project.help.item', {item: 'pro', uuid: current_project().uuid}) }}" {{ stimulus_action('app', 'turboCanvas') }}>
+                    <twig:Html:Badge:Neutral>Pro</twig:Html:Badge:Neutral>
+                </a>
+                <small>Embed links are not available with the free plan, or you need admin rights on this project.</small>
+            </p>
+        {% endif %}
+    </div>
 {% endblock %}

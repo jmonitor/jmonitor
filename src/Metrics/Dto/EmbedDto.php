@@ -8,9 +8,16 @@ use App\Chart\TimeRange;
 use App\Metrics\Metric;
 use App\Metrics\Renderer;
 use JsonSerializable;
+use Symfony\Component\DependencyInjection\Attribute\Exclude;
 use Symfony\Component\Serializer\Attribute\SerializedName;
 use Symfony\Component\Validator\Constraints as Assert;
 
+/**
+ * Plain DTO, never a service: excluded from autowiring so its required Metric (enum)
+ * constructor argument doesn't break container compilation when a controller action
+ * takes an optional #[MapQueryString] EmbedDto (see MetricsController::embed()).
+ */
+#[Exclude]
 readonly class EmbedDto implements JsonSerializable
 {
     public function __construct(

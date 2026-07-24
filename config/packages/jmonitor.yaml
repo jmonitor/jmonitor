@@ -2,6 +2,11 @@
 # Le bundle JmonitorBundle n'est enregistré qu'en dev/prod (voir config/bundles.php) :
 # la config est donc scopée sous when@dev / when@prod pour ne pas casser le boot en test.
 when@dev:
+    parameters:
+        # Served by the `localhost` host of docker/dev/Caddyfile. The HTTPS overlay
+        # overrides it with JMONITOR_PHP_ENDPOINT (internal plain-HTTP :2021 site).
+        app.jmonitor_dev_php_endpoint: 'http://localhost/jmonitor/php-metrics'
+
     jmonitor:
         project_api_key: '%env(JMONITOR_API_KEY)%'
         http_client: 'jmonitor_http_client'
@@ -18,8 +23,7 @@ when@dev:
                     min_avg_time_ms: 5 # Minimum average execution time in ms for a query to be included.
                     order_by: 'avg'
             php:
-                # Served by the `localhost` host of docker/dev/Caddyfile.
-                endpoint: 'http://localhost/jmonitor/php-metrics'
+                endpoint: '%env(default:app.jmonitor_dev_php_endpoint:JMONITOR_PHP_ENDPOINT)%'
             caddy:
                 endpoint: 'http://localhost:2019/metrics'
                 frankenphp: true

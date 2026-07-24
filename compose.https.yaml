@@ -1,0 +1,51 @@
+# HTTPS overlay for the dev stack — opt-in, enabled with `JMONITOR_HTTPS=1 make up`
+# (see CONTRIBUTING.md "HTTPS in dev"). The Caddy already inside the app image
+# terminates TLS itself, with certificates issued by its internal CA — `make ca`
+# exports the root certificate so the browser stops warning.
+#
+# HTTPS is published on JMONITOR_DEV_HTTPS_PORT (default 8443, mirroring the 8081
+# HTTP convention); the same variable drives the redirect, DEV_DASH_ORIGIN and the
+# Mercure public URL below, so one export moves both the published port and every
+# consumer of it. HTTP stays on :80 (redirect only). Remap either in your gitignored
+# compose.override.yaml as usual (it is loaded last).
+
+services:
+  app:
+    ports: !override
+      - "80:80"
+      - "${JMONITOR_DEV_HTTPS_PORT:-8443}:443"
+    environment:
+      # Public hosts only. The internal :2021 site is declared in the Caddyfile
+      # itself: listing it here would duplicate the FrankenPHP worker pool.
+      DEV_SITE_ADDRESS: "dash.jmonitor.localhost, collector.jmonitor.localhost, admin.jmonitor.localhost, webhook.jmonitor.localhost"
+      DEV_TLS: "tls internal"
+      DEV_DASH_ORIGIN: "https://dash.jmonitor.localhost:${JMONITOR_DEV_HTTPS_PORT:-8443}"
+      # Same hosts on :80, redirecting to the published HTTPS port.
+      DEV_REDIRECT_ADDRESS: "http://dash.jmonitor.localhost, http://collector.jmonitor.localhost, http://admin.jmonitor.localhost, http://webhook.jmonitor.localhost"
+      JMONITOR_DEV_HTTPS_PORT: "${JMONITOR_DEV_HTTPS_PORT:-8443}"
+      # Server-side calls move to the internal plain-HTTP site: on :80 the public
+      # hosts now answer a 308 redirect to https, which these clients can't follow
+      # (no host port, and the internal CA is not in the container's trust store).
+      MERCURE_URL: http://app:2021/.well-known/mercure
+      # Browser-facing: must carry the published host port, and its host must match
+      # the dashboard's — Symfony derives the Mercure subscriber cookie from it.
+      MERCURE_PUBLIC_URL: "https://dash.jmonitor.localhost:${JMONITOR_DEV_HTTPS_PORT:-8443}/.well-known/mercure"
+      JMONITOR_COLLECTOR_URL: http://collector.jmonitor.localhost:2021
+      # `localhost` host for parity with prod, where the php-metrics route IS
+      # host-restricted (app.php_metrics_host, under when@prod in
+      # config/routes/jmonitor.yaml). In dev the route has no host restriction, so
+      # any host on :2021 would work — localhost keeps the dev/prod shape identical.
+      JMONITOR_PHP_ENDPOINT: http://localhost:2021/jmonitor/php-metrics
+    volumes:
+      # The internal CA lives here. Without the volume every `docker compose down`
+      # throws it away and the certificate you trusted becomes unknown again.
+      - caddy-data:/data
+      - caddy-config:/config
+
+  demo:
+    environment:
+      MERCURE_URL: http://app:2021/.well-known/mercure
+
+volumes:
+  caddy-data:
+  caddy-config:

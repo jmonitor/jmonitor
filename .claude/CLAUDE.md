@@ -71,12 +71,14 @@ make monitor     # real self-monitoring metrics into the dev project (foreground
 make demo        # synthetic-metrics worker feeding the demo account (compose profile "demo")
 make provision   # re-run app:dev:provision (idempotent; links dev user to demo project once it exists)
 make perms       # fix root-owned files created by containers (server runs as root on the bind mount)
+make ca          # export Caddy's internal root CA (HTTPS mode) + print how to trust it
 ```
 
 - URLs: http://dash.jmonitor.localhost, admin., collector. (`.localhost` resolves natively), InfluxDB UI on :8086 (`admin` / `jmonitor-dev`).
 - Dev login: `dev@jmonitor.io` / `dev` (provisioned by `app:dev:provision`, own self-monitoring project, API key preset in `.env.dev`).
 - Committed dev defaults in `.env.dev`; personal overrides in `.env.dev.local`. Messenger is synchronous in dev — no worker needed.
 - Host port collisions: remap in gitignored `compose.override.yaml` (`ports: !override`).
+- HTTPS (opt-in): `JMONITOR_HTTPS=1 make up` enables the `compose.https.yaml` overlay (Caddy internal CA, dashboard on `https://dash.jmonitor.localhost:8443`); `make ca` trusts the cert. See CONTRIBUTING.md "HTTPS in dev".
 
 ## Code Quality Commands
 
@@ -114,6 +116,7 @@ A public, read-only demo account (`demo@jmonitor.io` / `demo`, project `"Demo pr
 - **Worker-safe services:** the app runs under FrankenPHP worker mode — shared services must not accumulate per-request state (reset mutated properties or make them readonly); `igor-php` enforces this
 - Comments and docs: short and factual (1-3 sentences), no hosting-provider details in public-facing code/docs
 - Never use Yoda conditions (`$var === 'x'`, not `'x' === $var`)
+- **Keep docs in sync with code:** whenever a change modifies, contradicts, or leaves incomplete anything documented in this `CLAUDE.md`, the root `README.md`, `docker/selfhosted/README.md`, or `CONTRIBUTING.md`, update that doc in the same change — stale or contradictory docs are treated as part of the diff, not a follow-up
 
 ## Frontend Stack
 

@@ -10,7 +10,8 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * A published, public, read-only embed link for a single metric card.
- * Config is snapshotted at creation; the token is the only secret in the URL.
+ * Config is set at creation and can be edited later; the token is immutable
+ * and is the only secret in the URL.
  */
 #[ORM\Entity(repositoryClass: EmbedRepository::class)]
 class Embed

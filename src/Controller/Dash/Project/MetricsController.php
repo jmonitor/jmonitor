@@ -145,4 +145,37 @@ class MetricsController extends AbstractController
             'created' => $embed->getToken(),
         ]);
     }
+
+    #[Route('/embed/update/{token}', name: 'project.metrics.embed.update', methods: ['POST'])]
+    #[IsGranted(ProjectVoter::PROJECT_ADMIN, subject: 'project')]
+    public function updateEmbed(
+        Project $project,
+        string $token,
+        #[MapQueryString(key: 'embed')]
+        EmbedDto $embedDto,
+        Request $request,
+        EmbedRepository $embedRepository,
+        EntityManagerInterface $em,
+        PlanResolver $planResolver,
+    ): Response {
+        if (!$planResolver->resolve($project)->embedable()) {
+            throw $this->createAccessDeniedException('Embeds are not available with the current plan.');
+        }
+
+        if (!$this->isCsrfTokenValid('update-embed', (string) $request->request->get('_token'))) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $embed = $embedRepository->findOneBy(['token' => $token, 'project' => $project])
+            ?? throw $this->createNotFoundException();
+
+        $embed->setDto($embedDto);
+        $em->flush();
+
+        return $this->redirectToRoute('project.metrics.embed', [
+            'uuid' => $project->getUuid(),
+            'edit' => $token,
+            'updated' => 1,
+        ]);
+    }
 }

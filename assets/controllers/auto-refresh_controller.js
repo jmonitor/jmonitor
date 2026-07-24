@@ -70,6 +70,14 @@ export default class extends Controller {
     #scheduleReconnect() {
         this.#clearReconnectTimer();
 
+        // Sustained failure: the subscribe token may have expired (public embeds carry a
+        // short-lived JWT). Reopening with the same stale URL would be rejected forever, so
+        // once the backoff hits its ceiling we reload the page to mint a fresh subscribe URL.
+        if (this.reconnectDelayMs >= this.maxReconnectDelayMs) {
+            this.triggerReload();
+            return;
+        }
+
         this.reconnectTimer = window.setTimeout(() => {
             if (!this.enabledValue) return;
             this.enable();

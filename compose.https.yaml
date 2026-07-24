@@ -3,16 +3,17 @@
 # terminates TLS itself, with certificates issued by its internal CA — `make ca`
 # exports the root certificate so the browser stops warning.
 #
-# Ports are deliberately left at their standard values here; remap them in your
-# gitignored compose.override.yaml as usual (it is loaded last). If you pick a
-# host port other than 8443, export JMONITOR_DEV_HTTPS_PORT so the Mercure public
-# URL below matches — the browser subscribes to that exact origin.
+# HTTPS is published on JMONITOR_DEV_HTTPS_PORT (default 8443, mirroring the 8081
+# HTTP convention); the same variable drives the redirect, DEV_DASH_ORIGIN and the
+# Mercure public URL below, so one export moves both the published port and every
+# consumer of it. HTTP stays on :80 (redirect only). Remap either in your gitignored
+# compose.override.yaml as usual (it is loaded last).
 
 services:
   app:
     ports: !override
       - "80:80"
-      - "443:443"
+      - "${JMONITOR_DEV_HTTPS_PORT:-8443}:443"
     environment:
       # Public hosts only. The internal :2021 site is declared in the Caddyfile
       # itself: listing it here would duplicate the FrankenPHP worker pool.

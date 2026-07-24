@@ -31,7 +31,12 @@
                             {% set dto = item.dto %}
                             {% set embed_url = url('embed.public', {token: item.token}) %}
                             <tr>
-                                <td>{{ dto.metric.label ?? dto.metric.value }}</td>
+                                <td>
+                                    {{ dto.metric.label ?? dto.metric.value }}
+                                    <small class="d-block text-body-tertiary">
+                                        {{ ux_icon(dto.metric.component.icon, {width: '1em', height: '1em'}) }} {{ dto.metric.component.label }}
+                                    </small>
+                                </td>
                                 <td>
                                     {{ item.createdAt|date('Y-m-d') }}
                                     {% if item.createdBy %}<small class="d-block text-body-tertiary">by {{ item.createdBy.email }}</small>{% endif %}

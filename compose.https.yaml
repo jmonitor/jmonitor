@@ -31,8 +31,10 @@ services:
       # the dashboard's — Symfony derives the Mercure subscriber cookie from it.
       MERCURE_PUBLIC_URL: "https://dash.jmonitor.localhost:${JMONITOR_DEV_HTTPS_PORT:-8443}/.well-known/mercure"
       JMONITOR_COLLECTOR_URL: http://collector.jmonitor.localhost:2021
-      # `localhost` host on purpose: the php-metrics route is restricted to it
-      # (app.php_metrics_host, config/routes/jmonitor.yaml).
+      # `localhost` host for parity with prod, where the php-metrics route IS
+      # host-restricted (app.php_metrics_host, under when@prod in
+      # config/routes/jmonitor.yaml). In dev the route has no host restriction, so
+      # any host on :2021 would work — localhost keeps the dev/prod shape identical.
       JMONITOR_PHP_ENDPOINT: http://localhost:2021/jmonitor/php-metrics
     volumes:
       # The internal CA lives here. Without the volume every `docker compose down`

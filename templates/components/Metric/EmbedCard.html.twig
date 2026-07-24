@@ -22,7 +22,7 @@
                     enabled: embed.autoRefresh,
                     canAutoRefresh: true,
                     showProBadge: false,
-                    subscribeUrl: consumed_metric_public_subscribe_url(),
+                    subscribeUrl: consumed_metric_public_subscribe_url(embed.metric.component.value),
                     withCredentials: false,
                 }) }}
             {% else %}

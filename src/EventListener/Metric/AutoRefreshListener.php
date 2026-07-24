@@ -33,13 +33,28 @@ readonly class AutoRefreshListener
             return;
         }
 
+        $components = $event->getComponents();
+
         try {
+            // Project-wide topic for authenticated dashboards: one message listing every
+            // updated component, filtered client-side.
             $this->hub->publish(
                 new Update(
                     $this->mercureTopicProvider->getConsumedMetricUrl($event->project),
-                    json_encode(['components' => $event->getComponents()]),
+                    json_encode(['components' => $components]),
                 ),
             );
+
+            // Per-component sub-topics for public embeds: each carries only its own
+            // component, so a public subscriber never sees the rest of the project.
+            foreach ($components as $component) {
+                $this->hub->publish(
+                    new Update(
+                        $this->mercureTopicProvider->getConsumedMetricComponentUrl($event->project, $component),
+                        json_encode(['components' => [$component]]),
+                    ),
+                );
+            }
         } catch (\Throwable $e) {
             $this->logger->error('Autorefresh error', [
                 'exception' => $e,

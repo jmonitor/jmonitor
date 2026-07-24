@@ -67,22 +67,26 @@ class MercureTopicProviderTest extends TestCase
         $this->assertStringStartsWith(self::HUB_URL . '?topic=', $url);
     }
 
-    public function testPublicSubscribeUrlEmbedsScopedJwtInQueryParameter(): void
+    public function testPublicSubscribeUrlScopesJwtToTheComponentSubTopicOnly(): void
     {
         $project = new Project();
-        $expectedTopic = sprintf('https://%s/metrics/consumed/%s', self::DOMAIN, $project->getUuid());
+        $projectTopic = sprintf('https://%s/metrics/consumed/%s', self::DOMAIN, $project->getUuid());
+        $componentTopic = $projectTopic . '/mysql';
 
         // No request: public URL generation must not depend on a request/cookie.
         $provider = $this->createProvider(new RequestStack());
 
-        $url = $provider->getPublicConsumedMetricSubscribeUrl($project);
+        $url = $provider->getPublicConsumedMetricSubscribeUrl('mysql', $project);
 
-        $this->assertStringStartsWith(self::HUB_URL . '?topic=' . rawurlencode($expectedTopic) . '&authorization=', $url);
+        $this->assertStringStartsWith(self::HUB_URL . '?topic=' . rawurlencode($componentTopic) . '&authorization=', $url);
 
         parse_str((string) parse_url($url, PHP_URL_QUERY), $query);
         $claims = $this->decodeJwtClaims((string) $query['authorization']);
 
-        $this->assertSame([$expectedTopic], $claims['mercure']['subscribe']);
+        // Scoped to the embedded component's sub-topic, never the project-wide topic:
+        // a public viewer must not be able to read the whole project's component stream.
+        $this->assertSame([$componentTopic], $claims['mercure']['subscribe']);
+        $this->assertNotContains($projectTopic, $claims['mercure']['subscribe']);
         $this->assertSame([], $claims['mercure']['publish']);
         $this->assertArrayHasKey('exp', $claims, 'Public JWTs must expire to bound the impact of a leak');
     }

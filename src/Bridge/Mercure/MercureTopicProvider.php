@@ -26,7 +26,9 @@ readonly class MercureTopicProvider
     ) {}
 
     /**
-     * Topic published server-side (see AutoRefreshListener).
+     * Project-wide topic published server-side (see AutoRefreshListener). Carries the
+     * full list of components updated in a push; only authenticated project members
+     * subscribe to it.
      */
     #[AsTwigFunction('consumed_metric_topic')]
     public function getConsumedMetricUrl(?Project $project = null): string
@@ -34,6 +36,16 @@ readonly class MercureTopicProvider
         $project ??= $this->projectContext->getCurrentProject();
 
         return sprintf('https://%s/metrics/consumed/%s', $this->domain, $project->getUuid());
+    }
+
+    /**
+     * Per-component sub-topic, also published by AutoRefreshListener with a single-component
+     * payload. Public embeds subscribe here instead of the project-wide topic, so a public
+     * viewer never learns which other components the project monitors.
+     */
+    public function getConsumedMetricComponentUrl(Project $project, string $component): string
+    {
+        return $this->getConsumedMetricUrl($project) . '/' . rawurlencode($component);
     }
 
     /**
@@ -54,13 +66,14 @@ readonly class MercureTopicProvider
     /**
      * EventSource subscription URL for public embed pages (no session): the subscriber
      * JWT rides in the `authorization` query parameter instead of a cookie, because
-     * cookies are not sent from cross-site iframes.
+     * cookies are not sent from cross-site iframes. Scoped to the embedded metric's
+     * component sub-topic only, so the token cannot read the project-wide stream.
      */
     #[AsTwigFunction('consumed_metric_public_subscribe_url')]
-    public function getPublicConsumedMetricSubscribeUrl(?Project $project = null): string
+    public function getPublicConsumedMetricSubscribeUrl(string $component, ?Project $project = null): string
     {
         $project ??= $this->projectContext->getCurrentProject();
-        $topic = $this->getConsumedMetricUrl($project);
+        $topic = $this->getConsumedMetricComponentUrl($project, $component);
 
         $url = $this->hub->getPublicUrl() . '?topic=' . rawurlencode($topic);
 

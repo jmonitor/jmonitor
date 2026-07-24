@@ -34,12 +34,12 @@ class SettingsMenu extends AbstractMenu
         yield new MenuLink('Team', 'project.settings.team', ['uuid' => $project->getUuid()], metadatas: [
             'icon' => 'mdi:user-outline',
         ]);
+        yield new MenuLink('Embeds', 'project.settings.embeds', ['uuid' => $project->getUuid()], metadatas: [
+            'icon' => 'material-symbols:code-rounded',
+        ]);
         yield new MenuLink('API key', 'project.settings.api_key', ['uuid' => $project->getUuid()], metadatas: [
             'icon' => 'material-symbols:vpn-key-outline',
             'disabled' => !$this->security->isGranted(ProjectVoter::PROJECT_ADMIN, $project),
-        ]);
-        yield new MenuLink('Embeds', 'project.settings.embeds', ['uuid' => $project->getUuid()], metadatas: [
-            'icon' => 'material-symbols:code-rounded',
         ]);
         if ($this->edition->isCloud()) {
             yield new MenuLink('Plan', 'project.settings.plan', ['uuid' => $project->getUuid()], metadatas: [

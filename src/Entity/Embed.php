@@ -39,9 +39,6 @@ class Embed
     private \DateTimeImmutable $createdAt;
 
     #[ORM\Column(nullable: true)]
-    private ?\DateTimeImmutable $revokedAt = null;
-
-    #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $lastUsedAt = null;
 
     public function __construct()
@@ -99,23 +96,6 @@ class Embed
     public function getCreatedAt(): \DateTimeImmutable
     {
         return $this->createdAt;
-    }
-
-    public function isRevoked(): bool
-    {
-        return $this->revokedAt !== null;
-    }
-
-    public function getRevokedAt(): ?\DateTimeImmutable
-    {
-        return $this->revokedAt;
-    }
-
-    public function revoke(): static
-    {
-        $this->revokedAt = new \DateTimeImmutable();
-
-        return $this;
     }
 
     public function getLastUsedAt(): ?\DateTimeImmutable

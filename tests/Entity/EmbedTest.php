@@ -30,15 +30,4 @@ class EmbedTest extends TestCase
 
         $this->assertEquals($dto, $embed->getDto());
     }
-
-    public function testRevoke(): void
-    {
-        $embed = new Embed();
-
-        $this->assertFalse($embed->isRevoked());
-
-        $embed->revoke();
-
-        $this->assertTrue($embed->isRevoked());
-    }
 }

@@ -17,20 +17,6 @@ use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 class SettingsEmbedControllerTest extends TestCase
 {
-    public function testRevokingAnotherProjectsEmbedIs404(): void
-    {
-        $embed = new Embed()->setProject(new Project());
-
-        $this->expectException(NotFoundHttpException::class);
-
-        new SettingsEmbedController()->revoke(
-            new Project(),
-            $embed,
-            $this->createMock(EntityManagerInterface::class),
-            new Request(),
-        );
-    }
-
     public function testDeletingAnotherProjectsEmbedIs404(): void
     {
         $embed = new Embed()->setProject(new Project());
@@ -43,19 +29,6 @@ class SettingsEmbedControllerTest extends TestCase
             $this->createMock(EntityManagerInterface::class),
             new Request(),
         );
-    }
-
-    public function testRevokingWithAnInvalidCsrfTokenIsDenied(): void
-    {
-        $project = new Project();
-        $embed = new Embed()->setProject($project);
-
-        $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects($this->never())->method('flush');
-
-        $this->expectException(AccessDeniedException::class);
-
-        $this->makeController()->revoke($project, $embed, $em, new Request());
     }
 
     public function testDeletingWithAnInvalidCsrfTokenIsDenied(): void

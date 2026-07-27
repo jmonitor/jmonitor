@@ -49,7 +49,12 @@ services:
       context: docker/dev
     profiles: ["demo"]
     command: ["sh", "-c", "php bin/console app:demo:provision && exec php bin/console app:demo:run"]
-    restart: unless-stopped
+    # on-failure (not unless-stopped): recover from an in-session crash, but never
+    # resurrect on daemon/host restart or outlive the stack. Its dependencies have no
+    # restart policy, so a boot-persistent policy here would fail-loop against absent
+    # mysql/influxdb whenever the stack is down. `make down` tears it down too (--profile "*",
+    # since a bare `docker compose down` leaves profile-gated services running).
+    restart: on-failure
     healthcheck:
       # The base image's healthcheck targets the web server (:2019); this service runs a console command.
       disable: true

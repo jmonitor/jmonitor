@@ -36,7 +36,7 @@ up:
 	$(DC) up -d --wait
 
 down:
-	$(DC) down
+	$(DC) --profile "*" down
 
 ## Full cold start: containers + dependencies + database schema.
 setup:

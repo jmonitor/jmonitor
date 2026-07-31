@@ -45,12 +45,16 @@ class EmbedType extends AbstractType
                 'choice_value' => static fn(?Renderer $renderer): ?string => $renderer?->value,
             ]);
 
-            // The dependent callback runs once for the initial render (PRE_SET_DATA, where the
-            // renderer and chart data passed in always match) and again on submit if the user
-            // just switched renderer (POST_SUBMIT). Only that second run can hand the freshly
-            // swapped chart subform stale data of the wrong type (e.g. Gauge options where a
-            // Line's are now expected) — Symfony's parent-to-child mapping would otherwise
-            // re-apply that stale value to the new subform and crash on the type mismatch.
+            // The dependent callback fires at most twice per form instance: once on the
+            // initial render (PRE_SET_DATA, where the renderer and chart data passed in
+            // always match) and once more on every submission (POST_SUBMIT), regardless of
+            // whether the renderer actually changed. On that POST_SUBMIT run, the chart
+            // subform is rebuilt fresh and Symfony's parent-to-child mapping would otherwise
+            // re-apply the *pre-submission* parent data to it — data matching the old
+            // renderer, which may now be the wrong type for the new subform and crash. It is
+            // safe to blank that stale value on every submit (not just on an actual switch):
+            // the subform still receives its real submitted values straight from the request
+            // via its own submit() call right after, independently of this reset.
             $initialBuild = true;
 
             $builder->addDependent('chart', 'renderer', function (DependentField $field, ?Renderer $renderer) use ($metric, &$initialBuild): void {

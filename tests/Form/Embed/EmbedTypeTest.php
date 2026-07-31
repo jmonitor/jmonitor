@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Form\Embed;
 
+use App\Chart\TimeRange;
 use App\Form\Embed\EmbedType;
 use App\Metrics\Dto\Embed\GaugeEmbedOptions;
 use App\Metrics\Dto\Embed\TimeSeriesEmbedOptions;
@@ -96,6 +97,11 @@ class EmbedTypeTest extends TypeTestCase
         $form->submit(['renderer' => 'line', 'chart' => ['range' => 'last_1_hour', 'aspectRatio' => '4'], 'card' => [], 'autoRefresh' => '']);
 
         $this->assertTrue($form->isSynchronized());
-        $this->assertInstanceOf(TimeSeriesEmbedOptions::class, $form->get('chart')->getData());
+        $this->assertTrue($form->isValid());
+
+        $chartData = $form->get('chart')->getData();
+        $this->assertInstanceOf(TimeSeriesEmbedOptions::class, $chartData);
+        $this->assertSame(TimeRange::LAST_1_HOUR, $chartData->range);
+        $this->assertSame(4.0, $chartData->aspectRatio);
     }
 }

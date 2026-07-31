@@ -23,3 +23,10 @@ when@prod:
     framework:
         cache:
             prefix_seed: jmonitor/jmonitor-prod
+
+when@test:
+    framework:
+        cache:
+            # Tests should not need a running Redis: an in-memory pool is enough, since
+            # nothing in the test suite depends on cached data surviving between requests.
+            app: cache.adapter.array

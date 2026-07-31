@@ -11,7 +11,9 @@ use App\Metrics\Metric\TimeSeriesMetricInterface;
 use App\Metrics\MetricLocator;
 use App\Metrics\Renderer;
 use App\Metrics\Renderer\ChartDefaultsResolver;
+use App\Metrics\Renderer\Configurator\ChartDefaultsConfigurator;
 use App\Metrics\Renderer\Dto\TimeSerieDto;
+use App\Metrics\Renderer\Options\TimeSeriesRendererOptions;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
@@ -19,7 +21,8 @@ class ChartDefaultsResolverTest extends TestCase
 {
     public function testTimeSeriesDefaultComesFromTheBareConfigurationWhenTheMetricDoesNotOverrideIt(): void
     {
-        $config = $this->resolver()->resolve(Metric::SystemCpuUsage, Renderer::Line);
+        $metric = Metric::SystemCpuUsage;
+        $config = $this->resolver(metric: $metric)->resolve($metric, Renderer::Line);
 
         $this->assertInstanceOf(TimeSeriesChartConfiguration::class, $config);
         $this->assertSame(2.8, $config->aspectRatio);
@@ -46,28 +49,42 @@ class ChartDefaultsResolverTest extends TestCase
         $this->assertNull($this->resolver()->resolve(Metric::SystemInformations, Renderer::Basic));
     }
 
+    public function testAMetricMissingFromTheLocatorFallsBackToTheBareConfiguration(): void
+    {
+        // Guards a metric added to the Line/Bar renderers without being registered as a service.
+        $resolver = new ChartDefaultsResolver($this->locator(Metric::MysqlSlowQueriesCount, 6.0));
+
+        $config = $resolver->resolve(Metric::SystemCpuUsage, Renderer::Line);
+
+        $this->assertInstanceOf(TimeSeriesChartConfiguration::class, $config);
+        $this->assertSame(2.8, $config->aspectRatio);
+    }
+
     /**
-     * The resolver duplicates the call ChartDefaultsConfigurator makes inside the render pipeline,
-     * because that configurator needs a DTO it only uses to read $dto->metric. Pin the two together.
+     * Verifies the resolver produces the same chart configuration as the render pipeline's ChartDefaultsConfigurator.
+     * Both are called with the same metric, so they must always stay in sync when that metric has a registered service.
      */
     public function testMatchesWhatTheRenderPipelineProduces(): void
     {
         $metric = Metric::MysqlSlowQueriesCount;
         $locator = $this->locator($metric, overrideAspectRatio: 6.0);
 
-        $fromPipeline = new TimeSeriesChartConfiguration();
-        $service = $locator->get($metric);
-        $this->assertInstanceOf(TimeSeriesMetricInterface::class, $service);
-        $service->configureTimeSerieChart($fromPipeline);
+        $options = new TimeSeriesRendererOptions();
+        $dto = new TimeSerieDto($metric);
+        $configurator = new ChartDefaultsConfigurator($locator);
+
+        $this->assertTrue($configurator->supports($options, $dto), 'Configurator must support TimeSeriesRendererOptions');
+        $configurator->configure($options, $dto);
+        $fromPipeline = $options->chartConfig;
 
         $fromResolver = new ChartDefaultsResolver($locator)->resolve($metric, Renderer::Bar);
 
         $this->assertEquals($fromPipeline, $fromResolver);
     }
 
-    private function resolver(?float $overrideAspectRatio = null): ChartDefaultsResolver
+    private function resolver(Metric $metric = Metric::MysqlSlowQueriesCount, ?float $overrideAspectRatio = null): ChartDefaultsResolver
     {
-        return new ChartDefaultsResolver($this->locator(Metric::MysqlSlowQueriesCount, $overrideAspectRatio));
+        return new ChartDefaultsResolver($this->locator($metric, $overrideAspectRatio));
     }
 
     private function locator(Metric $metric, ?float $overrideAspectRatio): MetricLocator

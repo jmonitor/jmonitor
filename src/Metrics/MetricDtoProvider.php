@@ -68,9 +68,11 @@ class MetricDtoProvider implements ResetInterface
             }
         } elseif ($service instanceof TypicalRangeAwareMetricInterface) {
             $ranges = $this->rangesProvider->get($metric);
+            // Null means no collected data, an expected state: there is nothing to badge.
+            $value = $service->getTypicalRangeValue($options);
 
-            if ($ranges) {
-                $dto->setBadge($ranges->find($service->getTypicalRangeValue($options))?->badge());
+            if ($ranges && $value !== null) {
+                $dto->setBadge($ranges->find($value)?->badge());
             }
         }
 

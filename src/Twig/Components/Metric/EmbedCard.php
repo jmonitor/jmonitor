@@ -16,6 +16,9 @@ class EmbedCard
     public bool $public = false;
     public bool $preview = false;
 
+    /** Route serving the content-only fragment; set only when the card refreshes in place. */
+    public ?string $contentUrl = null;
+
     private readonly MetricDtoProvider $dtoProvider;
 
     public function __construct(MetricDtoProvider $dtoProvider)

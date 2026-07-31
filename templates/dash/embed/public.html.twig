@@ -3,5 +3,5 @@
 {% block title %}{{ embed.metric.label ?? embed.metric.value }}{% endblock %}
 
 {% block body %}
-    {{ embed|render_embed(true) }}
+    {{ embed|render_embed(public: true, contentUrl: path('embed.public.content', {token: token})) }}
 {% endblock %}

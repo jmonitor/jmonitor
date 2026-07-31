@@ -27,12 +27,32 @@ class PublicEmbedControllerTest extends TestCase
 
         $this->expectException(NotFoundHttpException::class);
 
-        $this->invoke($embed);
+        $this->show($embed);
     }
 
-    private function invoke(Embed $embed): void
+    public function testFreePlanProjectContentIs404(): void
     {
-        new PublicEmbedController()->__invoke(
+        $embed = new Embed()->setProject($this->projectWithPlan(Plan::FREE));
+
+        $this->expectException(NotFoundHttpException::class);
+
+        $this->content($embed);
+    }
+
+    private function show(Embed $embed): void
+    {
+        new PublicEmbedController()->show(
+            $embed,
+            $this->projectContext(),
+            new PlanResolver(Edition::CLOUD),
+            $this->createMock(EntityManagerInterface::class),
+            new MockClock(),
+        );
+    }
+
+    private function content(Embed $embed): void
+    {
+        new PublicEmbedController()->content(
             $embed,
             $this->projectContext(),
             new PlanResolver(Edition::CLOUD),

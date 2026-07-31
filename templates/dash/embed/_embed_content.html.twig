@@ -1,0 +1,5 @@
+{# Refresh unit of an embed: only this frame is reloaded on each update, so the controls
+   around it — and the viewer's Live toggle state — stay untouched. #}
+<turbo-frame id="{{ constant('App\\Metrics\\EmbedRenderer::CONTENT_FRAME_ID') }}">
+    {{ inner|raw }}
+</turbo-frame>

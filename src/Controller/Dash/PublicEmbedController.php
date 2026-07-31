@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Dash;
 
 use App\Entity\Embed;
+use App\Metrics\Dto\EmbedDto;
 use App\Plan\PlanResolver;
 use App\Project\ProjectContext;
 use Doctrine\ORM\EntityManagerInterface;
@@ -21,7 +22,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class PublicEmbedController extends AbstractController
 {
     #[Route('/e/{token}', name: 'embed.public')]
-    public function __invoke(
+    public function show(
         #[MapEntity(mapping: ['token' => 'token'])]
         Embed $embed,
         ProjectContext $projectContext,
@@ -29,6 +30,37 @@ class PublicEmbedController extends AbstractController
         EntityManagerInterface $em,
         ClockInterface $clock,
     ): Response {
+        return $this->publicResponse('dash/embed/public.html.twig', [
+            'embed' => $this->resolveDto($embed, $projectContext, $planResolver, $em, $clock),
+            'token' => $embed->getToken(),
+        ]);
+    }
+
+    /**
+     * Metric content alone, as a turbo-frame. The card refreshes through this route instead
+     * of reloading the whole page, so the viewer's client-side Live toggle survives updates.
+     */
+    #[Route('/e/{token}/content', name: 'embed.public.content')]
+    public function content(
+        #[MapEntity(mapping: ['token' => 'token'])]
+        Embed $embed,
+        ProjectContext $projectContext,
+        PlanResolver $planResolver,
+        EntityManagerInterface $em,
+        ClockInterface $clock,
+    ): Response {
+        return $this->publicResponse('dash/embed/public_content.html.twig', [
+            'embed' => $this->resolveDto($embed, $projectContext, $planResolver, $em, $clock),
+        ]);
+    }
+
+    private function resolveDto(
+        Embed $embed,
+        ProjectContext $projectContext,
+        PlanResolver $planResolver,
+        EntityManagerInterface $em,
+        ClockInterface $clock,
+    ): EmbedDto {
         $project = $embed->getProject();
 
         if (!$planResolver->resolve($project)->embedable()) {
@@ -50,9 +82,15 @@ class PublicEmbedController extends AbstractController
             $em->flush();
         }
 
-        $response = $this->render('dash/embed/public.html.twig', [
-            'embed' => $dto,
-        ]);
+        return $dto;
+    }
+
+    /**
+     * @param array<string, mixed> $parameters
+     */
+    private function publicResponse(string $template, array $parameters): Response
+    {
+        $response = $this->render($template, $parameters);
         $response->headers->set('X-Robots-Tag', 'noindex');
 
         return $response;

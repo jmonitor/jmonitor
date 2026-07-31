@@ -6,12 +6,6 @@ parameters:
     ignoreErrors:
         - identifier: doctrine.columnType
         - identifier: doctrine.associationType
-        -
-            # ChartDefaultsResolver is intentionally private; self::getContainer() in a
-            # KernelTestCase exposes private services at runtime, but PHPStan's Symfony
-            # extension only knows the public services listed in the dumped container.
-            identifier: symfonyContainer.serviceNotFound
-            path: tests/Metrics/AspectRatioBoundsTest.php
 
     symfony:
             containerXmlPath: var/cache/dev/App_KernelDevDebugContainer.xml

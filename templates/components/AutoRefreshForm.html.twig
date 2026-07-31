@@ -20,7 +20,7 @@
                 {{ form_widget(form.autoRefresh) }}
             </div>
             <div class="col-auto">
-                <button class="btn btn-primary" type="button" {{ stimulus_target('auto-refresh', 'btn') }} {{ stimulus_action('auto-refresh', 'triggerReload') }}>
+                <button class="btn btn-primary" type="button" {{ stimulus_target('auto-refresh', 'btn') }} {{ stimulus_action('auto-refresh', 'refresh') }}>
                     <twig:ux:icon name="material-symbols:refresh" data-auto-refresh-target="icon" width="1.2em" height="1.2em" />
                 </button>
             </div>

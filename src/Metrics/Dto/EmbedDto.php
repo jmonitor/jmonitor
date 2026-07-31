@@ -32,6 +32,8 @@ readonly class EmbedDto implements JsonSerializable
         public bool $autoRefresh = false,
         #[SerializedName('cc')]
         public ?array $chartConfig = null,
+        #[SerializedName('pn')]
+        public bool $showProjectName = false,
     ) {}
 
     /**
@@ -53,10 +55,11 @@ readonly class EmbedDto implements JsonSerializable
             range: isset($data['ra']) ? TimeRange::from($data['ra']) : null,
             autoRefresh: (bool) ($data['ar'] ?? false),
             chartConfig: $chartConfig,
+            showProjectName: (bool) ($data['pn'] ?? false),
         );
     }
 
-    public function with(?Renderer $renderer = null, ?TimeRange $range = null, ?bool $autoRefresh = null, ?array $chartConfig = null): self
+    public function with(?Renderer $renderer = null, ?TimeRange $range = null, ?bool $autoRefresh = null, ?array $chartConfig = null, ?bool $showProjectName = null): self
     {
         return new self(
             $this->metric,
@@ -64,6 +67,7 @@ readonly class EmbedDto implements JsonSerializable
             $range ?? $this->range,
             $autoRefresh ?? $this->autoRefresh,
             $chartConfig ?? $this->chartConfig,
+            $showProjectName ?? $this->showProjectName,
         );
     }
 
@@ -80,6 +84,7 @@ readonly class EmbedDto implements JsonSerializable
             'ra' => $this->range?->value,
             'ar' => $this->autoRefresh,
             'cc' => $this->chartConfig,
+            'pn' => $this->showProjectName,
         ], fn($v): bool => $v !== null);
     }
 }

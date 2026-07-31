@@ -75,6 +75,7 @@ class MetricsController extends AbstractController
             'range' => $embedDto->range,
             'autoRefresh' => $embedDto->autoRefresh ? '1' : '',
             'chartConfig' => $embedDto->chartConfig,
+            'showProjectName' => $embedDto->showProjectName,
         ], [
             'metric' => $embedDto->metric,
             'action' => $this->generateUrl('project.metrics.embed', array_filter([
@@ -92,7 +93,8 @@ class MetricsController extends AbstractController
             $range = $form->has('range') ? $form->get('range')->getData() : null;
             $autoRefresh = (bool) $form->get('autoRefresh')->getData();
             $chartConfig = $form->has('chartConfig') ? $form->get('chartConfig')->getData() : null;
-            $embedDto = new EmbedDto($metric, $renderer, $range, $autoRefresh, $chartConfig);
+            $showProjectName = (bool) $form->get('showProjectName')->getData();
+            $embedDto = new EmbedDto($metric, $renderer, $range, $autoRefresh, $chartConfig, $showProjectName);
         }
 
         $createdEmbed = null;

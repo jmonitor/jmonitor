@@ -8,7 +8,10 @@ export default class extends Controller {
         enabled: Boolean,
         topic: String,
         component: String,
-        withCredentials: { type: Boolean, default: true }
+        withCredentials: { type: Boolean, default: true },
+        // When both are set, updates refresh that frame instead of reloading the page.
+        contentUrl: { type: String, default: '' },
+        frame: { type: String, default: '' }
     };
 
     connect() {
@@ -50,7 +53,7 @@ export default class extends Controller {
         const datas = JSON.parse(event.data);
 
         if (datas.components.includes(this.componentValue)) {
-            this.triggerReload();
+            this.refresh();
         }
     }
 
@@ -73,8 +76,9 @@ export default class extends Controller {
         // Sustained failure: the subscribe token may have expired (public embeds carry a
         // short-lived JWT). Reopening with the same stale URL would be rejected forever, so
         // once the backoff hits its ceiling we reload the page to mint a fresh subscribe URL.
+        // A frame refresh would not do: the token lives in this element's markup.
         if (this.reconnectDelayMs >= this.maxReconnectDelayMs) {
-            this.triggerReload();
+            this.reloadPage();
             return;
         }
 
@@ -96,7 +100,21 @@ export default class extends Controller {
         }
     }
 
-    triggerReload() {
+    // Refreshes the metric only, leaving this controller (and the viewer's Live toggle) alive.
+    // Falls back to a page reload where no content frame is configured.
+    refresh() {
+        const frame = this.frameValue ? document.getElementById(this.frameValue) : null;
+
+        if (!this.contentUrlValue || !frame) {
+            this.reloadPage();
+            return;
+        }
+
+        // The frame is rendered inline, so it has no src until the first refresh.
+        frame.src ? frame.reload() : (frame.src = this.contentUrlValue);
+    }
+
+    reloadPage() {
         Turbo.visit(window.location.href, { action: "replace" });
     }
 

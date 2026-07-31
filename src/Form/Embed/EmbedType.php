@@ -8,6 +8,7 @@ use App\Chart\TimeRange;
 use App\Metrics\Metric;
 use App\Metrics\Renderer;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -74,6 +75,11 @@ class EmbedType extends AbstractType
                 'renderer' => $renderers[0],
             ]);
         }
+
+        $builder->add('showProjectName', CheckboxType::class, [
+            'label' => 'Show project name',
+            'required' => false,
+        ]);
 
         // Driven by the preview's Live toggle (embed-form Stimulus controller), '1' or ''.
         $builder->add('autoRefresh', HiddenType::class, [

@@ -14,7 +14,7 @@ class EmbedDtoTest extends TestCase
 {
     public function testFromArrayRoundTripsJsonSerialize(): void
     {
-        $dto = new EmbedDto(Metric::SystemCpuUsage, Renderer::Line, TimeRange::LAST_1_HOUR, true, ['aspectRatio' => 2.0]);
+        $dto = new EmbedDto(Metric::SystemCpuUsage, Renderer::Line, TimeRange::LAST_1_HOUR, true, ['aspectRatio' => 2.0], true);
 
         $this->assertEquals($dto, EmbedDto::fromArray($dto->jsonSerialize()));
     }
@@ -28,6 +28,14 @@ class EmbedDtoTest extends TestCase
         $this->assertNull($dto->range);
         $this->assertFalse($dto->autoRefresh);
         $this->assertNull($dto->chartConfig);
+        $this->assertFalse($dto->showProjectName);
+    }
+
+    public function testFromArrayReadsShowProjectName(): void
+    {
+        $dto = EmbedDto::fromArray(['m' => 'system.cpu_usage', 'pn' => true]);
+
+        $this->assertTrue($dto->showProjectName);
     }
 
     public function testFromArrayCastsNumericAspectRatioString(): void

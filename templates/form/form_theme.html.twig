@@ -20,3 +20,20 @@
         {{ form_widget(form.unit, {attr: {style: 'max-width: 100px'}}) }}
     </div>
 {% endblock %}
+
+{% block slider_row %}
+    <div class="mb-4" {{ stimulus_controller('option-slider', {default: default}) }}>
+        <div class="d-flex justify-content-between align-items-baseline">
+            {{ form_label(form) }}
+            <small class="text-body-tertiary">
+                <span data-option-slider-target="value">{{ value }}</span>
+                <span data-option-slider-target="badge">(default)</span>
+                <button type="button" class="btn btn-link btn-sm p-0 ms-1 d-none"
+                        data-option-slider-target="reset"
+                        data-action="option-slider#reset"
+                        title="Reset to default">↺</button>
+            </small>
+        </div>
+        {{ form_widget(form) }}
+    </div>
+{% endblock %}

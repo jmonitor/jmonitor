@@ -47,4 +47,15 @@ class GaugeEmbedOptionsTest extends TestCase
 
         $this->assertSame(2.8, $options->chartConfig->aspectRatio);
     }
+
+    /** "1e400" overflows to INF, which json_encode() refuses when the DTO is re-serialised. */
+    public function testFromArrayIgnoresANonFiniteAspectRatio(): void
+    {
+        $this->assertNull(GaugeEmbedOptions::fromArray(['aspectRatio' => '1e400'])->aspectRatio);
+    }
+
+    public function testFromArrayIgnoresAnAspectRatioAboveTheMaximum(): void
+    {
+        $this->assertNull(GaugeEmbedOptions::fromArray(['aspectRatio' => GaugeEmbedOptions::ASPECT_RATIO_MAX + 1])->aspectRatio);
+    }
 }

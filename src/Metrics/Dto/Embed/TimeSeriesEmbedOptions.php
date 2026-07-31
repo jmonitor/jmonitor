@@ -23,10 +23,18 @@ final readonly class TimeSeriesEmbedOptions implements ChartEmbedOptionsInterfac
     {
         $range = $data['range'] ?? null;
         $aspectRatio = $data['aspectRatio'] ?? null;
+        $aspectRatio = is_numeric($aspectRatio) ? (float) $aspectRatio : null;
+
+        // A crafted query string can carry an out-of-bounds or non-finite ("1e400" -> INF)
+        // ratio; fall back to the default rather than storing something the slider can't
+        // represent or json_encode() can't serialise.
+        if ($aspectRatio !== null && (!is_finite($aspectRatio) || $aspectRatio < self::ASPECT_RATIO_MIN || $aspectRatio > self::ASPECT_RATIO_MAX)) {
+            $aspectRatio = null;
+        }
 
         return new self(
             range: is_string($range) && $range !== '' ? TimeRange::from($range) : null,
-            aspectRatio: is_numeric($aspectRatio) ? (float) $aspectRatio : null,
+            aspectRatio: $aspectRatio,
         );
     }
 

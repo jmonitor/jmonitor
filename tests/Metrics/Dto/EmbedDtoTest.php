@@ -100,4 +100,19 @@ class EmbedDtoTest extends TestCase
 
         EmbedDto::fromArray([]);
     }
+
+    /** A crafted "embed[m][]=x" query string carries an array where a scalar is expected. */
+    public function testFromArrayThrowsOnAnArrayValuedMetric(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        EmbedDto::fromArray(['m' => ['x']]);
+    }
+
+    public function testFromArrayThrowsOnAnArrayValuedRenderer(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        EmbedDto::fromArray(['m' => 'system.cpu_usage', 're' => ['x']]);
+    }
 }

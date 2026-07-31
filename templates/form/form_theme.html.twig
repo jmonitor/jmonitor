@@ -38,7 +38,8 @@
     {%- if errors|length > 0 -%}
         {%- set attr = attr|merge({'aria-invalid': 'true'}) -%}
     {%- endif -%}
-    <div class="mb-4" {{ stimulus_controller('option-slider', {default: default}) }}>
+    {%- set row_class = row_class|default(row_attr.class|default('mb-4')|trim) -%}
+    <div{% with {attr: row_attr|merge({class: row_class})} %}{{ block('attributes') }}{% endwith %} {{ stimulus_controller('option-slider', {default: default}) }}>
         <div class="d-flex justify-content-between align-items-baseline">
             {{ form_label(form) }}
             <small class="text-body-tertiary">

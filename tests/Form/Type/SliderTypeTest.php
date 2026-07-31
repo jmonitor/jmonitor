@@ -65,6 +65,17 @@ class SliderTypeTest extends TypeTestCase
         $this->assertNull($form->getData());
     }
 
+    // Casting 'abc' to 0.0 and letting the Range constraint reject it produces the misleading
+    // "should be 0.5 or more" — a transformation failure names the real problem instead.
+    public function testSubmittingANonNumericValueIsNotSynchronized(): void
+    {
+        $form = $this->factory->create(SliderType::class, null, $this->options());
+
+        $form->submit('abc');
+
+        $this->assertFalse($form->isSynchronized());
+    }
+
     public function testTheDefaultIsExposedToTheView(): void
     {
         $view = $this->factory->create(SliderType::class, null, $this->options())->createView();

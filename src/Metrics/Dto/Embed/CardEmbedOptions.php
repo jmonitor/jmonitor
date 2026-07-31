@@ -22,6 +22,8 @@ final readonly class CardEmbedOptions
     /** @return array<string, mixed> */
     public function toArray(): array
     {
-        return array_filter(['showProjectName' => $this->showProjectName]);
+        return array_filter([
+            'showProjectName' => $this->showProjectName ? true : null,
+        ], static fn(mixed $value): bool => $value !== null);
     }
 }

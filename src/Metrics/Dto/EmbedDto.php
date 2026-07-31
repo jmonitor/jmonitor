@@ -42,8 +42,8 @@ readonly class EmbedDto implements JsonSerializable
     public static function fromArray(array $data): self
     {
         try {
-            $metric = Metric::from((string) ($data['m'] ?? ''));
-            $renderer = isset($data['re']) ? Renderer::from((string) $data['re']) : null;
+            $metric = Metric::from(self::expectScalar($data['m'] ?? ''));
+            $renderer = isset($data['re']) ? Renderer::from(self::expectScalar($data['re'])) : null;
 
             $chartData = is_array($data['cc'] ?? null) ? $data['cc'] : [];
 
@@ -72,6 +72,21 @@ readonly class EmbedDto implements JsonSerializable
             card: $card,
             chart: $chart,
         );
+    }
+
+    /**
+     * A malformed query string can carry an array where a scalar is expected (e.g.
+     * "embed[m][]=x"); casting that to string emits a PHP warning before Metric::from()/
+     * Renderer::from() even get a chance to reject it. Fail the same way as any other
+     * malformed value instead.
+     */
+    private static function expectScalar(mixed $value): string
+    {
+        if (!is_scalar($value)) {
+            throw new \ValueError('Expected a scalar value.');
+        }
+
+        return (string) $value;
     }
 
     public function findRenderer(): Renderer

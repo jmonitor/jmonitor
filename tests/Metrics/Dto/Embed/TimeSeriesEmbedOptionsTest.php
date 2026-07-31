@@ -57,6 +57,17 @@ class TimeSeriesEmbedOptionsTest extends TestCase
         $this->assertNull(TimeSeriesEmbedOptions::fromArray(['aspectRatio' => 'abc'])->aspectRatio);
     }
 
+    /** "1e400" overflows to INF, which json_encode() refuses when the DTO is re-serialised. */
+    public function testFromArrayIgnoresANonFiniteAspectRatio(): void
+    {
+        $this->assertNull(TimeSeriesEmbedOptions::fromArray(['aspectRatio' => '1e400'])->aspectRatio);
+    }
+
+    public function testFromArrayIgnoresAnAspectRatioAboveTheMaximum(): void
+    {
+        $this->assertNull(TimeSeriesEmbedOptions::fromArray(['aspectRatio' => TimeSeriesEmbedOptions::ASPECT_RATIO_MAX + 1])->aspectRatio);
+    }
+
     public function testToArrayDropsNullValues(): void
     {
         $this->assertSame([], new TimeSeriesEmbedOptions()->toArray());

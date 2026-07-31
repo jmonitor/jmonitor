@@ -6,6 +6,7 @@ namespace App\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
+use Symfony\Component\Form\Exception\TransformationFailedException;
 use Symfony\Component\Form\Extension\Core\Type\RangeType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
@@ -30,6 +31,10 @@ class SliderType extends AbstractType
             static function (mixed $value) use ($default, $tolerance): ?float {
                 if ($value === null || $value === '') {
                     return null;
+                }
+
+                if (!is_numeric($value)) {
+                    throw new TransformationFailedException('This value should be a valid number.');
                 }
 
                 // Round off floating-point representation noise (e.g. abs(2.75 - 2.8) can land

@@ -11,6 +11,7 @@ use App\Entity\Project;
 use App\Entity\User;
 use App\Form\Embed\EmbedType;
 use App\Metrics\CollectorContext;
+use App\Metrics\Dto\Embed\EmbedOptionsFactory;
 use App\Metrics\Dto\EmbedDto;
 use App\Metrics\MetricsBagProvider;
 use App\Plan\PlanResolver;
@@ -95,7 +96,10 @@ class MetricsController extends AbstractController
                 renderer: $renderer,
                 autoRefresh: (bool) $form->get('autoRefresh')->getData(),
                 card: $form->get('card')->getData(),
-                chart: $form->has('chart') ? $form->get('chart')->getData() : null,
+                // A submission without a chart subform (e.g. a hand-crafted POST omitting the
+                // renderer) still needs its chart options to match the renderer, the same
+                // guarantee GaugeEmbedOptions::applyTo() relies on to force displayHelp(false).
+                chart: $form->has('chart') ? $form->get('chart')->getData() : EmbedOptionsFactory::createEmpty($renderer),
             );
         }
 

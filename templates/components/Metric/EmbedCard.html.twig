@@ -7,9 +7,11 @@
                     <small class="d-block text-body-tertiary">{{ embed.range.label }}</small>
                 {% endif %}
             </div>
-            <div>
-                <span class="badge bg-secondary">{{ current_project().name }}</span>
-            </div>
+            {% if embed.showProjectName %}
+                <div>
+                    <span class="badge bg-secondary">{{ current_project().name }}</span>
+                </div>
+            {% endif %}
         </div>
         {% if contentUrl %}
             {{ include('dash/embed/_embed_content.html.twig', {inner: block('content')}) }}

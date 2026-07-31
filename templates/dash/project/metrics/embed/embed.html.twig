@@ -4,9 +4,7 @@
 
 {% block body %}
     <div {{ stimulus_controller('embed-form') }}>
-        {% if form.renderer is defined or form.range is defined %}
-            <h6 class="mb-3">Options</h6>
-        {% endif %}
+        <h6 class="mb-3">Options</h6>
 
         {{ form_start(form) }}
         {{ form_rest(form) }}

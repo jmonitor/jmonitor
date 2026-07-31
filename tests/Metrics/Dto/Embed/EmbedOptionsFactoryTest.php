@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Metrics\Dto\Embed;
 
+use App\Form\Embed\GaugeEmbedOptionsType;
+use App\Form\Embed\TimeSeriesEmbedOptionsType;
 use App\Metrics\Dto\Embed\EmbedOptionsFactory;
 use App\Metrics\Dto\Embed\GaugeEmbedOptions;
 use App\Metrics\Dto\Embed\TimeSeriesEmbedOptions;
@@ -34,5 +36,14 @@ class EmbedOptionsFactoryTest extends TestCase
     {
         $this->assertEquals(new TimeSeriesEmbedOptions(), EmbedOptionsFactory::createEmpty(Renderer::Line));
         $this->assertNull(EmbedOptionsFactory::createEmpty(Renderer::Basic));
+    }
+
+    public function testFormTypeFollowsTheRenderer(): void
+    {
+        $this->assertSame(TimeSeriesEmbedOptionsType::class, EmbedOptionsFactory::formType(Renderer::Line));
+        $this->assertSame(TimeSeriesEmbedOptionsType::class, EmbedOptionsFactory::formType(Renderer::Bar));
+        $this->assertSame(GaugeEmbedOptionsType::class, EmbedOptionsFactory::formType(Renderer::Gauge));
+        $this->assertNull(EmbedOptionsFactory::formType(Renderer::Basic));
+        $this->assertNull(EmbedOptionsFactory::formType(null));
     }
 }

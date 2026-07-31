@@ -7,23 +7,39 @@ namespace App\Tests\Controller\Dash\Project;
 use App\Controller\Dash\Project\MetricsController;
 use App\Entity\Embed;
 use App\Entity\Project;
+use App\Form\Embed\CardEmbedOptionsType;
+use App\Form\Embed\EmbedType;
+use App\Form\Embed\GaugeEmbedOptionsType;
+use App\Form\Embed\TimeSeriesEmbedOptionsType;
+use App\Metrics\Dto\Embed\CardEmbedOptions;
+use App\Metrics\Dto\Embed\GaugeEmbedOptions;
 use App\Metrics\Dto\Embed\TimeSeriesEmbedOptions;
 use App\Metrics\Dto\EmbedDto;
 use App\Metrics\Metric;
+use App\Metrics\MetricLocator;
 use App\Metrics\Renderer;
+use App\Metrics\Renderer\ChartDefaultsResolver;
 use App\Plan\Edition;
 use App\Plan\PlanResolver;
 use App\Repository\EmbedRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerInterface;
 use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\Form\Extension\HttpFoundation\HttpFoundationExtension;
+use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
+use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\Forms;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
+use Symfony\Component\Validator\Validation;
 
 class MetricsControllerTest extends TestCase
 {
@@ -124,6 +140,81 @@ class MetricsControllerTest extends TestCase
         $this->expectException(BadRequestHttpException::class);
 
         $this->makeController(csrfValid: true)->updateEmbed($project, $token, $newDto, new Request(), $repository, $em, new PlanResolver(Edition::SELF_HOSTED));
+    }
+
+    // Regression: a submission with no "renderer" value is still valid and synchronised
+    // (ChoiceType has no server-side "required" constraint) — the resolved renderer must
+    // still get chart options that match it, so GaugeEmbedOptions::applyTo() keeps forcing
+    // displayHelp(false).
+    public function testEmbedFallsBackToTheMetricsDefaultRendererWhenNoneIsSubmitted(): void
+    {
+        // SystemRamUsage offers Gauge + Line, and defaults to Gauge.
+        $project = new Project();
+        $embedDto = new EmbedDto(Metric::SystemRamUsage, Renderer::Gauge, false, new CardEmbedOptions(), new GaugeEmbedOptions());
+
+        $router = $this->createMock(UrlGeneratorInterface::class);
+        $router->method('generate')->willReturn('/redirected');
+
+        $authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
+        $authorizationChecker->method('isGranted')->willReturn(false);
+
+        $container = new Container();
+        $container->set('form.factory', $this->embedFormFactory());
+        $container->set('router', $router);
+        $container->set('security.authorization_checker', $authorizationChecker);
+
+        $capturedEmbed = null;
+        $controller = $this->getMockBuilder(MetricsController::class)
+            ->onlyMethods(['render'])
+            ->getMock();
+        $controller->method('render')->willReturnCallback(function (string $view, array $parameters) use (&$capturedEmbed): Response {
+            $capturedEmbed = $parameters['embed'];
+
+            return new Response();
+        });
+        $controller->setContainer($container);
+
+        // No "renderer" key at all — the same shape a hand-crafted POST omitting the style
+        // choice would submit.
+        $request = Request::create('/', 'POST', ['embed' => ['autoRefresh' => '', 'card' => []]]);
+
+        $response = $controller->embed($project, $request, $this->createMock(EmbedRepository::class), new PlanResolver(Edition::SELF_HOSTED), $embedDto);
+
+        $this->assertInstanceOf(Response::class, $response);
+        $this->assertInstanceOf(EmbedDto::class, $capturedEmbed);
+        $this->assertSame(Renderer::Gauge, $capturedEmbed->renderer);
+        $this->assertInstanceOf(GaugeEmbedOptions::class, $capturedEmbed->chart);
+    }
+
+    /**
+     * A hand-assembled form factory carrying only the types EmbedType needs, rather than the
+     * real DI-backed one: the real "form.factory" service pulls in the whole form type
+     * registry, and an unrelated service in it fails to construct in this test env
+     * (Symfony\Component\Mercure\Hub built with a null URL) — a pre-existing environment gap,
+     * not something this test is about.
+     */
+    private function embedFormFactory(): FormFactoryInterface
+    {
+        $metricLocatorContainer = new class implements ContainerInterface {
+            public function get(string $id): never
+            {
+                throw new \LogicException('No metric service needed: this submission never reaches the time series branch.');
+            }
+
+            public function has(string $id): bool
+            {
+                return false;
+            }
+        };
+
+        return Forms::createFormFactoryBuilder()
+            ->addExtension(new ValidatorExtension(Validation::createValidator()))
+            ->addExtension(new HttpFoundationExtension())
+            ->addType(new EmbedType(new ChartDefaultsResolver(new MetricLocator($metricLocatorContainer))))
+            ->addType(new CardEmbedOptionsType())
+            ->addType(new GaugeEmbedOptionsType())
+            ->addType(new TimeSeriesEmbedOptionsType())
+            ->getFormFactory();
     }
 
     private function makeController(bool $csrfValid): MetricsController

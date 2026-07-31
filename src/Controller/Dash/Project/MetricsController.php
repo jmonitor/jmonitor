@@ -89,7 +89,11 @@ class MetricsController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $metric = $embedDto->metric;
-            $renderer = $form->has('renderer') ? $form->get('renderer')->getData() : $metric->availableRenderers()[0];
+            // A submitted-but-empty renderer choice is a valid, synchronised form (ChoiceType
+            // has no server-side "required" constraint): resolve it the same way
+            // EmbedDto::findRenderer()/MetricRenderer::render() do, so the chart options built
+            // below can never disagree with the renderer that actually renders the preview.
+            $renderer = $form->has('renderer') ? ($form->get('renderer')->getData() ?? $metric->defaultRenderer()) : $metric->availableRenderers()[0];
 
             $embedDto = new EmbedDto(
                 metric: $metric,

@@ -32,7 +32,12 @@ class SliderType extends AbstractType
                     return null;
                 }
 
-                return abs((float) $value - $default) < $tolerance ? null : (float) $value;
+                // Round off floating-point representation noise (e.g. abs(2.75 - 2.8) can land
+                // a hair under 0.05 instead of exactly on it) so the boundary comparison below
+                // reflects the real decimal values rather than binary rounding artefacts.
+                $diff = round(abs((float) $value - $default), 9);
+
+                return $diff < $tolerance ? null : (float) $value;
             },
         ));
     }

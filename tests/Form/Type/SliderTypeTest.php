@@ -35,6 +35,27 @@ class SliderTypeTest extends TypeTestCase
         $this->assertSame(4.0, $form->getData());
     }
 
+    // A slider anchored on the min/step grid can only emit multiples of the step from the
+    // default, so a value exactly half a step away can't come from the control itself — a
+    // hand-crafted request at that boundary is stored as sent, not silently rewritten to null.
+    public function testSubmittingExactlyHalfAStepAboveTheDefaultStoresIt(): void
+    {
+        $form = $this->factory->create(SliderType::class, null, $this->options());
+
+        $form->submit('2.85');
+
+        $this->assertSame(2.85, $form->getData());
+    }
+
+    public function testSubmittingExactlyHalfAStepBelowTheDefaultStoresIt(): void
+    {
+        $form = $this->factory->create(SliderType::class, null, $this->options());
+
+        $form->submit('2.75');
+
+        $this->assertSame(2.75, $form->getData());
+    }
+
     public function testAnEmptySubmissionStoresNull(): void
     {
         $form = $this->factory->create(SliderType::class, null, $this->options());

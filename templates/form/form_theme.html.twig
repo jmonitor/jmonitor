@@ -21,7 +21,23 @@
     </div>
 {% endblock %}
 
+{# Same row wrapper as bootstrap_5_layout's form_row/form_row_render (aria wiring, help, errors),
+   with the label line replaced by a label + live value readout, per the slider's own needs. #}
 {% block slider_row %}
+    {%- set attr = {} -%}
+    {%- set aria_describedby = [] -%}
+    {%- if help -%}
+        {%- set aria_describedby = aria_describedby|merge([id ~ '_help']) -%}
+    {%- endif -%}
+    {%- if errors|length > 0 -%}
+        {%- set aria_describedby = aria_describedby|merge(errors|map((_, index) => id ~ '_error' ~ (index + 1))) -%}
+    {%- endif -%}
+    {%- if aria_describedby|length > 0 -%}
+        {%- set attr = attr|merge({'aria-describedby': aria_describedby|join(' ')}) -%}
+    {%- endif -%}
+    {%- if errors|length > 0 -%}
+        {%- set attr = attr|merge({'aria-invalid': 'true'}) -%}
+    {%- endif -%}
     <div class="mb-4" {{ stimulus_controller('option-slider', {default: default}) }}>
         <div class="d-flex justify-content-between align-items-baseline">
             {{ form_label(form) }}
@@ -34,6 +50,8 @@
                         title="Reset to default">↺</button>
             </small>
         </div>
-        {{ form_widget(form) }}
+        {{ form_widget(form, {attr: attr}) }}
+        {{ form_help(form) }}
+        {{ form_errors(form) }}
     </div>
 {% endblock %}

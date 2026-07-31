@@ -25,8 +25,20 @@ export default class extends Controller {
         const current = parseFloat(this.input.value);
         const isDefault = Math.abs(current - this.defaultValue) < 1e-9;
 
-        this.valueTarget.textContent = current.toFixed(1);
+        this.valueTarget.textContent = current.toFixed(this.decimals());
         this.badgeTarget.classList.toggle('d-none', !isDefault);
         this.resetTarget.classList.toggle('d-none', isDefault);
+    }
+
+    // Number of decimals to display, derived from the widget's own step so the readout
+    // matches what the slider can actually produce (e.g. step="0.01" -> 2 decimals).
+    decimals() {
+        const step = parseFloat(this.input.step);
+        if (!Number.isFinite(step) || step <= 0) {
+            return 1;
+        }
+
+        const fraction = String(step).split('.')[1];
+        return fraction ? fraction.length : 0;
     }
 }

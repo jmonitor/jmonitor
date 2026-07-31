@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Dash\Project;
 
 use App\Chart\TimeRange;
+use App\Controller\Attribute\MapEmbedDto;
 use App\Entity\Embed;
 use App\Entity\Enums\Component;
 use App\Entity\Project;
@@ -22,7 +23,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -57,7 +57,7 @@ class MetricsController extends AbstractController
         Request $request,
         EmbedRepository $embedRepository,
         PlanResolver $planResolver,
-        #[MapQueryString(key: 'embed')]
+        #[MapEmbedDto]
         ?EmbedDto $embedDto = null,
     ): Response {
         $editedEmbed = null;
@@ -129,7 +129,7 @@ class MetricsController extends AbstractController
     #[IsGranted(ProjectVoter::PROJECT_ADMIN, subject: 'project')]
     public function createEmbed(
         Project $project,
-        #[MapQueryString(key: 'embed')]
+        #[MapEmbedDto]
         EmbedDto $embedDto,
         Request $request,
         EntityManagerInterface $em,
@@ -165,7 +165,7 @@ class MetricsController extends AbstractController
     public function updateEmbed(
         Project $project,
         string $token,
-        #[MapQueryString(key: 'embed')]
+        #[MapEmbedDto]
         EmbedDto $embedDto,
         Request $request,
         EmbedRepository $embedRepository,

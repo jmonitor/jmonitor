@@ -71,7 +71,7 @@ class PublicEmbedController extends AbstractController
 
         try {
             $dto = $embed->getDto();
-        } catch (\ValueError) {
+        } catch (\InvalidArgumentException) {
             // A stored metric/renderer/range value no longer exists in the enums.
             throw $this->createNotFoundException();
         }

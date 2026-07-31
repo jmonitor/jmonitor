@@ -60,6 +60,7 @@ readonly class EmbedDto implements JsonSerializable
             }
 
             $chart = EmbedOptionsFactory::hydrate($renderer ?? $metric->defaultRenderer(), $chartData);
+            $card = CardEmbedOptions::fromArray($cardData);
         } catch (\ValueError $e) {
             throw new \InvalidArgumentException('Invalid embed configuration.', previous: $e);
         }
@@ -68,7 +69,7 @@ readonly class EmbedDto implements JsonSerializable
             metric: $metric,
             renderer: $renderer,
             autoRefresh: (bool) ($data['ar'] ?? false),
-            card: CardEmbedOptions::fromArray($cardData),
+            card: $card,
             chart: $chart,
         );
     }

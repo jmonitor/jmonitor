@@ -34,7 +34,7 @@ class TimeSeriesEmbedOptionsType extends AbstractType implements DataMapperInter
 
         $builder->add('aspectRatio', SliderType::class, [
             'label' => 'Aspect ratio',
-            'default' => $defaults->aspectRatio ?? 2.8,
+            'default' => $defaults->aspectRatio ?? TimeSeriesChartConfiguration::DEFAULT_ASPECT_RATIO,
             'min' => TimeSeriesEmbedOptions::ASPECT_RATIO_MIN,
             'max' => TimeSeriesEmbedOptions::ASPECT_RATIO_MAX,
             'step' => TimeSeriesEmbedOptions::ASPECT_RATIO_STEP,

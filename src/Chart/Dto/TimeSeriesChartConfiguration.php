@@ -11,12 +11,14 @@ use Symfony\UX\Chartjs\Model\Chart;
 
 class TimeSeriesChartConfiguration implements ChartConfigurationInterface
 {
+    public const float DEFAULT_ASPECT_RATIO = 2.8;
+
     public private(set) string $chartType = Chart::TYPE_LINE;
     public private(set) ?int $yMin = null;
     public private(set) ?int $suggestedYMin = null;
     public private(set) ?int $yMax = null;
     public private(set) ?TimeRange $range = null;
-    public private(set) ?float $aspectRatio = 2.8;
+    public private(set) ?float $aspectRatio = self::DEFAULT_ASPECT_RATIO;
     public private(set) ?Unit $unit = null;
 
     /**

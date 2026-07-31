@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Metrics;
 
 use App\Metrics\Dto\EmbedDto;
-use App\Metrics\Renderer\Dto\Embed\EmbedRendererOptionsBuilder;
 use Twig\Attribute\AsTwigFilter;
 use Twig\Environment;
 
@@ -42,10 +41,6 @@ readonly class EmbedRenderer
 
     private function renderInner(EmbedDto $embed): string
     {
-        return $this->metricRenderer->render(
-            $embed->metric,
-            $embed->renderer,
-            EmbedRendererOptionsBuilder::fromEmbedDto($embed),
-        );
+        return $this->metricRenderer->render($embed->metric, $embed->renderer, $embed->chart);
     }
 }

@@ -7,6 +7,7 @@ namespace App\Tests\Controller\Dash\Project;
 use App\Controller\Dash\Project\MetricsController;
 use App\Entity\Embed;
 use App\Entity\Project;
+use App\Metrics\Dto\Embed\TimeSeriesEmbedOptions;
 use App\Metrics\Dto\EmbedDto;
 use App\Metrics\Metric;
 use App\Metrics\Renderer;
@@ -29,7 +30,7 @@ class MetricsControllerTest extends TestCase
     public function testCreateEmbedIsDeniedOnFreePlan(): void
     {
         $project = new Project();
-        $dto = new EmbedDto(Metric::SystemCpuUsage, null, null, false, null);
+        $dto = new EmbedDto(Metric::SystemCpuUsage, null, false);
         $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->never())->method('persist');
 
@@ -41,7 +42,7 @@ class MetricsControllerTest extends TestCase
     public function testUpdateEmbedIsDeniedOnFreePlan(): void
     {
         $project = new Project();
-        $dto = new EmbedDto(Metric::SystemCpuUsage, null, null, false, null);
+        $dto = new EmbedDto(Metric::SystemCpuUsage, null, false);
         $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->never())->method('flush');
 
@@ -53,7 +54,7 @@ class MetricsControllerTest extends TestCase
     public function testUpdateEmbedWithAnInvalidCsrfTokenIsDenied(): void
     {
         $project = new Project();
-        $dto = new EmbedDto(Metric::SystemCpuUsage, null, null, false, null);
+        $dto = new EmbedDto(Metric::SystemCpuUsage, null, false);
         $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->never())->method('flush');
 
@@ -66,7 +67,7 @@ class MetricsControllerTest extends TestCase
     public function testUpdatingAnUnknownOrForeignTokenIs404(): void
     {
         $project = new Project();
-        $dto = new EmbedDto(Metric::SystemCpuUsage, null, null, false, null);
+        $dto = new EmbedDto(Metric::SystemCpuUsage, null, false);
         $repository = $this->createMock(EmbedRepository::class);
         $repository->expects($this->once())->method('findOneBy')->with(['token' => 'unknown', 'project' => $project])->willReturn(null);
 
@@ -78,10 +79,11 @@ class MetricsControllerTest extends TestCase
     public function testUpdateEmbedReplacesTheDtoAndKeepsTheToken(): void
     {
         $project = new Project();
-        $embed = new Embed()->setProject($project)->setDto(new EmbedDto(Metric::SystemCpuUsage, Renderer::Gauge, null, false, null));
+        $embed = new Embed()->setProject($project)->setDto(new EmbedDto(Metric::SystemCpuUsage, Renderer::Gauge, false));
         $token = $embed->getToken();
 
-        $newDto = new EmbedDto(Metric::SystemCpuUsage, Renderer::Line, null, true, null);
+        // chart must already hold the renderer's default options: getDto() always fills it in via fromArray().
+        $newDto = new EmbedDto(Metric::SystemCpuUsage, Renderer::Line, true, chart: new TimeSeriesEmbedOptions());
         $repository = $this->createMock(EmbedRepository::class);
         $repository->expects($this->once())->method('findOneBy')->with(['token' => $token, 'project' => $project])->willReturn($embed);
         $em = $this->createMock(EntityManagerInterface::class);
@@ -110,10 +112,10 @@ class MetricsControllerTest extends TestCase
     public function testUpdateEmbedRejectsAMetricChange(): void
     {
         $project = new Project();
-        $embed = new Embed()->setProject($project)->setDto(new EmbedDto(Metric::SystemCpuUsage, Renderer::Gauge, null, false, null));
+        $embed = new Embed()->setProject($project)->setDto(new EmbedDto(Metric::SystemCpuUsage, Renderer::Gauge, false));
         $token = $embed->getToken();
 
-        $newDto = new EmbedDto(Metric::SystemRamUsage, Renderer::Gauge, null, false, null);
+        $newDto = new EmbedDto(Metric::SystemRamUsage, Renderer::Gauge, false);
         $repository = $this->createMock(EmbedRepository::class);
         $repository->method('findOneBy')->willReturn($embed);
         $em = $this->createMock(EntityManagerInterface::class);

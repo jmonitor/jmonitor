@@ -7,6 +7,8 @@ namespace App\Metrics\Actions;
 use App\AutoRefresh\AutoRefreshContext;
 use App\Range\RangeContext;
 use App\Metrics\Actions\Dto\Action;
+use App\Metrics\Dto\Embed\EmbedOptionsFactory;
+use App\Metrics\Dto\Embed\TimeSeriesEmbedOptions;
 use App\Metrics\Dto\EmbedDto;
 use App\Metrics\Metric;
 use App\Metrics\Renderer;
@@ -38,14 +40,17 @@ readonly class EmbedActionProvider
     private function getDefaultEmbed(Metric $metric, ?Renderer $renderer = null): EmbedDto
     {
         $renderer ??= $metric->defaultRenderer();
+        $chart = EmbedOptionsFactory::createEmpty($renderer);
+
+        if ($chart instanceof TimeSeriesEmbedOptions) {
+            $chart = new TimeSeriesEmbedOptions(range: $this->rangeContext->getRangeDto()->range);
+        }
 
         return new EmbedDto(
             metric: $metric,
             renderer: $renderer,
-            range: $renderer->supportRange() ? $this->rangeContext->getRangeDto()->range : null,
             autoRefresh: $this->autoRefreshContext->isAutoRefresh(),
-            //            card: true,
-            chartConfig: [],
+            chart: $chart,
         );
     }
 }

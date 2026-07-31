@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace App\Controller\Dash\Project;
 
+use App\Chart\TimeRange;
 use App\Entity\Embed;
 use App\Entity\Enums\Component;
 use App\Entity\Project;
 use App\Entity\User;
 use App\Form\Embed\EmbedType;
 use App\Metrics\CollectorContext;
+use App\Metrics\Dto\Embed\CardEmbedOptions;
+use App\Metrics\Dto\Embed\EmbedOptionsFactory;
 use App\Metrics\Dto\EmbedDto;
 use App\Metrics\MetricsBagProvider;
 use App\Plan\PlanResolver;
@@ -72,10 +75,10 @@ class MetricsController extends AbstractController
 
         $form = $this->createForm(EmbedType::class, [
             'renderer' => $embedDto->findRenderer(),
-            'range' => $embedDto->range,
+            'range' => $embedDto->getRange(),
             'autoRefresh' => $embedDto->autoRefresh ? '1' : '',
-            'chartConfig' => $embedDto->chartConfig,
-            'showProjectName' => $embedDto->showProjectName,
+            'chartConfig' => $embedDto->chart?->toArray(),
+            'showProjectName' => $embedDto->card->showProjectName,
         ], [
             'metric' => $embedDto->metric,
             'action' => $this->generateUrl('project.metrics.embed', array_filter([
@@ -90,11 +93,19 @@ class MetricsController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $metric = $embedDto->metric;
             $renderer = $form->has('renderer') ? $form->get('renderer')->getData() : $metric->availableRenderers()[0];
-            $range = $form->has('range') ? $form->get('range')->getData() : null;
-            $autoRefresh = (bool) $form->get('autoRefresh')->getData();
-            $chartConfig = $form->has('chartConfig') ? $form->get('chartConfig')->getData() : null;
-            $showProjectName = (bool) $form->get('showProjectName')->getData();
-            $embedDto = new EmbedDto($metric, $renderer, $range, $autoRefresh, $chartConfig, $showProjectName);
+            $chartData = $form->has('chartConfig') ? ($form->get('chartConfig')->getData() ?? []) : [];
+
+            if ($form->has('range') && $form->get('range')->getData() instanceof TimeRange) {
+                $chartData['range'] = $form->get('range')->getData()->value;
+            }
+
+            $embedDto = new EmbedDto(
+                metric: $metric,
+                renderer: $renderer,
+                autoRefresh: (bool) $form->get('autoRefresh')->getData(),
+                card: new CardEmbedOptions((bool) $form->get('showProjectName')->getData()),
+                chart: EmbedOptionsFactory::hydrate($renderer, $chartData),
+            );
         }
 
         $createdEmbed = null;

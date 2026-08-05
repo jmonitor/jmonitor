@@ -14,6 +14,19 @@ collectors:
     type: attribute
     host: 'collector.%app.domain%'
 
+# Same controllers on an internal Host, for agents that reach the app from inside its
+# own network. The self-hosted collector container needs this when APP_DOMAIN is under
+# .localhost: libcurl resolves *.localhost to loopback (RFC 6761) and never asks Docker
+# DNS, so it posts to the compose service name instead. An addition, not a replacement —
+# agents on other servers keep using collector.<domain>.
+collectors_internal:
+    resource:
+        path: ../src/Controller/Collector/
+        namespace: App\Controller\Collector
+    type: attribute
+    name_prefix: internal_
+    host: '%app.collector_internal_host%'
+
 dash:
     resource:
         path: ../src/Controller/Dash/

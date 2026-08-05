@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Tests\Bridge\Mercure;
 
 use App\Bridge\Mercure\MercureTopicProvider;
+use App\Bridge\Mercure\SameOriginHub;
 use App\Entity\Project;
 use App\Project\ProjectContext;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Mercure\Authorization;
@@ -20,31 +22,59 @@ use Symfony\Component\Mercure\Jwt\StaticTokenProvider;
 class MercureTopicProviderTest extends TestCase
 {
     private const DOMAIN = 'jmonitor.io';
-    private const HUB_URL = 'https://dash.jmonitor.io/.well-known/mercure';
+    private const INTERNAL_HUB_URL = 'http://app/.well-known/mercure';
     private const SECRET = '!ChangeThisMercureHubJWTSecretKey!';
 
-    public function testReturnsSubscribeUrlAndScopesCookieToProjectTopic(): void
+    public function testReturnsSameOriginSubscribeUrlAndScopesCookieToProjectTopic(): void
     {
         $project = new Project();
         $expectedTopic = sprintf('https://%s/metrics/consumed/%s', self::DOMAIN, $project->getUuid());
 
-        $request = Request::create(self::HUB_URL);
+        $request = Request::create('https://dash.jmonitor.io/dash/projects');
         $provider = $this->createProvider($this->requestStack($request));
 
         $url = $provider->getConsumedMetricSubscribeUrl($project);
 
-        $this->assertSame(self::HUB_URL . '?topic=' . rawurlencode($expectedTopic), $url);
+        // Relative on purpose: the browser resolves it against the page it is on, so the
+        // subscription follows the real scheme, host and port with nothing to configure.
+        $this->assertSame(SameOriginHub::PATH . '?topic=' . rawurlencode($expectedTopic), $url);
 
-        $claims = $this->extractCookieClaims($request);
+        $claims = $this->decodeJwtClaims((string) $this->cookie($request)->getValue());
         $this->assertSame([$expectedTopic], $claims['mercure']['subscribe']);
         // The subscriber cookie must not grant any publish rights.
         $this->assertSame([], $claims['mercure']['publish']);
     }
 
+    public function testCookieIsNotSecureOverPlainHttp(): void
+    {
+        $request = Request::create('http://dash.jmonitor.localhost:8080/dash/projects');
+        $provider = $this->createProvider($this->requestStack($request));
+
+        $provider->getConsumedMetricSubscribeUrl(new Project());
+
+        $cookie = $this->cookie($request);
+        // A Secure cookie is dropped by the browser over plain HTTP: the subscription
+        // would then be anonymous and rejected by the hub.
+        $this->assertFalse($cookie->isSecure());
+        $this->assertSame(SameOriginHub::PATH, $cookie->getPath());
+        // Host-only: the cookie follows the dashboard host, whatever it is.
+        $this->assertNull($cookie->getDomain());
+    }
+
+    public function testCookieIsSecureOverHttps(): void
+    {
+        $request = Request::create('https://dash.jmonitor.io/dash/projects');
+        $provider = $this->createProvider($this->requestStack($request));
+
+        $provider->getConsumedMetricSubscribeUrl(new Project());
+
+        $this->assertTrue($this->cookie($request)->isSecure());
+    }
+
     public function testDoesNotFailWhenCookieAlreadySet(): void
     {
         $project = new Project();
-        $request = Request::create(self::HUB_URL);
+        $request = Request::create('https://dash.jmonitor.io/dash/projects');
 
         $logger = $this->createMock(LoggerInterface::class);
         // The second render (cookie already set on the request) is logged, not propagated.
@@ -55,7 +85,7 @@ class MercureTopicProviderTest extends TestCase
         $provider->getConsumedMetricSubscribeUrl($project);
         $url = $provider->getConsumedMetricSubscribeUrl($project);
 
-        $this->assertStringStartsWith(self::HUB_URL . '?topic=', $url);
+        $this->assertStringStartsWith(SameOriginHub::PATH . '?topic=', $url);
     }
 
     public function testDoesNotSetCookieWithoutRequest(): void
@@ -64,7 +94,7 @@ class MercureTopicProviderTest extends TestCase
 
         $url = $provider->getConsumedMetricSubscribeUrl(new Project());
 
-        $this->assertStringStartsWith(self::HUB_URL . '?topic=', $url);
+        $this->assertStringStartsWith(SameOriginHub::PATH . '?topic=', $url);
     }
 
     public function testPublicSubscribeUrlScopesJwtToTheComponentSubTopicOnly(): void
@@ -78,7 +108,10 @@ class MercureTopicProviderTest extends TestCase
 
         $url = $provider->getPublicConsumedMetricSubscribeUrl('mysql', $project);
 
-        $this->assertStringStartsWith(self::HUB_URL . '?topic=' . rawurlencode($componentTopic) . '&authorization=', $url);
+        $this->assertStringStartsWith(
+            SameOriginHub::PATH . '?topic=' . rawurlencode($componentTopic) . '&authorization=',
+            $url,
+        );
 
         parse_str((string) parse_url($url, PHP_URL_QUERY), $query);
         $claims = $this->decodeJwtClaims((string) $query['authorization']);
@@ -93,11 +126,11 @@ class MercureTopicProviderTest extends TestCase
 
     private function createProvider(RequestStack $requestStack, ?LoggerInterface $logger = null): MercureTopicProvider
     {
-        $hub = new Hub(
-            self::HUB_URL,
-            new StaticTokenProvider('jwt'),
-            new LcobucciFactory(self::SECRET),
-            self::HUB_URL,
+        // No public URL configured, like config/packages/mercure.yaml: the decorator
+        // derives it from the request, which is what shapes the authorization cookie.
+        $hub = new SameOriginHub(
+            new Hub(self::INTERNAL_HUB_URL, new StaticTokenProvider('jwt'), new LcobucciFactory(self::SECRET)),
+            $requestStack,
         );
 
         return new MercureTopicProvider(
@@ -118,18 +151,13 @@ class MercureTopicProviderTest extends TestCase
         return $stack;
     }
 
-    /**
-     * @return array<string, mixed>
-     */
-    private function extractCookieClaims(Request $request): array
+    private function cookie(Request $request): Cookie
     {
         $cookies = $request->attributes->get('_mercure_authorization_cookies');
         $this->assertIsArray($cookies);
         $this->assertArrayHasKey('', $cookies, 'A cookie must be set for the default hub');
 
-        $jwt = $cookies['']->getValue();
-
-        return $this->decodeJwtClaims((string) $jwt);
+        return $cookies[''];
     }
 
     /**

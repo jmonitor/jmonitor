@@ -54,20 +54,6 @@ all.
 dashboard is at `http://dash.jmonitor.localhost:8080` — you can also skip
 the HTTPS step entirely.
 
-> **Warning:** over plain HTTP, the real-time dashboard updates are degraded:
-> the stack assumes `https://` for Mercure (server-sent events), so the
-> browser cannot subscribe and dashboards only refresh on page reload.
-> Everything else works normally. For full parity, enable native HTTPS in its
-> "private network" variant — **both** lines in `.env` (details in step 3):
->
-> ```
-> COMPOSE_FILE=compose.yaml:compose.https.yaml
-> JMONITOR_TLS=tls internal
-> ```
->
-> The dashboard is then at `https://dash.jmonitor.localhost` — no `:8080`,
-> the stack now listens on the standard HTTPS port.
-
 ## 2. Configure
 
 ```bash
@@ -90,8 +76,7 @@ The app refuses to start while a `CHANGE_ME` placeholder remains.
 ## 3. HTTPS
 
 Pick one of the options below. HTTPS is recommended: credentials travel over
-these hosts, and the real-time dashboard updates require it (see "No TLS at
-all?" for what plain HTTP means).
+these hosts (see "No TLS at all?" for what plain HTTP means).
 
 ### Native HTTPS — recommended, nothing to install
 
@@ -124,9 +109,6 @@ trust that CA — export it and install it on your machines:
 ```bash
 docker compose cp app:/data/caddy/pki/authorities/local/root.crt jmonitor-ca.crt
 ```
-
-Real-time dashboards work in this mode too (they only need `https://`, not a
-publicly trusted certificate — accepting the browser warning is enough).
 
 **Bringing your own certificates** (corporate CA, wildcard you already own):
 mount them into the `app` service via a compose override and set
@@ -190,11 +172,10 @@ Cloudflare→server leg), expose the stack on port 80 (`JMONITOR_HTTP_PORT=80`,
 
 ### No TLS at all?
 
-The stack also works over plain HTTP — nothing breaks
-except the real-time dashboard updates, which assume `https://` (same
-degradation as the local-test case, see the warning in the DNS section).
-Credentials then travel unencrypted, so keep that for local tests and private
-networks, not for anything reachable from the internet.
+The stack works fully over plain HTTP — real-time dashboard updates included:
+the browser subscribes to the hub on whatever origin it is already browsing.
+Credentials do travel unencrypted though, so keep that for local tests and
+private networks, not for anything reachable from the internet.
 
 ## 4. Start
 
@@ -329,8 +310,10 @@ Let's Encrypt rate limits.
   effect without the native-HTTPS overlay: also add
   `COMPOSE_FILE=compose.yaml:compose.https.yaml` to `.env`, then re-run
   `docker compose up -d`.
-- **Dashboards don't refresh in real time** — SSE buffered by the proxy: see
-  the `proxy_buffering off` / `proxy_read_timeout` lines in the nginx example.
+- **Dashboards don't refresh in real time** — behind a reverse proxy, server-sent
+  events must not be buffered: see the `proxy_buffering off` /
+  `proxy_read_timeout` lines in the nginx example. The proxy must also pass
+  `/.well-known/mercure` through to the stack like any other path.
 - **InfluxDB UI** — not published by default; `http://<host>:8086` inside the
   Docker network, or publish the port in a compose override
   (login `admin` / `INFLUXDB_ADMIN_PASSWORD`).

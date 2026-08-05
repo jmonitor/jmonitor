@@ -35,7 +35,7 @@ services:
 
   collector:
     environment:
-      JMONITOR_COLLECTOR_URL: http://collector.${APP_DOMAIN:?}:2021
+      JMONITOR_COLLECTOR_URL: http://app:2021
       JMONITOR_PHP_ENDPOINT: http://app:2021/jmonitor/php-metrics
 
 volumes:

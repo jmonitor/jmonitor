@@ -37,7 +37,8 @@
 		publisher_jwt "!ChangeThisDevMercureSecret-min-32-bytes!" HS256
 		subscriber_jwt "!ChangeThisDevMercureSecret-min-32-bytes!" HS256
 
-		cors_origins {$DEV_DASH_ORIGIN:http://dash.jmonitor.localhost}
+		# No cors_origins/publish_origins: browsers subscribe same-origin (the hub is
+		# served by this very site) and the app publishes with a bearer token.
 
 		# No `anonymous`: a valid subscriber JWT (cookie set by the app, scoped to the
 		# project topic) is required to subscribe, just like prod.
@@ -86,7 +87,6 @@
 		transport local
 		publisher_jwt "!ChangeThisDevMercureSecret-min-32-bytes!" HS256
 		subscriber_jwt "!ChangeThisDevMercureSecret-min-32-bytes!" HS256
-		cors_origins {$DEV_DASH_ORIGIN:http://dash.jmonitor.localhost}
 	}
 
 	php_server

@@ -34,6 +34,12 @@ Multi-host routing via `config/routes.yaml`:
 - `dash.{domain}` → user dashboard (ROLE_USER)
 - `admin.{domain}` → EasyAdmin panel (ROLE_ADMIN)
 
+The collector routes are also registered on an internal Host
+(`app.collector_internal_host`, env `JMONITOR_COLLECTOR_INTERNAL_HOST`, defaults to the
+public one) for agents inside the app's own network — the self-hosted collector container
+sets it to the compose service name, because libcurl resolves `*.localhost` to loopback
+(RFC 6761) and could never reach `collector.<domain>` through Docker DNS.
+
 Multi-tenant: User → ProjectUser (OWNER/ADMIN/VIEWER) → Project → InfluxDB bucket
 
 ## Key Directories

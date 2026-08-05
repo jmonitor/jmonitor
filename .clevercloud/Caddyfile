@@ -27,15 +27,12 @@
 		transport local
 
 		# Clé injectée par env var ({$VAR} = substitution au parse du Caddyfile).
-		# Doit correspondre à MERCURE_JWT_SECRET / MERCURE_SUBSCRIBER_JWT_KEY de l'app.
+		# Doit correspondre au MERCURE_JWT_SECRET de l'app.
 		publisher_jwt {$MERCURE_JWT_SECRET} HS256
 		subscriber_jwt {$MERCURE_JWT_SECRET} HS256
 
-		# les domaines autorisé à subscribe en js
-		cors_origins https://dash.jmonitor.io
-
-		# pas d'impact car push côté serveur
-		publish_origins https://dash.jmonitor.io
+		# Pas de cors_origins/publish_origins : le navigateur s'abonne en same-origin
+		# (le hub est servi par ce site) et l'app publie avec un bearer token.
 
 		# Pas d'`anonymous` : un JWT subscriber valide (cookie mercureAuthorization
 		# posé par l'app, scopé au topic du projet) est requis pour s'abonner.

@@ -60,7 +60,7 @@ readonly class MercureTopicProvider
 
         $this->authorizeSubscription($topic);
 
-        return $this->hub->getPublicUrl() . '?topic=' . rawurlencode($topic);
+        return $this->subscribeUrl($topic);
     }
 
     /**
@@ -75,7 +75,7 @@ readonly class MercureTopicProvider
         $project ??= $this->projectContext->getCurrentProject();
         $topic = $this->getConsumedMetricComponentUrl($project, $component);
 
-        $url = $this->hub->getPublicUrl() . '?topic=' . rawurlencode($topic);
+        $url = $this->subscribeUrl($topic);
 
         // Subscribe-only, single-topic, expiring token. The page re-mints one on each
         // (auto-)refresh, so a short lifetime does not break long-running widgets.
@@ -92,6 +92,16 @@ readonly class MercureTopicProvider
         return $url;
     }
 
+    /**
+     * Root-relative on purpose: the hub is embedded in the app's own web server, so the
+     * browser resolves this against the page it is on — same scheme, host and port, with
+     * nothing to configure and no cross-origin request.
+     */
+    private function subscribeUrl(string $topic): string
+    {
+        return SameOriginHub::PATH . '?topic=' . rawurlencode($topic);
+    }
+
     private function authorizeSubscription(string $topic): void
     {
         $request = $this->requestStack->getMainRequest();
@@ -104,8 +114,8 @@ readonly class MercureTopicProvider
             // No publish right is granted (publish = []), only the subscription to this topic.
             $this->authorization->setCookie($request, [$topic]);
         } catch (\RuntimeException $e) {
-            // Cookie already set on this request (double render) or hub on a different
-            // domain (dev config): not blocking for the page rendering.
+            // Cookie already set on this request (double render): not blocking for the
+            // page rendering.
             $this->logger->warning('Unable to set Mercure subscriber authorization cookie', ['exception' => $e]);
         }
     }

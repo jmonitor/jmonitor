@@ -44,9 +44,9 @@
 		publisher_jwt {$MERCURE_JWT_SECRET} HS256
 		subscriber_jwt {$MERCURE_JWT_SECRET} HS256
 
-		# Browsers subscribe from the dashboard origin (https:// in both TLS modes).
-		cors_origins https://dash.{$APP_DOMAIN}
-		publish_origins https://dash.{$APP_DOMAIN}
+		# No cors_origins/publish_origins: browsers subscribe same-origin (the hub is
+		# served by this very site, whatever scheme and port the user publishes it on)
+		# and the app publishes with a bearer token.
 	}
 
 	php_server {
@@ -74,15 +74,13 @@
 # handful of internal requests per minute. The mercure handler shares the main
 # site's hub (the module pools transports process-wide), so events published
 # here reach browsers subscribed through the public site.
-http://app:2021, http://collector.{$APP_DOMAIN:localhost}:2021 {
+http://app:2021 {
 	root * public/
 
 	mercure {
 		transport local
 		publisher_jwt {$MERCURE_JWT_SECRET} HS256
 		subscriber_jwt {$MERCURE_JWT_SECRET} HS256
-		cors_origins https://dash.{$APP_DOMAIN}
-		publish_origins https://dash.{$APP_DOMAIN}
 	}
 
 	php_server

@@ -40,12 +40,16 @@
                 <button class="btn btn-primary">Create embed link</button>
             </form>
             <p class="text-body-tertiary mt-2 mb-0"><small>Generates a public read-only link for this card.</small></p>
-        {% else %}
+        {% elseif not planAllowsEmbed %}
             <p class="text-body-tertiary mb-0">
                 <a href="{{ path('project.help.item', {item: 'pro', uuid: current_project().uuid}) }}" {{ stimulus_action('app', 'turboCanvas') }}>
                     <twig:Html:Badge:Neutral>Pro</twig:Html:Badge:Neutral>
                 </a>
-                <small>Embed links are not available with the free plan, or you need admin rights on this project.</small>
+                <small>Embed links are not available with the free plan.</small>
+            </p>
+        {% else %}
+            <p class="text-body-tertiary mb-0">
+                <small>Only project admins can create or edit embed links.</small>
             </p>
         {% endif %}
     </div>

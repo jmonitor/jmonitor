@@ -6,7 +6,9 @@ namespace App\Tests\Controller\Dash\Project;
 
 use App\Controller\Dash\Project\MetricsController;
 use App\Entity\Embed;
+use App\Entity\Enums\Plan;
 use App\Entity\Project;
+use App\Entity\Subscription;
 use App\Form\Embed\CardEmbedOptionsType;
 use App\Form\Embed\EmbedType;
 use App\Form\Embed\GaugeEmbedOptionsType;
@@ -140,6 +142,77 @@ class MetricsControllerTest extends TestCase
         $this->expectException(BadRequestHttpException::class);
 
         $this->makeController(csrfValid: true)->updateEmbed($project, $token, $newDto, new Request(), $repository, $em, new PlanResolver(Edition::SELF_HOSTED));
+    }
+
+    // Regression: a viewer on a Pro project used to get the "free plan" message, because the
+    // template only knew the combined canCreateEmbed flag. The two blockers must stay distinct.
+    public function testEmbedTellsAPlanBlockerApartFromAMissingAdminRight(): void
+    {
+        $proParameters = $this->captureEmbedParameters($this->projectWithPlan(Plan::PRO), isAdmin: false);
+        $this->assertTrue($proParameters['planAllowsEmbed']);
+        $this->assertFalse($proParameters['canCreateEmbed']);
+
+        $freeParameters = $this->captureEmbedParameters($this->projectWithPlan(Plan::FREE), isAdmin: true);
+        $this->assertFalse($freeParameters['planAllowsEmbed']);
+        $this->assertFalse($freeParameters['canCreateEmbed']);
+
+        $adminParameters = $this->captureEmbedParameters($this->projectWithPlan(Plan::PRO), isAdmin: true);
+        $this->assertTrue($adminParameters['planAllowsEmbed']);
+        $this->assertTrue($adminParameters['canCreateEmbed']);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function captureEmbedParameters(Project $project, bool $isAdmin): array
+    {
+        $router = $this->createMock(UrlGeneratorInterface::class);
+        $router->method('generate')->willReturn('/embed');
+
+        $authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
+        $authorizationChecker->method('isGranted')->willReturn($isAdmin);
+
+        $container = new Container();
+        $container->set('form.factory', $this->embedFormFactory());
+        $container->set('router', $router);
+        $container->set('security.authorization_checker', $authorizationChecker);
+
+        $captured = [];
+        $controller = $this->getMockBuilder(MetricsController::class)
+            ->onlyMethods(['render'])
+            ->getMock();
+        $controller->method('render')->willReturnCallback(function (string $view, array $parameters) use (&$captured): Response {
+            $captured = $parameters;
+
+            return new Response();
+        });
+        $controller->setContainer($container);
+
+        $controller->embed(
+            $project,
+            new Request(),
+            $this->createMock(EmbedRepository::class),
+            new PlanResolver(Edition::CLOUD),
+            new EmbedDto(Metric::SystemRamUsage, Renderer::Gauge, false, new CardEmbedOptions(), new GaugeEmbedOptions()),
+        );
+
+        return $captured;
+    }
+
+    private function projectWithPlan(Plan $plan): Project
+    {
+        $project = new Project();
+
+        if ($plan !== Plan::FREE) {
+            $subscription = new Subscription()
+                ->setPlan($plan)
+                ->setStartAt(new \DateTimeImmutable())
+                ->setEndAt(new \DateTimeImmutable('+7 days'))
+                ->setAutoRenew(false);
+            $project->setSubscription($subscription);
+        }
+
+        return $project;
     }
 
     // Regression: a submission with no "renderer" value is still valid and synchronised

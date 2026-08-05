@@ -117,13 +117,18 @@ class MetricsController extends AbstractController
             $createdEmbed = $embedRepository->findOneBy(['token' => $createdToken, 'project' => $project]);
         }
 
+        // Kept apart from canCreateEmbed so the template can tell the two blockers apart:
+        // an insufficient plan and missing admin rights need different messages.
+        $planAllowsEmbed = $planResolver->resolve($project)->embedable();
+
         return $this->render('dash/project/metrics/embed/embed.html.twig', [
             'embed' => $embedDto,
             'form' => $form,
             'createdEmbed' => $createdEmbed,
             'editedEmbed' => $editedEmbed,
             'updated' => $request->query->getBoolean('updated'),
-            'canCreateEmbed' => $planResolver->resolve($project)->embedable() && $this->isGranted(ProjectVoter::PROJECT_ADMIN, $project),
+            'planAllowsEmbed' => $planAllowsEmbed,
+            'canCreateEmbed' => $planAllowsEmbed && $this->isGranted(ProjectVoter::PROJECT_ADMIN, $project),
         ]);
     }
 

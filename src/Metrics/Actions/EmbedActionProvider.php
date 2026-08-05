@@ -22,9 +22,10 @@ readonly class EmbedActionProvider
         private ProjectContext $projectContext,
     ) {}
 
-    public function getDefaultEmbedAction(Metric $metric, ?Renderer $renderer = null): Action
+    /** @param array<string, scalar> $metricOptions options the card itself is rendered with */
+    public function getDefaultEmbedAction(Metric $metric, ?Renderer $renderer = null, array $metricOptions = []): Action
     {
-        $dto = $this->getDefaultEmbed($metric, $renderer);
+        $dto = $this->getDefaultEmbed($metric, $renderer, $metricOptions);
 
         return new Action('embed')
             ->setLabel('Embed')
@@ -37,7 +38,8 @@ readonly class EmbedActionProvider
         ;
     }
 
-    private function getDefaultEmbed(Metric $metric, ?Renderer $renderer = null): EmbedDto
+    /** @param array<string, scalar> $metricOptions */
+    private function getDefaultEmbed(Metric $metric, ?Renderer $renderer = null, array $metricOptions = []): EmbedDto
     {
         $renderer ??= $metric->defaultRenderer();
         $chart = EmbedOptionsFactory::createEmpty($renderer);
@@ -51,6 +53,7 @@ readonly class EmbedActionProvider
             renderer: $renderer,
             autoRefresh: $this->autoRefreshContext->isAutoRefresh(),
             chart: $chart,
+            metricOptions: $metricOptions,
         );
     }
 }

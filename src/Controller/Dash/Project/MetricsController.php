@@ -104,6 +104,9 @@ class MetricsController extends AbstractController
                 // renderer) still needs its chart options to match the renderer, the same
                 // guarantee GaugeEmbedOptions::applyTo() relies on to force displayHelp(false).
                 chart: $form->has('chart') ? $form->get('chart')->getData() : EmbedOptionsFactory::createEmpty($renderer),
+                // Not part of the form: which series the card shows is fixed by the entry
+                // point, exactly like the metric itself.
+                metricOptions: $embedDto->metricOptions,
             );
         }
 

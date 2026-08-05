@@ -1,7 +1,7 @@
 {# @var dto \App\Metrics\Renderer\Dto\ConsumerValueDto #}
 <twig:Card {{ ...attributes.defaults({class: 'card-metric'}) }} cardBody:class="d-flex flex-column gap-4 justify-content-between">
     <div class="position-absolute top-0 end-0 p-2">
-        <twig:Metric:Actions dto="{{ dto }}" renderer="{{ renderer }}" />
+        <twig:Metric:Actions dto="{{ dto }}" renderer="{{ renderer }}" options="{{ options }}" />
     </div>
     <div class="d-flex align-items-center gap-2 flex-wrap justify-content-between">
         <div class="d-flex align-items-center gap-2">

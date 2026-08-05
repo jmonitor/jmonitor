@@ -24,12 +24,21 @@ use Symfony\Component\DependencyInjection\Attribute\Exclude;
 #[Exclude]
 readonly class EmbedDto implements JsonSerializable
 {
+    private const int MAX_METRIC_OPTIONS = 8;
+    private const int MAX_METRIC_OPTION_LENGTH = 64;
+
+    /**
+     * @param array<string, scalar> $metricOptions options of the metric service itself (which
+     *                                             Caddy handler, which Redis database...), as
+     *                                             the metric card was rendered with
+     */
     public function __construct(
         public Metric $metric,
         public ?Renderer $renderer = null,
         public bool $autoRefresh = false,
         public CardEmbedOptions $card = new CardEmbedOptions(),
         public ?ChartEmbedOptionsInterface $chart = null,
+        public array $metricOptions = [],
     ) {}
 
     /**
@@ -61,6 +70,7 @@ readonly class EmbedDto implements JsonSerializable
 
             $chart = EmbedOptionsFactory::hydrate($renderer ?? $metric->defaultRenderer(), $chartData);
             $card = CardEmbedOptions::fromArray($cardData);
+            $metricOptions = self::hydrateMetricOptions(is_array($data['o'] ?? null) ? $data['o'] : []);
         } catch (\ValueError $e) {
             throw new \InvalidArgumentException('Invalid embed configuration.', previous: $e);
         }
@@ -71,7 +81,46 @@ readonly class EmbedDto implements JsonSerializable
             autoRefresh: (bool) ($data['ar'] ?? false),
             card: $card,
             chart: $chart,
+            metricOptions: $metricOptions,
         );
+    }
+
+    /**
+     * Metric options say *which* series a card shows; their semantics belong to the metric's
+     * own OptionsResolver, which rejects anything it doesn't declare. Hydration only bounds
+     * what a crafted query string can carry, and restores integer-like values: a query string
+     * hands everything back as a string, where those resolvers type them as int.
+     *
+     * @param array<array-key, mixed> $data
+     *
+     * @return array<string, scalar>
+     */
+    private static function hydrateMetricOptions(array $data): array
+    {
+        if (count($data) > self::MAX_METRIC_OPTIONS) {
+            throw new \ValueError('Too many metric options.');
+        }
+
+        $options = [];
+
+        foreach ($data as $name => $value) {
+            if (!is_string($name) || !preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $name)) {
+                throw new \ValueError('Unusable metric option name.');
+            }
+
+            if (!is_scalar($value)) {
+                throw new \ValueError('Expected a scalar value.');
+            }
+
+            if (is_string($value) && strlen($value) > self::MAX_METRIC_OPTION_LENGTH) {
+                throw new \ValueError('Metric option value is too long.');
+            }
+
+            $asInt = is_string($value) ? filter_var($value, FILTER_VALIDATE_INT) : false;
+            $options[$name] = $asInt === false ? $value : $asInt;
+        }
+
+        return $options;
     }
 
     /**
@@ -108,6 +157,7 @@ readonly class EmbedDto implements JsonSerializable
             'ar' => $this->autoRefresh,
             'c' => $this->card->toArray(),
             'cc' => $this->chart?->toArray(),
+            'o' => $this->metricOptions,
         ], static fn(mixed $value): bool => $value !== null && $value !== []);
     }
 }

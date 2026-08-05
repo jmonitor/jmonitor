@@ -115,4 +115,68 @@ class EmbedDtoTest extends TestCase
 
         EmbedDto::fromArray(['m' => 'system.cpu_usage', 're' => ['x']]);
     }
+
+    public function testMetricOptionsRoundTripJsonSerialize(): void
+    {
+        $dto = new EmbedDto(Metric::CaddyReqPerSec, Renderer::Line, chart: new TimeSeriesEmbedOptions(), metricOptions: ['handler' => 'php']);
+
+        $this->assertEquals($dto, EmbedDto::fromArray($dto->jsonSerialize()));
+    }
+
+    /** A query string carries everything as a string; options typed as int must survive it. */
+    public function testFromArrayRestoresIntegerMetricOptions(): void
+    {
+        $dto = EmbedDto::fromArray(['m' => 'redis.db_keys', 'o' => ['db' => '3']]);
+
+        $this->assertSame(['db' => 3], $dto->metricOptions);
+    }
+
+    public function testFromArrayKeepsNonIntegerMetricOptionsAsStrings(): void
+    {
+        $dto = EmbedDto::fromArray(['m' => 'caddy.req_per_sec', 'o' => ['handler' => 'file_server']]);
+
+        $this->assertSame(['handler' => 'file_server'], $dto->metricOptions);
+    }
+
+    /**
+     * The sidebar link carries the whole config as query parameters, which come back as
+     * strings: what the card was rendered with must survive that round trip untouched.
+     */
+    public function testTheConfigSurvivesAQueryStringRoundTrip(): void
+    {
+        $dto = new EmbedDto(Metric::RedisDbKeys, Renderer::Line, true, new CardEmbedOptions(true), new TimeSeriesEmbedOptions(TimeRange::LAST_1_HOUR, 2.0), ['db' => 3]);
+
+        parse_str(http_build_query(['embed' => $dto->jsonSerialize()]), $query);
+
+        $this->assertIsArray($query['embed']);
+        $this->assertEquals($dto, EmbedDto::fromArray($query['embed']));
+    }
+
+    public function testFromArrayThrowsOnAnArrayValuedMetricOption(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        EmbedDto::fromArray(['m' => 'caddy.req_per_sec', 'o' => ['handler' => ['php']]]);
+    }
+
+    public function testFromArrayThrowsOnAnUnusableMetricOptionName(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        EmbedDto::fromArray(['m' => 'caddy.req_per_sec', 'o' => ['not an option name' => 'php']]);
+    }
+
+    public function testFromArrayThrowsOnAnOverlongMetricOptionValue(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        EmbedDto::fromArray(['m' => 'caddy.req_per_sec', 'o' => ['handler' => str_repeat('a', 65)]]);
+    }
+
+    public function testFromArrayThrowsOnTooManyMetricOptions(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        EmbedDto::fromArray(['m' => 'caddy.req_per_sec', 'o' => array_fill_keys(array_map(static fn(int $i): string => 'o' . $i, range(1, 9)), 'x')]);
+    }
 }

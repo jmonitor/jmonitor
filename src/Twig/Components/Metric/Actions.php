@@ -18,6 +18,9 @@ class Actions
     public AbstractDto $dto;
     public Renderer $renderer;
 
+    /** Options the card is rendered with, forwarded so its actions target the same series. */
+    public array $options = [];
+
     private readonly DefaultActionsProvider $defaultActionsProvider;
 
     public function __construct(DefaultActionsProvider $defaultActionsProvider)
@@ -31,6 +34,6 @@ class Actions
     #[ExposeInTemplate]
     public function getActions(): array
     {
-        return $this->defaultActionsProvider->getDefaultActions($this->dto->metric, $this->renderer);
+        return $this->defaultActionsProvider->getDefaultActions($this->dto->metric, $this->renderer, $this->options);
     }
 }

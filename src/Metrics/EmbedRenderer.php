@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Metrics;
 
 use App\Metrics\Dto\EmbedDto;
+use Symfony\Component\OptionsResolver\Exception\ExceptionInterface as OptionsResolverException;
 use Twig\Attribute\AsTwigFilter;
 use Twig\Environment;
 
@@ -41,6 +42,13 @@ readonly class EmbedRenderer
 
     private function renderInner(EmbedDto $embed): string
     {
-        return $this->metricRenderer->render($embed->metric, $embed->renderer, $embed->chart);
+        try {
+            return $this->metricRenderer->render($embed->metric, $embed->renderer, $embed->chart, $embed->metricOptions);
+        } catch (OptionsResolverException) {
+            // Metric options come from a stored config or from the sidebar's query string: a
+            // crafted set, or one the metric no longer accepts, degrades to the card's error
+            // state instead of failing the whole page.
+            return $this->twig->render('dash/project/metrics/error/_rendering_error.html.twig');
+        }
     }
 }

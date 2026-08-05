@@ -74,7 +74,7 @@
 # handful of internal requests per minute. The mercure handler shares the main
 # site's hub (the module pools transports process-wide), so events published
 # here reach browsers subscribed through the public site.
-http://app:2021, http://collector.{$APP_DOMAIN:localhost}:2021 {
+http://app:2021 {
 	root * public/
 
 	mercure {

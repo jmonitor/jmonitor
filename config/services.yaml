@@ -23,6 +23,11 @@ parameters:
     app.jmonitor_caddy_endpoint: 'http://localhost:2019/metrics'
     app.php_metrics_host_default: 'localhost'
     app.php_metrics_host: '%env(default:app.php_metrics_host_default:JMONITOR_PHP_METRICS_HOST)%'
+    # Second Host the metrics endpoint answers on, for agents living inside the same
+    # network as the app (self-hosted: the collector container posts to the compose
+    # service name). Defaults to the public host, so nothing extra is exposed elsewhere.
+    app.collector_host_default: 'collector.%app.domain%'
+    app.collector_internal_host: '%env(default:app.collector_host_default:JMONITOR_COLLECTOR_INTERNAL_HOST)%'
 
 services:
     # default configuration for services in *this* file

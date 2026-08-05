@@ -17,10 +17,13 @@ x-app-environment: &app-environment
   # the app container's Caddy through the compose service name. The browser
   # subscribes same-origin, so there is no public URL to configure.
   MERCURE_URL: http://app/.well-known/mercure
-  # Host of the php-metrics route: compiled into the APP container's routing
-  # cache (entrypoint cache:warmup); the collector service calls it via
-  # http://app/... (shared here so app and collector stay consistent).
+  # Hosts of the two internal endpoints the collector service calls, compiled into
+  # the APP container's routing cache (entrypoint cache:warmup). Both are the compose
+  # service name: a collector.<domain> URL would be unusable when APP_DOMAIN is under
+  # .localhost, since libcurl resolves *.localhost to loopback (RFC 6761) instead of
+  # asking Docker DNS. Shared here so app and collector stay consistent.
   JMONITOR_PHP_METRICS_HOST: app
+  JMONITOR_COLLECTOR_INTERNAL_HOST: app
 
 services:
   app:
@@ -29,13 +32,6 @@ services:
     ports:
       - "${JMONITOR_HTTP_BIND:-127.0.0.1}:${JMONITOR_HTTP_PORT:-8080}:80"
     env_file: .env
-    networks:
-      default:
-        aliases:
-          # Lets the collector service reach the app with the exact Host header
-          # Symfony routes on (collector.<domain>), without leaving the compose
-          # network or hairpinning through the self-hoster's reverse proxy.
-          - "collector.${APP_DOMAIN:?}"
     environment:
       <<: *app-environment
     # The image healthcheck targets Caddy (:2019), which only starts once the
@@ -88,7 +84,7 @@ services:
     env_file: .env
     environment:
       <<: *app-environment
-      JMONITOR_COLLECTOR_URL: http://collector.${APP_DOMAIN:?}
+      JMONITOR_COLLECTOR_URL: http://app
       JMONITOR_PHP_ENDPOINT: http://app/jmonitor/php-metrics
       JMONITOR_CADDY_ENDPOINT: http://app:2020/metrics
     healthcheck:

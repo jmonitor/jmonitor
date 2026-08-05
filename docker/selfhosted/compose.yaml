@@ -14,10 +14,9 @@ x-app-environment: &app-environment
   INFLUXDB_URL: http://influxdb:8086
   INFLUXDB_ORG_NAME: jmonitor
   # Server-side Mercure publishing: both containers reach the hub embedded in
-  # the app container's Caddy through the compose service name.
+  # the app container's Caddy through the compose service name. The browser
+  # subscribes same-origin, so there is no public URL to configure.
   MERCURE_URL: http://app/.well-known/mercure
-  # Browser-side subscription URL (through the self-hoster's TLS proxy).
-  MERCURE_PUBLIC_URL: https://dash.${APP_DOMAIN:?}/.well-known/mercure
   # Host of the php-metrics route: compiled into the APP container's routing
   # cache (entrypoint cache:warmup); the collector service calls it via
   # http://app/... (shared here so app and collector stay consistent).

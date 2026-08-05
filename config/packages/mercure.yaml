@@ -2,7 +2,9 @@ mercure:
     hubs:
         default:
             url: '%env(default::MERCURE_URL)%'
-            public_url: '%env(default::MERCURE_PUBLIC_URL)%'
+            # No public_url: App\Bridge\Mercure\SameOriginHub derives it from the current
+            # request, so the browser subscribes on the origin it is already browsing —
+            # http or https, any port, no configuration.
             jwt:
                 secret: '%env(MERCURE_JWT_SECRET)%'
                 publish: '*'

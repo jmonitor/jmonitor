@@ -9,7 +9,7 @@
 
             {# if length actions #}
             <div class="ms-auto">
-                <twig:Metric:Actions dto="{{ dto }}" renderer="{{ renderer }}" />
+                <twig:Metric:Actions dto="{{ dto }}" renderer="{{ renderer }}" options="{{ options }}" />
             </div>
         </div>
         {% if dto.currentValue is not empty %}

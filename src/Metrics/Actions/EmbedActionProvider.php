@@ -7,6 +7,8 @@ namespace App\Metrics\Actions;
 use App\AutoRefresh\AutoRefreshContext;
 use App\Range\RangeContext;
 use App\Metrics\Actions\Dto\Action;
+use App\Metrics\Dto\Embed\EmbedOptionsFactory;
+use App\Metrics\Dto\Embed\TimeSeriesEmbedOptions;
 use App\Metrics\Dto\EmbedDto;
 use App\Metrics\Metric;
 use App\Metrics\Renderer;
@@ -20,9 +22,10 @@ readonly class EmbedActionProvider
         private ProjectContext $projectContext,
     ) {}
 
-    public function getDefaultEmbedAction(Metric $metric, ?Renderer $renderer = null): Action
+    /** @param array<string, scalar> $metricOptions options the card itself is rendered with */
+    public function getDefaultEmbedAction(Metric $metric, ?Renderer $renderer = null, array $metricOptions = []): Action
     {
-        $dto = $this->getDefaultEmbed($metric, $renderer);
+        $dto = $this->getDefaultEmbed($metric, $renderer, $metricOptions);
 
         return new Action('embed')
             ->setLabel('Embed')
@@ -35,17 +38,22 @@ readonly class EmbedActionProvider
         ;
     }
 
-    private function getDefaultEmbed(Metric $metric, ?Renderer $renderer = null): EmbedDto
+    /** @param array<string, scalar> $metricOptions */
+    private function getDefaultEmbed(Metric $metric, ?Renderer $renderer = null, array $metricOptions = []): EmbedDto
     {
         $renderer ??= $metric->defaultRenderer();
+        $chart = EmbedOptionsFactory::createEmpty($renderer);
+
+        if ($chart instanceof TimeSeriesEmbedOptions) {
+            $chart = new TimeSeriesEmbedOptions(range: $this->rangeContext->getRangeDto()->range);
+        }
 
         return new EmbedDto(
             metric: $metric,
             renderer: $renderer,
-            range: $renderer->supportRange() ? $this->rangeContext->getRangeDto()->range : null,
             autoRefresh: $this->autoRefreshContext->isAutoRefresh(),
-            //            card: true,
-            chartConfig: [],
+            chart: $chart,
+            metricOptions: $metricOptions,
         );
     }
 }

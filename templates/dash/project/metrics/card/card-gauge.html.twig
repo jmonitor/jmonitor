@@ -2,7 +2,7 @@
 <twig:Card {{ ...attributes.defaults({class: 'card-metric'}) }}>
     <div class="position-absolute top-0 end-0 p-2">
         {% if dto %} {# if length actions ? #}
-            <twig:Metric:Actions dto="{{ dto }}" renderer="{{ renderer }}" />
+            <twig:Metric:Actions dto="{{ dto }}" renderer="{{ renderer }}" options="{{ options }}" />
         {% endif %}
     </div>
 

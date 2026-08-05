@@ -15,12 +15,14 @@ readonly class DefaultActionsProvider
     ) {}
 
     /**
+     * @param array<string, scalar> $metricOptions
+     *
      * @return Action[]
      */
-    public function getDefaultActions(Metric $metric, ?Renderer $renderer): array
+    public function getDefaultActions(Metric $metric, ?Renderer $renderer, array $metricOptions = []): array
     {
         return [
-            $this->embedActionProvider->getDefaultEmbedAction($metric, $renderer),
+            $this->embedActionProvider->getDefaultEmbedAction($metric, $renderer, $metricOptions),
         ];
     }
 }

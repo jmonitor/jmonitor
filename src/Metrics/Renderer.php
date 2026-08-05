@@ -14,15 +14,6 @@ enum Renderer: string
     case ConsumerValue = 'consumer_value';
     case Basic = 'basic';
 
-    public function supportRange(): bool
-    {
-        return match ($this) {
-            self::Line,
-            self::Bar => true,
-            default => false,
-        };
-    }
-
     /**
      * Public name
      */

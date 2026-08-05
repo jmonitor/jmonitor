@@ -7,11 +7,13 @@ namespace App\Metrics\Metric\Redis;
 use App\Metrics\BagAwareTrait;
 use App\Metrics\Metric;
 use App\Metrics\Metric\BasicMetricInterface;
+use App\Metrics\Metric\OptionsAwareMetricInterface;
 use App\Metrics\Renderer\Dto\BasicDto;
 use Symfony\Component\DependencyInjection\Attribute\AsTaggedItem;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 #[AsTaggedItem(Metric::RedisDbExpiringKeys->value)]
-class RedisDbExpiringKeys implements BasicMetricInterface
+class RedisDbExpiringKeys implements BasicMetricInterface, OptionsAwareMetricInterface
 {
     use BagAwareTrait;
 
@@ -28,5 +30,11 @@ class RedisDbExpiringKeys implements BasicMetricInterface
             ->setValueAvailable($db !== null)
             ->setValue($db)
         ;
+    }
+
+    public function configureOptions(OptionsResolver $optionsResolver): void
+    {
+        $optionsResolver->setRequired('db');
+        $optionsResolver->setAllowedTypes('db', 'int');
     }
 }

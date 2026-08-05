@@ -39,6 +39,17 @@ class PublicEmbedControllerTest extends TestCase
         $this->content($embed);
     }
 
+    public function testStoredConfigWithAnUnknownMetricIs404(): void
+    {
+        $embed = new Embed()->setProject($this->projectWithPlan(Plan::PRO));
+        // Simulates a published embed whose metric was later removed from the Metric enum.
+        new \ReflectionProperty(Embed::class, 'config')->setValue($embed, ['m' => 'does.not_exist']);
+
+        $this->expectException(NotFoundHttpException::class);
+
+        $this->show($embed);
+    }
+
     private function show(Embed $embed): void
     {
         new PublicEmbedController()->show(

@@ -6,9 +6,15 @@ namespace App\Tests\Form\Embed;
 
 use App\Chart\TimeRange;
 use App\Form\Embed\EmbedType;
+use App\Metrics\Dto\Embed\GaugeEmbedOptions;
+use App\Metrics\Dto\Embed\TimeSeriesEmbedOptions;
 use App\Metrics\Metric;
+use App\Metrics\MetricLocator;
 use App\Metrics\Renderer;
+use App\Metrics\Renderer\ChartDefaultsResolver;
+use Psr\Container\ContainerInterface;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
+use Symfony\Component\Form\FormTypeInterface;
 use Symfony\Component\Form\Test\TypeTestCase;
 use Symfony\Component\Validator\Validation;
 
@@ -16,68 +22,86 @@ class EmbedTypeTest extends TypeTestCase
 {
     protected function getExtensions(): array
     {
-        return [
-            new ValidatorExtension(Validation::createValidator()),
-        ];
+        return [new ValidatorExtension(Validation::createValidator())];
     }
 
-    public function testNoMetricFieldAndNoStyleSelectForSingleRendererMetric(): void
+    /** @return FormTypeInterface[] */
+    protected function getTypes(): array
     {
-        // MysqlQueriesPerSecond has a single renderer (Line), which supports a range.
+        $container = new class implements ContainerInterface {
+            public function get(string $id): never
+            {
+                throw new \LogicException('No metric service in this unit test.');
+            }
+
+            public function has(string $id): bool
+            {
+                return false;
+            }
+        };
+
+        return [new EmbedType(new ChartDefaultsResolver(new MetricLocator($container)))];
+    }
+
+    public function testSingleTimeSeriesRendererMetricGetsTheChartOptions(): void
+    {
+        // MysqlQueriesPerSecond has a single Line renderer.
         $form = $this->factory->create(EmbedType::class, null, ['metric' => Metric::MysqlQueriesPerSecond]);
 
-        $this->assertFalse($form->has('metric'));
         $this->assertFalse($form->has('renderer'));
-        $this->assertTrue($form->has('range'));
-        $this->assertTrue($form->has('chartConfig'));
+        $this->assertTrue($form->has('chart'));
+        $this->assertTrue($form->get('chart')->has('range'));
+        $this->assertTrue($form->get('chart')->has('aspectRatio'));
+        $this->assertTrue($form->has('card'));
         $this->assertTrue($form->has('autoRefresh'));
     }
 
-    public function testGaugeOnlyMetricGetsOnlyTheHiddenAutoRefreshField(): void
+    /** Regression: the gauge used to get no options form at all. */
+    public function testGaugeOnlyMetricGetsAnAspectRatio(): void
     {
-        // PhpOpcacheHitRate has a single Gauge renderer: no range, no chart config.
         $form = $this->factory->create(EmbedType::class, null, ['metric' => Metric::PhpOpcacheHitRate]);
 
-        $this->assertFalse($form->has('renderer'));
-        $this->assertFalse($form->has('range'));
-        $this->assertFalse($form->has('chartConfig'));
-        $this->assertTrue($form->has('autoRefresh'));
+        $this->assertTrue($form->has('chart'));
+        $this->assertTrue($form->get('chart')->has('aspectRatio'));
+        $this->assertFalse($form->get('chart')->has('range'));
     }
 
-    public function testMultiRendererMetricGetsTheStyleSelect(): void
+    public function testRendererWithoutOptionsGetsNoChartSubform(): void
+    {
+        // ApacheLoadAverage's only renderer is Basic.
+        $form = $this->factory->create(EmbedType::class, null, ['metric' => Metric::ApacheLoadAverage]);
+
+        $this->assertFalse($form->has('chart'));
+        $this->assertTrue($form->has('card'));
+    }
+
+    public function testMultiRendererMetricGetsTheStyleSelectAndTheGaugeOptions(): void
     {
         $form = $this->factory->create(EmbedType::class, [
             'renderer' => Renderer::Gauge,
+            'chart' => new GaugeEmbedOptions(),
         ], ['metric' => Metric::SystemRamUsage]);
 
         $this->assertTrue($form->has('renderer'));
-        // Gauge does not support a range: no dependent fields.
-        $this->assertFalse($form->has('range'));
+        $this->assertTrue($form->get('chart')->has('aspectRatio'));
+        $this->assertFalse($form->get('chart')->has('range'));
     }
 
-    public function testDependentRangeAppearsWhenRendererSupportsIt(): void
+    public function testSwitchingToALineRendererBringsTheRangeBack(): void
     {
         $form = $this->factory->create(EmbedType::class, [
-            'renderer' => Renderer::Line,
+            'renderer' => Renderer::Gauge,
+            'chart' => new GaugeEmbedOptions(),
         ], ['metric' => Metric::SystemRamUsage]);
 
-        $this->assertTrue($form->has('range'));
-        $this->assertTrue($form->has('chartConfig'));
-    }
+        $form->submit(['renderer' => 'line', 'chart' => ['range' => 'last_1_hour', 'aspectRatio' => '4'], 'card' => [], 'autoRefresh' => '']);
 
-    public function testSubmitMapsValues(): void
-    {
-        $form = $this->factory->create(EmbedType::class, null, ['metric' => Metric::SystemRamUsage]);
-
-        $form->submit([
-            'renderer' => Renderer::Line->value,
-            'range' => TimeRange::LAST_24_HOURS->value,
-            'autoRefresh' => '1',
-        ]);
-
+        $this->assertTrue($form->isSynchronized());
         $this->assertTrue($form->isValid());
-        $this->assertSame(Renderer::Line, $form->get('renderer')->getData());
-        $this->assertSame(TimeRange::LAST_24_HOURS, $form->get('range')->getData());
-        $this->assertSame('1', $form->get('autoRefresh')->getData());
+
+        $chartData = $form->get('chart')->getData();
+        $this->assertInstanceOf(TimeSeriesEmbedOptions::class, $chartData);
+        $this->assertSame(TimeRange::LAST_1_HOUR, $chartData->range);
+        $this->assertSame(4.0, $chartData->aspectRatio);
     }
 }

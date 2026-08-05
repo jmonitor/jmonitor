@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace App\Controller\Dash\Project;
 
+use App\Controller\Attribute\MapEmbedDto;
 use App\Entity\Embed;
 use App\Entity\Enums\Component;
 use App\Entity\Project;
 use App\Entity\User;
 use App\Form\Embed\EmbedType;
 use App\Metrics\CollectorContext;
+use App\Metrics\Dto\Embed\EmbedOptionsFactory;
 use App\Metrics\Dto\EmbedDto;
 use App\Metrics\MetricsBagProvider;
 use App\Plan\PlanResolver;
@@ -19,7 +21,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -54,7 +55,7 @@ class MetricsController extends AbstractController
         Request $request,
         EmbedRepository $embedRepository,
         PlanResolver $planResolver,
-        #[MapQueryString(key: 'embed')]
+        #[MapEmbedDto]
         ?EmbedDto $embedDto = null,
     ): Response {
         $editedEmbed = null;
@@ -72,10 +73,9 @@ class MetricsController extends AbstractController
 
         $form = $this->createForm(EmbedType::class, [
             'renderer' => $embedDto->findRenderer(),
-            'range' => $embedDto->range,
             'autoRefresh' => $embedDto->autoRefresh ? '1' : '',
-            'chartConfig' => $embedDto->chartConfig,
-            'showProjectName' => $embedDto->showProjectName,
+            'card' => $embedDto->card,
+            'chart' => $embedDto->chart,
         ], [
             'metric' => $embedDto->metric,
             'action' => $this->generateUrl('project.metrics.embed', array_filter([
@@ -89,12 +89,25 @@ class MetricsController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $metric = $embedDto->metric;
-            $renderer = $form->has('renderer') ? $form->get('renderer')->getData() : $metric->availableRenderers()[0];
-            $range = $form->has('range') ? $form->get('range')->getData() : null;
-            $autoRefresh = (bool) $form->get('autoRefresh')->getData();
-            $chartConfig = $form->has('chartConfig') ? $form->get('chartConfig')->getData() : null;
-            $showProjectName = (bool) $form->get('showProjectName')->getData();
-            $embedDto = new EmbedDto($metric, $renderer, $range, $autoRefresh, $chartConfig, $showProjectName);
+            // A submitted-but-empty renderer choice is a valid, synchronised form (ChoiceType
+            // has no server-side "required" constraint): resolve it the same way
+            // EmbedDto::findRenderer()/MetricRenderer::render() do, so the chart options built
+            // below can never disagree with the renderer that actually renders the preview.
+            $renderer = $form->has('renderer') ? ($form->get('renderer')->getData() ?? $metric->defaultRenderer()) : $metric->availableRenderers()[0];
+
+            $embedDto = new EmbedDto(
+                metric: $metric,
+                renderer: $renderer,
+                autoRefresh: (bool) $form->get('autoRefresh')->getData(),
+                card: $form->get('card')->getData(),
+                // A submission without a chart subform (e.g. a hand-crafted POST omitting the
+                // renderer) still needs its chart options to match the renderer, the same
+                // guarantee GaugeEmbedOptions::applyTo() relies on to force displayHelp(false).
+                chart: $form->has('chart') ? $form->get('chart')->getData() : EmbedOptionsFactory::createEmpty($renderer),
+                // Not part of the form: which series the card shows is fixed by the entry
+                // point, exactly like the metric itself.
+                metricOptions: $embedDto->metricOptions,
+            );
         }
 
         $createdEmbed = null;
@@ -118,7 +131,7 @@ class MetricsController extends AbstractController
     #[IsGranted(ProjectVoter::PROJECT_ADMIN, subject: 'project')]
     public function createEmbed(
         Project $project,
-        #[MapQueryString(key: 'embed')]
+        #[MapEmbedDto]
         EmbedDto $embedDto,
         Request $request,
         EntityManagerInterface $em,
@@ -154,7 +167,7 @@ class MetricsController extends AbstractController
     public function updateEmbed(
         Project $project,
         string $token,
-        #[MapQueryString(key: 'embed')]
+        #[MapEmbedDto]
         EmbedDto $embedDto,
         Request $request,
         EmbedRepository $embedRepository,

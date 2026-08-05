@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace App\Form\Embed;
 
-use App\Chart\TimeRange;
+use App\Metrics\Dto\Embed\EmbedOptionsFactory;
 use App\Metrics\Metric;
 use App\Metrics\Renderer;
+use App\Metrics\Renderer\ChartDefaultsResolver;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -20,9 +19,16 @@ use Symfonycasts\DynamicForms\DynamicFormBuilder;
 /**
  * Options for the embed sidebar. The metric is fixed by the entry point (metric card
  * menu or an existing embed) and passed as the "metric" form option.
+ *
+ * Which options exist is answered once, by EmbedOptionsFactory: the form never asks
+ * a renderer whether it supports a range.
  */
 class EmbedType extends AbstractType
 {
+    public function __construct(
+        private readonly ChartDefaultsResolver $defaultsResolver,
+    ) {}
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         /** @var Metric $metric */
@@ -39,47 +45,31 @@ class EmbedType extends AbstractType
                 'choice_value' => static fn(?Renderer $renderer): ?string => $renderer?->value,
             ]);
 
-            $builder->addDependent('range', 'renderer', function (DependentField $field, ?Renderer $renderer): void {
-                if (!$renderer || !$renderer->supportRange()) {
+            // The dependent callback fires at most twice per form instance: once on the
+            // initial render (PRE_SET_DATA, where the renderer and chart data passed in
+            // always match) and once more on every submission (POST_SUBMIT), regardless of
+            // whether the renderer actually changed. On that POST_SUBMIT run, the chart
+            // subform is rebuilt fresh and Symfony's parent-to-child mapping would otherwise
+            // re-apply the *pre-submission* parent data to it — data matching the old
+            // renderer, which may now be the wrong type for the new subform and crash. It is
+            // safe to blank that stale value on every submit (not just on an actual switch):
+            // the subform still receives its real submitted values straight from the request
+            // via its own submit() call right after, independently of this reset.
+            $initialBuild = true;
+
+            $builder->addDependent('chart', 'renderer', function (DependentField $field, ?Renderer $renderer) use ($metric, &$initialBuild): void {
+                if (!$renderer) {
                     return;
                 }
 
-                $field->add(EnumType::class, [
-                    'label' => 'Range',
-                    'class' => TimeRange::class,
-                    'choice_label' => static fn(TimeRange $range): string => $range->label(),
-                    'required' => false,
-                ]);
+                $this->addChartOptions($field, $metric, $renderer, resetData: !$initialBuild);
+                $initialBuild = false;
             });
-
-            $builder->addDependent('chartConfig', 'renderer', function (DependentField $field, ?Renderer $renderer): void {
-                if (!$renderer || !$renderer->supportRange()) {
-                    return;
-                }
-
-                $field->add(ChartConfigType::class, [
-                    'label' => false,
-                    'renderer' => $renderer,
-                ]);
-            });
-        } elseif ($renderers[0]->supportRange()) {
-            $builder->add('range', EnumType::class, [
-                'label' => 'Range',
-                'class' => TimeRange::class,
-                'choice_label' => static fn(TimeRange $range): string => $range->label(),
-                'required' => false,
-            ]);
-
-            $builder->add('chartConfig', ChartConfigType::class, [
-                'label' => false,
-                'renderer' => $renderers[0],
-            ]);
+        } else {
+            $this->addChartOptions($builder, $metric, $renderers[0]);
         }
 
-        $builder->add('showProjectName', CheckboxType::class, [
-            'label' => 'Show project name',
-            'required' => false,
-        ]);
+        $builder->add('card', CardEmbedOptionsType::class, ['label' => false]);
 
         // Driven by the preview's Live toggle (embed-form Stimulus controller), '1' or ''.
         $builder->add('autoRefresh', HiddenType::class, [
@@ -100,5 +90,31 @@ class EmbedType extends AbstractType
 
         $resolver->setRequired('metric');
         $resolver->setAllowedTypes('metric', Metric::class);
+    }
+
+    private function addChartOptions(DependentField|FormBuilderInterface $target, Metric $metric, Renderer $renderer, bool $resetData = false): void
+    {
+        $formType = EmbedOptionsFactory::formType($renderer);
+
+        if (!$formType) {
+            return;
+        }
+
+        $options = [
+            'label' => false,
+            'defaults' => $this->defaultsResolver->resolve($metric, $renderer),
+        ];
+
+        if ($resetData) {
+            $options['data'] = null;
+        }
+
+        if ($target instanceof DependentField) {
+            $target->add($formType, $options);
+
+            return;
+        }
+
+        $target->add('chart', $formType, $options);
     }
 }

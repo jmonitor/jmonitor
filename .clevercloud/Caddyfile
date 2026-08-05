@@ -27,7 +27,7 @@
 		transport local
 
 		# Clé injectée par env var ({$VAR} = substitution au parse du Caddyfile).
-		# Doit correspondre à MERCURE_JWT_SECRET / MERCURE_SUBSCRIBER_JWT_KEY de l'app.
+		# Doit correspondre au MERCURE_JWT_SECRET de l'app.
 		publisher_jwt {$MERCURE_JWT_SECRET} HS256
 		subscriber_jwt {$MERCURE_JWT_SECRET} HS256
 

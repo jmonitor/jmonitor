@@ -18,7 +18,6 @@ services:
       # itself: listing it here would duplicate the FrankenPHP worker pool.
       DEV_SITE_ADDRESS: "dash.jmonitor.localhost, collector.jmonitor.localhost, admin.jmonitor.localhost, webhook.jmonitor.localhost"
       DEV_TLS: "tls internal"
-      DEV_DASH_ORIGIN: "https://dash.jmonitor.localhost:${JMONITOR_DEV_HTTPS_PORT:-8443}"
       # Same hosts on :80, redirecting to the published HTTPS port.
       DEV_REDIRECT_ADDRESS: "http://dash.jmonitor.localhost, http://collector.jmonitor.localhost, http://admin.jmonitor.localhost, http://webhook.jmonitor.localhost"
       JMONITOR_DEV_HTTPS_PORT: "${JMONITOR_DEV_HTTPS_PORT:-8443}"

@@ -49,7 +49,7 @@ override it in a gitignored `compose.override.yaml`.
 ### HTTPS in dev
 
 The stack is HTTP by default. To run it over HTTPS instead — closer to production
-(secure cookies, `https://` Mercure) — enable the `compose.https.yaml` overlay:
+(secure cookies) — enable the `compose.https.yaml` overlay:
 Caddy issues the certificates itself from its internal CA, no external tool needed.
 
 ```bash
@@ -65,8 +65,8 @@ it away, and you would then have to trust the new one.
 
 The overlay serves HTTPS on `8443` (mirroring the `8081` HTTP convention) and keeps
 `80` for the HTTP→HTTPS redirects. To use a different HTTPS port, export
-`JMONITOR_DEV_HTTPS_PORT` — one variable moves both the published port and every
-consumer of it (the redirect target and the Mercure origin the browser subscribes to).
+`JMONITOR_DEV_HTTPS_PORT` — one variable moves both the published port and the
+HTTP→HTTPS redirect target.
 Remap either port in your `compose.override.yaml` as usual. Server-side traffic
 (Mercure publishing, self-monitoring pushes, php-metrics) moves to a plain-HTTP `:2021`
 site inside the container, never published.

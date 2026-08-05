@@ -46,6 +46,27 @@ Common commands: `make sh` (shell in the app container), `make monitor`, `make t
 `make phpstan`, `make cs`, `make down`. If a host port collides (80, 3306, 6379, 8086),
 override it in a gitignored `compose.override.yaml`.
 
+The dev stack runs under the Compose project `jmonitor-dev`, the self-hosted stack
+(`docker/selfhosted/`) under `jmonitor`. Distinct names are what let you run both at once
+on the same machine — otherwise Compose treats them as one project and each `up` replaces
+the other's containers while inheriting its volumes.
+
+If your dev stack predates that split it still runs as `jmonitor`: stop it once with
+`docker compose -p jmonitor down`, then `make setup`. Volumes are prefixed by the project
+name, so the new stack starts on empty ones — a fresh database, and a new Caddy CA to
+trust in HTTPS mode. To keep the old data instead, copy each volume over before starting:
+
+```bash
+for v in mysql-data influxdb-data caddy-data caddy-config; do
+  docker volume create "jmonitor-dev_$v" >/dev/null
+  docker run --rm -v "jmonitor_$v:/from" -v "jmonitor-dev_$v:/to" alpine \
+    sh -c 'cp -a /from/. /to/'
+done
+```
+
+The leftover `jmonitor_*` volumes are then orphans — `docker volume rm` them when you are
+sure you no longer need them.
+
 ### HTTPS in dev
 
 The stack is HTTP by default. To run it over HTTPS instead — closer to production

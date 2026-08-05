@@ -1,7 +1,10 @@
 # Dev stack — see the README "Development setup" section.
 # Quick start: make setup   (or: docker compose up -d --wait, then composer install
 # and doctrine:migrations:migrate inside the app container).
-name: jmonitor
+# Distinct from the self-hosted stack's project name (docker/selfhosted/compose.yaml,
+# `jmonitor`): same name would make Compose treat both as one project, replacing each
+# other's containers and sharing each other's volumes.
+name: jmonitor-dev
 
 services:
   app:

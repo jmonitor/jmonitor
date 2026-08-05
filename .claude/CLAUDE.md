@@ -67,7 +67,7 @@ src/
 
 ## Development Environment (Docker)
 
-Local dev runs in Docker Compose (`compose.yaml`): FrankenPHP app container + MySQL + Redis + InfluxDB, driven by the `Makefile`. PHP/composer commands run **inside the app container** (`make sh` or `docker compose exec app ...`), not on the host.
+Local dev runs in Docker Compose (`compose.yaml`, project name `jmonitor-dev` — the self-hosted stack keeps `jmonitor`, so both can run on the same machine): FrankenPHP app container + MySQL + Redis + InfluxDB, driven by the `Makefile`. PHP/composer commands run **inside the app container** (`make sh` or `docker compose exec app ...`), not on the host.
 
 ```
 make setup       # cold start: containers + composer install + migrations + dev provisioning

@@ -193,6 +193,10 @@ Then log in at `https://dash.<APP_DOMAIN>` with `ADMIN_EMAIL` / `ADMIN_PASSWORD`
 You'll already see metrics: the stack monitors itself out of the box (see
 [Self-monitoring](#self-monitoring)).
 
+The stack runs under the Compose project `jmonitor`. If the same machine also
+runs the JMonitor development stack, that one uses `jmonitor-dev`, so the two
+keep separate containers, networks and volumes and can run side by side.
+
 ## 5. Monitor your own servers
 
 To monitor **your own servers and apps**, create a project in the dashboard,

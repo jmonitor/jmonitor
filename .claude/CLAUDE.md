@@ -124,7 +124,7 @@ A public, read-only demo account (`demo@jmonitor.io` / `demo`, project `"Demo pr
 - Comments and docs: short and factual (1-3 sentences), no hosting-provider details in public-facing code/docs
 - Never use Yoda conditions (`$var === 'x'`, not `'x' === $var`)
 - **Keep docs in sync with code:** whenever a change modifies, contradicts, or leaves incomplete anything documented in this `CLAUDE.md`, the root `README.md`, `docker/selfhosted/README.md`, or `CONTRIBUTING.md`, update that doc in the same change — stale or contradictory docs are treated as part of the diff, not a follow-up
-- **Changelog:** any user-visible change (feature, behavior change, fix, upgrade step) gets a line under `## [Unreleased]` in `CHANGELOG.md`, suffixed with `(cloud)` / `(self-hosted)` when edition-specific. Dependency bumps, refactors and CI changes are excluded. Release procedure: "Releasing" in `CONTRIBUTING.md`
+- **Changelog:** any user-visible change (feature, behavior change, fix, upgrade step) gets a line under `## [Unreleased]` in `CHANGELOG.md`, suffixed with `(cloud)` / `(self-hosted)` when edition-specific. Dependency bumps, refactors and CI changes are excluded. **Cutting a release is a maintainer task with its own procedure — read [docs/releasing.md](../docs/releasing.md) before tagging anything.**
 
 ## Frontend Stack
 

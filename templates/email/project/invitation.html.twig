@@ -9,11 +9,7 @@
 
     <p>
         To accept the invitation, please click on the following link:
-        {% if userExist %}
-            <a href="{{ url('invitation.accept', {uniquid: invitation.uniquid}) }}">accept the invitation</a>
-        {% else %}
-            <a href="{{ url('security.register') }}">accept the invitation</a>
-        {% endif %}
+        <a href="{{ url('invitation.join', {uniquid: invitation.uniquid}) }}">accept the invitation</a>
     </p>
     <p>If this looks like a mistake, simply ignore this e-mail.</p>
 {% endblock %}

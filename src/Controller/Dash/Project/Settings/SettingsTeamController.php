@@ -50,16 +50,11 @@ class SettingsTeamController extends AbstractController
             $em->persist($invitation);
             $em->flush();
 
-            $userExist = $em->getRepository(User::class)->findOneBy([
-                'email' => $invitation->getEmail(),
-            ]);
-
             $email = new Email();
             $email->subject('Invitation to join project ' . $project->getName());
             $email->to($invitation->getEmail());
             $email->html($this->renderView('email/project/invitation.html.twig', [
                 'invitation' => $invitation,
-                'userExist' => $userExist,
             ]));
             $mailer->send($email);
 

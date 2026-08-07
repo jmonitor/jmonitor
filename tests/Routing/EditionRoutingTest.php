@@ -6,7 +6,10 @@ namespace App\Tests\Routing;
 
 use App\Plan\Edition;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
+use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
 use Symfony\Component\Routing\RouterInterface;
 
 class EditionRoutingTest extends KernelTestCase
@@ -93,6 +96,24 @@ class EditionRoutingTest extends KernelTestCase
         $parameters = $this->match('webhook.jmonitor.io', '/webhook/stripe');
 
         $this->assertSame('_webhook_controller', $parameters['_route']);
+    }
+
+    /**
+     * Accepting an invitation mutates state and its link travels by e-mail:
+     * a GET would let link scanners and prefetchers accept it silently.
+     */
+    public function testAcceptingAnInvitationRejectsGet(): void
+    {
+        self::bootKernel();
+
+        /** @var RouterInterface $router */
+        $router = self::getContainer()->get(RouterInterface::class);
+        $router->getContext()->setHost('dash.jmonitor.io');
+
+        $this->assertInstanceOf(RequestMatcherInterface::class, $router);
+
+        $this->expectException(MethodNotAllowedException::class);
+        $router->matchRequest(Request::create('https://dash.jmonitor.io/invitations/0123456789abcdef/accept', 'GET'));
     }
 
     public function testWebhookRouteIs404InSelfHosted(): void

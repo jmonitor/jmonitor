@@ -4,8 +4,12 @@
             <li>
                 <div class="d-flex align-items-center gap-3">
                     <span>Project <b>{{ invitation.project.name }}</b> as {{ invitation.role.value }}</span>
-                    <a class="btn btn-primary btn-sm" href="{{ path('invitation.accept', {uniquid: invitation.uniquid}) }}">Join</a>
+                    <form action="{{ path('invitation.accept', {uniquid: invitation.uniquid}) }}" method="post">
+                        <input type="hidden" name="_token" value="{{ csrf_token('accept_invitation') }}">
+                        <button type="submit" class="btn btn-primary btn-sm">Join</button>
+                    </form>
                     <form action="{{ path('invitation.refuse', {uniquid: invitation.uniquid}) }}" method="post" data-turbo-confirm="Please confirm.">
+                        <input type="hidden" name="_token" value="{{ csrf_token('refuse_invitation') }}">
                         <button type="submit" class="btn link-danger">Decline</button>
                     </form>
                 </div>

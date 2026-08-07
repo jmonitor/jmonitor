@@ -27,5 +27,7 @@
     </div>
     {{ form_end(form) }}
 
-    <twig:Security:Terms />
+    {% if is_cloud() %}
+        <twig:Security:Terms />
+    {% endif %}
 {% endblock %}

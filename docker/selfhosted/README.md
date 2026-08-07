@@ -239,6 +239,28 @@ first start — create a project in the dashboard, put its API key in `.env`
 as `JMONITOR_API_KEY` (and remove `SELF_MONITORING=0` if set), then recreate
 the service so it picks up the new `.env`: `docker compose up -d collector`.
 
+## Adding users
+
+Your instance is **invite-only**: public sign-up is disabled, so nobody can
+create an account on their own — an instance reachable from the internet stays
+yours.
+
+**Invite them to a project** (the usual way) — open a project, go to
+Settings > Team, and invite an email address with a role. The invitee gets a
+link, creates their account with that address, and lands straight in the
+project. Someone who already has an account just confirms the invitation.
+
+**No SMTP configured?** The invitation email cannot be delivered, but the link
+still works: every pending invitation is listed under Settings > Team with a
+**Copy link** button. Send it over any channel you like.
+
+You can also create an account directly from the admin panel
+(`admin.<APP_DOMAIN>` > Users > New), then invite it to a project.
+
+Sign-in with Google (and other OAuth providers) is a cloud-only feature: it
+would need its own provider setup on every install. Accounts here use email and
+password.
+
 ## Email & error reporting
 
 The mailer carries both **alert notifications** and **production error
@@ -249,8 +271,10 @@ reports**. To enable them, configure an SMTP transport:
 - `ERROR_MAIL_TO` — where production errors are emailed (deduplicated). Leave
   empty to disable.
 
-Without SMTP the app degrades gracefully: alert emails are silently dropped
-and errors only land in the container logs (`docker compose logs app`).
+Without SMTP the app still runs: alert emails are silently dropped and errors
+only land in the container logs (`docker compose logs app`). Invitation emails
+are dropped too — copy the invitation link from Settings > Team instead (see
+[Adding users](#adding-users)).
 
 ## Timezone
 

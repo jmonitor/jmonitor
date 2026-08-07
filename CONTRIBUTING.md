@@ -126,3 +126,30 @@ automatically. A pre-commit hook running these checks is installed automatically
 - Keep PRs focused: one feature or fix per PR.
 - Add or update tests for any behavior change.
 - Reference the related issue in the PR description.
+- Add a line under `## [Unreleased]` in `CHANGELOG.md` for anything a user would
+  notice: new features, behavior changes, fixes, upgrade steps. Dependency
+  bumps, refactors and CI changes do not belong there. Suffix the line with
+  `(cloud)` or `(self-hosted)` when it only applies to one edition.
+
+## Releasing
+
+Releases are self-hosted image versions, published by
+`.github/workflows/docker-publish.yml` on `v*` tags.
+
+1. In `CHANGELOG.md`, rename `## [Unreleased]` to `## [X.Y.Z] - YYYY-MM-DD`
+   using the date you are tagging, and add a fresh empty `## [Unreleased]`
+   above it.
+2. Update the link definitions at the bottom: point `[Unreleased]` at
+   `compare/vX.Y.Z...HEAD` and add a `[X.Y.Z]` line for the new tag.
+3. Commit, then `git tag vX.Y.Z && git push origin master --tags`.
+4. Watch the run: it re-checks that the changelog has an entry for the tag,
+   builds and pushes the multi-arch image, then opens the GitHub release with
+   that changelog section as its body.
+
+Put anything a self-hoster must do by hand (new env var, long migration, changed
+default) under an `### Upgrade notes` heading at the top of the version's entry,
+before the other sections.
+
+Use plain `vX.Y.Z` tags. A prerelease tag (`v1.0.0-rc.1`) produces no `latest`
+image tag, which breaks the `${JMONITOR_VERSION:-latest}` default of the
+self-hosted Compose stack.

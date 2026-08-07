@@ -301,6 +301,10 @@ ships a long migration, the app container may exceed its health grace period
 and `docker compose up -d` will wait on the worker; re-run `docker compose up -d`
 once the app is healthy again.
 
+Check the [changelog](https://github.com/jmonitor/jmonitor/blob/master/CHANGELOG.md)
+before upgrading: anything you need to do by hand is listed under **Upgrade
+notes** for that version.
+
 ## Backup
 
 All application state lives in three named volumes: `mysql-data`,

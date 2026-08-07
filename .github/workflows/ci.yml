@@ -10,7 +10,7 @@ jobs:
         name: Lint, static analysis & tests
         runs-on: ubuntu-latest
         steps:
-            -   uses: actions/checkout@v4
+            -   uses: actions/checkout@v7
 
             -   name: Setup PHP
                 uses: shivammathur/setup-php@v2
@@ -20,7 +20,7 @@ jobs:
                     coverage: none
 
             -   name: Install dependencies
-                uses: ramsey/composer-install@v3
+                uses: ramsey/composer-install@v4
 
             -   name: PHP-CS-Fixer
                 run: composer run lint:check

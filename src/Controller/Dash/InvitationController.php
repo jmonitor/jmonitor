@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace App\Controller\Dash;
 
-use App\Entity\Enums\UserStatus;
 use App\Entity\ProjectInvitation;
-use App\Entity\ProjectUser;
 use App\Entity\User;
+use App\Project\InvitationAccepter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,22 +20,13 @@ use Symfony\Component\Security\Http\Attribute\CurrentUser;
 class InvitationController extends AbstractController
 {
     #[Route('/invitations/{uniquid:invitation}/accept', name: 'invitation.accept')]
-    public function dash(ProjectInvitation $invitation, #[CurrentUser] User $user, EntityManagerInterface $em): Response
+    public function dash(ProjectInvitation $invitation, #[CurrentUser] User $user, InvitationAccepter $invitationAccepter): Response
     {
         if ($invitation->getEmail() !== $user->getEmail()) {
             throw $this->createNotFoundException();
         }
 
-        $projectUser = new ProjectUser();
-        $projectUser->setUser($user);
-        $projectUser->setProject($invitation->getProject());
-        $projectUser->setRole($invitation->getRole());
-
-        $em->persist($projectUser);
-        $em->remove($invitation);
-        $user->setStatus(UserStatus::ACTIVE);
-
-        $em->flush();
+        $projectUser = $invitationAccepter->accept($invitation, $user);
 
         $this->addFlash('success', 'Invitation accepted.');
 

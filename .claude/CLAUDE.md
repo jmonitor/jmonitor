@@ -133,6 +133,9 @@ A public, read-only demo account (`demo@jmonitor.io` / `demo`, project `"Demo pr
 - Bootstrap 5.3.5, dark theme only (`<html data-bs-theme="dark">`)
 - Custom CSS in `assets/css/app.css` (imports modular partials: `_card.css`, `_sidebar.css`, etc.)
 - CSS variables override Bootstrap defaults
+- **Fonts are served locally, never from a CDN** — woff2 files in `assets/fonts/` (+ their OFL
+  licences), `@font-face` in `assets/css/_fonts.css`. Self-hosted instances on a private network
+  must not depend on Google Fonts. `_fonts.css` documents how to refresh the files.
 
 **JavaScript:**
 - **Stimulus 3.2.2**

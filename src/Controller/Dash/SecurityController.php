@@ -12,6 +12,7 @@ use App\Form\Security\RegisterType;
 use App\Project\InvitationAccepter;
 use App\Repository\UserRepository;
 use App\Security\Authenticator\GoogleAuthenticator;
+use App\Security\Registration\RegistrationGate;
 use Doctrine\ORM\EntityManagerInterface;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -32,10 +33,17 @@ class SecurityController extends AbstractController
     use TargetPathTrait;
 
     #[Route('/register', name: 'security.register')]
-    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $em, Security $security, RateLimiterFactoryInterface $registerFormLimiter): Response
+    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $em, Security $security, RateLimiterFactoryInterface $registerFormLimiter, RegistrationGate $registrationGate): Response
     {
         if ($this->getUser()) {
             return $this->redirect('/');
+        }
+
+        // Invite-only instances keep /register/{uniquid} open: it is the only way in.
+        if (!$registrationGate->isOpen()) {
+            $this->addFlash('warning', 'Registration is by invitation only.');
+
+            return $this->redirectToRoute('security.login');
         }
 
         return $this->handleRegistration(null, $request, $userPasswordHasher, $em, $security, $registerFormLimiter, null);

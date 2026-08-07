@@ -4,7 +4,9 @@
 
 {% block h1 %}Login{% endblock %}
 {% block sub_h1 %}
-    {{ 'login.not_registred?'|trans }} <a href="{{ path('security.register') }}">Register</a>
+    {% if registration_open() %}
+        {{ 'login.not_registred?'|trans }} <a href="{{ path('security.register') }}">Register</a>
+    {% endif %}
 {% endblock %}
 
 {% do metas().canonical('security.login') %}

@@ -6,7 +6,10 @@ namespace App\Tests\Routing;
 
 use App\Plan\Edition;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
+use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
 use Symfony\Component\Routing\RouterInterface;
 
 class EditionRoutingTest extends KernelTestCase
@@ -93,6 +96,108 @@ class EditionRoutingTest extends KernelTestCase
         $parameters = $this->match('webhook.jmonitor.io', '/webhook/stripe');
 
         $this->assertSame('_webhook_controller', $parameters['_route']);
+    }
+
+    /**
+     * The invitation entry point is the same in both editions: only the ability to
+     * register *without* an invitation differs.
+     */
+    public function testJoinRouteMatchesInCloud(): void
+    {
+        self::bootKernel();
+
+        $parameters = $this->match('dash.jmonitor.io', '/join/0123456789abcdef');
+
+        $this->assertSame('invitation.join', $parameters['_route']);
+    }
+
+    public function testJoinRouteMatchesInSelfHosted(): void
+    {
+        // Symfony's env resolution checks $_ENV before $_SERVER (EnvVarProcessor::getEnv()),
+        // so both must be overridden or the bootstrap-loaded $_ENV value ("cloud") wins silently.
+        $_SERVER['APP_EDITION'] = $_ENV['APP_EDITION'] = 'selfhosted';
+        self::bootKernel();
+
+        $parameters = $this->match('dash.jmonitor.io', '/join/0123456789abcdef');
+
+        $this->assertSame('invitation.join', $parameters['_route']);
+    }
+
+    /**
+     * OAuth sign-in is cloud-only: wiring it up means a Google Cloud project per install,
+     * and it is a second door creating accounts on the fly. The authenticator itself stays
+     * registered — programmatic login after registration and password reset uses it.
+     */
+    public function testOauthRoutesMatchInCloud(): void
+    {
+        self::bootKernel();
+
+        $this->assertSame('security.login.oauth', $this->match('dash.jmonitor.io', '/login/oauth')['_route']);
+        $this->assertSame('security.login.oauth.check', $this->match('dash.jmonitor.io', '/login/oauth/check')['_route']);
+    }
+
+    public function testOauthLoginRouteIs404InSelfHosted(): void
+    {
+        // Symfony's env resolution checks $_ENV before $_SERVER (EnvVarProcessor::getEnv()),
+        // so both must be overridden or the bootstrap-loaded $_ENV value ("cloud") wins silently.
+        $_SERVER['APP_EDITION'] = $_ENV['APP_EDITION'] = 'selfhosted';
+        self::bootKernel();
+
+        $this->expectException(ResourceNotFoundException::class);
+        $this->match('dash.jmonitor.io', '/login/oauth');
+    }
+
+    public function testOauthCheckRouteIs404InSelfHosted(): void
+    {
+        // Symfony's env resolution checks $_ENV before $_SERVER (EnvVarProcessor::getEnv()),
+        // so both must be overridden or the bootstrap-loaded $_ENV value ("cloud") wins silently.
+        $_SERVER['APP_EDITION'] = $_ENV['APP_EDITION'] = 'selfhosted';
+        self::bootKernel();
+
+        $this->expectException(ResourceNotFoundException::class);
+        $this->match('dash.jmonitor.io', '/login/oauth/check');
+    }
+
+    /**
+     * Registering through an invitation link stays reachable in both editions: it is the
+     * only way in once self-hosted closes open registration. The bare /register route
+     * matches everywhere too — the controller, not the router, turns it away.
+     */
+    public function testInvitationRegisterRouteMatchesInCloud(): void
+    {
+        self::bootKernel();
+
+        $this->assertSame('security.register', $this->match('dash.jmonitor.io', '/register')['_route']);
+        $this->assertSame('security.register.invitation', $this->match('dash.jmonitor.io', '/register/0123456789abcdef')['_route']);
+    }
+
+    public function testInvitationRegisterRouteMatchesInSelfHosted(): void
+    {
+        // Symfony's env resolution checks $_ENV before $_SERVER (EnvVarProcessor::getEnv()),
+        // so both must be overridden or the bootstrap-loaded $_ENV value ("cloud") wins silently.
+        $_SERVER['APP_EDITION'] = $_ENV['APP_EDITION'] = 'selfhosted';
+        self::bootKernel();
+
+        $this->assertSame('security.register', $this->match('dash.jmonitor.io', '/register')['_route']);
+        $this->assertSame('security.register.invitation', $this->match('dash.jmonitor.io', '/register/0123456789abcdef')['_route']);
+    }
+
+    /**
+     * Accepting an invitation mutates state and its link travels by e-mail:
+     * a GET would let link scanners and prefetchers accept it silently.
+     */
+    public function testAcceptingAnInvitationRejectsGet(): void
+    {
+        self::bootKernel();
+
+        /** @var RouterInterface $router */
+        $router = self::getContainer()->get(RouterInterface::class);
+        $router->getContext()->setHost('dash.jmonitor.io');
+
+        $this->assertInstanceOf(RequestMatcherInterface::class, $router);
+
+        $this->expectException(MethodNotAllowedException::class);
+        $router->matchRequest(Request::create('https://dash.jmonitor.io/invitations/0123456789abcdef/accept', 'GET'));
     }
 
     public function testWebhookRouteIs404InSelfHosted(): void

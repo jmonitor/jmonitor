@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace App\Controller\Dash;
 
+use App\Entity\ProjectInvitation;
 use App\Entity\User;
 use App\Form\Security\ChangePasswordFormType;
 use App\Form\Security\PasswordLostType;
 use App\Form\Security\RegisterType;
+use App\Project\InvitationAccepter;
 use App\Repository\UserRepository;
 use App\Security\Authenticator\GoogleAuthenticator;
+use App\Security\Registration\RegistrationGate;
 use Doctrine\ORM\EntityManagerInterface;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -30,15 +33,51 @@ class SecurityController extends AbstractController
     use TargetPathTrait;
 
     #[Route('/register', name: 'security.register')]
-    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $em, Security $security, RateLimiterFactoryInterface $registerFormLimiter): Response
+    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $em, Security $security, RateLimiterFactoryInterface $registerFormLimiter, RegistrationGate $registrationGate): Response
     {
         if ($this->getUser()) {
             return $this->redirect('/');
         }
 
+        // Invite-only instances keep /register/{uniquid} open: it is the only way in.
+        if (!$registrationGate->isOpen()) {
+            $this->addFlash('warning', 'Registration is by invitation only.');
+
+            return $this->redirectToRoute('security.login');
+        }
+
+        return $this->handleRegistration(null, $request, $userPasswordHasher, $em, $security, $registerFormLimiter, null);
+    }
+
+    /**
+     * Registration through an invitation link: the address is locked to the invited one
+     * and the invitation is accepted on submit.
+     */
+    #[Route('/register/{uniquid:invitation}', name: 'security.register.invitation')]
+    public function registerWithInvitation(ProjectInvitation $invitation, Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $em, Security $security, RateLimiterFactoryInterface $registerFormLimiter, UserRepository $userRepository, InvitationAccepter $invitationAccepter): Response
+    {
+        // Already logged in, or the invited address already has an account: the join
+        // dispatcher knows where to send them.
+        if ($this->getUser() || $userRepository->findOneBy(['email' => $invitation->getEmail()])) {
+            return $this->redirectToRoute('invitation.join', ['uniquid' => $invitation->getUniquid()]);
+        }
+
+        return $this->handleRegistration($invitation, $request, $userPasswordHasher, $em, $security, $registerFormLimiter, $invitationAccepter);
+    }
+
+    private function handleRegistration(?ProjectInvitation $invitation, Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $em, Security $security, RateLimiterFactoryInterface $registerFormLimiter, ?InvitationAccepter $invitationAccepter): Response
+    {
         $user = new User();
+
+        if ($invitation) {
+            $user->setEmail($invitation->getEmail());
+        }
+
         $form = $this->createForm(RegisterType::class, $user, [
-            'action' => $this->generateUrl('security.register'),
+            'action' => $invitation
+                ? $this->generateUrl('security.register.invitation', ['uniquid' => $invitation->getUniquid()])
+                : $this->generateUrl('security.register'),
+            'invitation' => $invitation,
         ]);
 
         $form->handleRequest($request);
@@ -50,19 +89,36 @@ class SecurityController extends AbstractController
             if (!$limit->isAccepted()) {
                 $this->addFlash('danger', 'Too many registrations from your IP. Please try again in a minute.');
 
-                return $this->redirectToRoute('security.register');
+                // Back to the form they came from: sending an invitee to the bare /register
+                // would drop the invitation, and on an invite-only instance that route just
+                // bounces them to the login page.
+                return $invitation
+                    ? $this->redirectToRoute('security.register.invitation', ['uniquid' => $invitation->getUniquid()])
+                    : $this->redirectToRoute('security.register');
             }
 
             $user->setPassword($userPasswordHasher->hashPassword($user, $form->get('plainPassword')->getData()));
 
             $em->persist($user);
-            $em->flush();
+
+            if ($invitation && $invitationAccepter) {
+                // Filling in a form that names the project is the consent, so there is no
+                // extra confirmation step. The status must reach ACTIVE before login, or
+                // LoginSuccessListenerForOnboarding overrides the response and sends the
+                // invitee to /onboarding instead of the project.
+                $projectUser = $invitationAccepter->accept($invitation, $user);
+
+                $this->saveTargetPath($request->getSession(), 'main', $this->generateUrl('project.dashboard', ['uuid' => $projectUser->getProject()->getUuid()]));
+            } else {
+                $em->flush();
+            }
 
             return $security->login($user, GoogleAuthenticator::class, 'main');
         }
 
         return $this->render('dash/security/register.html.twig', [
             'form' => $form,
+            'invitation' => $invitation,
         ]);
     }
 
@@ -106,7 +162,7 @@ class SecurityController extends AbstractController
         ]);
     }
 
-    #[Route(path: '/login/oauth', name: 'security.login.oauth')]
+    #[Route(path: '/login/oauth', name: 'security.login.oauth', condition: "env('APP_EDITION') == 'cloud'")]
     public function googleLogin(ClientRegistry $clientRegistry): RedirectResponse
     {
         return $clientRegistry->getClient('google')->redirect(['openid', 'email', 'profile'], [
@@ -200,7 +256,7 @@ class SecurityController extends AbstractController
         ]);
     }
 
-    #[Route('/login/oauth/check', name: 'security.login.oauth.check')]
+    #[Route('/login/oauth/check', name: 'security.login.oauth.check', condition: "env('APP_EDITION') == 'cloud'")]
     public function oauthCheck(): Response
     {
         // Google seems to ping this URL sometimes when configuring OAuth.

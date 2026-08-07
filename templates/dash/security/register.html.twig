@@ -8,8 +8,17 @@
 {% endblock %}
 
 {% block content %}
-    <twig:Security:OauthLinks />
-    <twig:Security:Ou />
+    {% if invitation %}
+        <twig:Alert type="info">
+            You have been invited to join the project <b>{{ invitation.project.name }}</b>
+            as {{ invitation.role.value }}. Create your account to join it.
+        </twig:Alert>
+    {% endif %}
+
+    {% if is_cloud() %}
+        <twig:Security:OauthLinks />
+        <twig:Security:Ou />
+    {% endif %}
 
     {{ form_start(form) }}
     {{ form_rest(form) }}

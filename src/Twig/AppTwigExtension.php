@@ -13,6 +13,7 @@ use App\Entity\User;
 use App\Plan\Edition;
 use App\Plan\PlanResolver;
 use App\Project\ProjectContext;
+use App\Security\Registration\RegistrationGate;
 use Symfony\Bundle\SecurityBundle\Security;
 use Twig\Attribute\AsTwigFilter;
 use Twig\Attribute\AsTwigFunction;
@@ -25,6 +26,7 @@ readonly class AppTwigExtension
         private Security $security,
         private PlanResolver $planResolver,
         private Edition $edition,
+        private RegistrationGate $registrationGate,
     ) {}
 
     #[AsTwigFunction('current_project')]
@@ -63,12 +65,23 @@ readonly class AppTwigExtension
     }
 
     /**
-     * True in the cloud edition — used to gate the billing elements in the templates.
+     * True in the cloud edition — used to gate the cloud-only elements in the templates
+     * (billing screens, OAuth sign-in buttons).
      */
     #[AsTwigFunction('is_cloud')]
     public function isCloud(): bool
     {
         return $this->edition->isCloud();
+    }
+
+    /**
+     * True when an account can be created without an invitation — used to hide the
+     * "Register" link on invite-only (self-hosted) instances.
+     */
+    #[AsTwigFunction('registration_open')]
+    public function isRegistrationOpen(): bool
+    {
+        return $this->registrationGate->isOpen();
     }
 
     #[AsTwigFilter('bytes')]

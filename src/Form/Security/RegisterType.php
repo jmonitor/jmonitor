@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Form\Security;
 
+use App\Entity\ProjectInvitation;
 use App\Entity\User;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Form\AbstractType;
@@ -25,6 +26,9 @@ class RegisterType extends AbstractType
         $builder
             ->add('email', EmailType::class, [
                 'label' => 'register.email.label',
+                // Registering through an invitation link: the address is the invited one,
+                // never what the browser posts.
+                'disabled' => $options['invitation'] instanceof ProjectInvitation,
                 'constraints' => [
                     new NotBlank(),
                     new Email(),
@@ -56,7 +60,10 @@ class RegisterType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => User::class,
+            'invitation' => null,
             'constraints' => new UniqueEntity(fields: 'email'),
         ]);
+
+        $resolver->setAllowedTypes('invitation', ['null', ProjectInvitation::class]);
     }
 }

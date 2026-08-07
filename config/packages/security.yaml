@@ -59,7 +59,10 @@ security:
         - { path: ^/, roles: ROLE_ADMIN, host: 'admin.%app.domain%' }
 
         # Dashboard
-        - { path: ^/(login|register|password-), roles: PUBLIC_ACCESS }
+        # join/ is the public entry point of an invitation link: it must be reachable by
+        # someone who has no account yet. /invitations/* stays authenticated — accept and
+        # refuse take a non-nullable #[CurrentUser] and would break anonymously.
+        - { path: ^/(login|register|password-|join/), roles: PUBLIC_ACCESS }
 
         # Public embeds: authorization is the embed token itself
         - { path: ^/e/, roles: PUBLIC_ACCESS, host: 'dash.%app.domain%' }

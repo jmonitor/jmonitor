@@ -86,6 +86,7 @@
                     <tr>
                         <th scope="col"><small class="text-body-tertiary fw-normal">Email</small></th>
                         <th scope="col"><small class="text-body-tertiary fw-normal">Role</small></th>
+                        <th scope="col"><small class="text-body-tertiary fw-normal">Invitation link</small></th>
                         <th scope="col"></th>
                     </tr>
                     </thead>
@@ -94,6 +95,18 @@
                         <tr>
                             <td>{{ invitation.email }}</td>
                             <td><span class="badge text-bg-secondary">{{ invitation.role.value }}</span></td>
+                            <td>
+                                {# Without SMTP the invitation e-mail is dropped: this link is then the only way in. #}
+                                <span data-controller="clipboard" data-clipboard-success-content-value="Copied!">
+                                    <span hidden data-clipboard-target="source">{{ url('invitation.join', {uniquid: invitation.uniquid}) }}</span>
+                                    <button
+                                        type="button"
+                                        class="btn btn-sm btn-outline-primary"
+                                        data-clipboard-target="button"
+                                        data-action="clipboard#copy"
+                                    >{{ ux_icon('material-symbols:content-copy-outline', {width: '1em', height: '1em'}) }} Copy link</button>
+                                </span>
+                            </td>
                             <td class="text-end">
                                 {% if not is_granted('project.admin') %}
                                     <twig:Html:Dropdown :disabled="true" />

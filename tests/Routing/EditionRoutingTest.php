@@ -124,6 +124,30 @@ class EditionRoutingTest extends KernelTestCase
     }
 
     /**
+     * Registering through an invitation link stays reachable in both editions: it is the
+     * only way in once self-hosted closes open registration. The bare /register route
+     * matches everywhere too — the controller, not the router, turns it away.
+     */
+    public function testInvitationRegisterRouteMatchesInCloud(): void
+    {
+        self::bootKernel();
+
+        $this->assertSame('security.register', $this->match('dash.jmonitor.io', '/register')['_route']);
+        $this->assertSame('security.register.invitation', $this->match('dash.jmonitor.io', '/register/0123456789abcdef')['_route']);
+    }
+
+    public function testInvitationRegisterRouteMatchesInSelfHosted(): void
+    {
+        // Symfony's env resolution checks $_ENV before $_SERVER (EnvVarProcessor::getEnv()),
+        // so both must be overridden or the bootstrap-loaded $_ENV value ("cloud") wins silently.
+        $_SERVER['APP_EDITION'] = $_ENV['APP_EDITION'] = 'selfhosted';
+        self::bootKernel();
+
+        $this->assertSame('security.register', $this->match('dash.jmonitor.io', '/register')['_route']);
+        $this->assertSame('security.register.invitation', $this->match('dash.jmonitor.io', '/register/0123456789abcdef')['_route']);
+    }
+
+    /**
      * Accepting an invitation mutates state and its link travels by e-mail:
      * a GET would let link scanners and prefetchers accept it silently.
      */

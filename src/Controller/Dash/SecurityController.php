@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Controller\Dash;
 
+use App\Entity\ProjectInvitation;
 use App\Entity\User;
 use App\Form\Security\ChangePasswordFormType;
 use App\Form\Security\PasswordLostType;
 use App\Form\Security\RegisterType;
+use App\Project\InvitationAccepter;
 use App\Repository\UserRepository;
 use App\Security\Authenticator\GoogleAuthenticator;
 use Doctrine\ORM\EntityManagerInterface;
@@ -36,9 +38,38 @@ class SecurityController extends AbstractController
             return $this->redirect('/');
         }
 
+        return $this->handleRegistration(null, $request, $userPasswordHasher, $em, $security, $registerFormLimiter, null);
+    }
+
+    /**
+     * Registration through an invitation link: the address is locked to the invited one
+     * and the invitation is accepted on submit.
+     */
+    #[Route('/register/{uniquid:invitation}', name: 'security.register.invitation')]
+    public function registerWithInvitation(ProjectInvitation $invitation, Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $em, Security $security, RateLimiterFactoryInterface $registerFormLimiter, UserRepository $userRepository, InvitationAccepter $invitationAccepter): Response
+    {
+        // Already logged in, or the invited address already has an account: the join
+        // dispatcher knows where to send them.
+        if ($this->getUser() || $userRepository->findOneBy(['email' => $invitation->getEmail()])) {
+            return $this->redirectToRoute('invitation.join', ['uniquid' => $invitation->getUniquid()]);
+        }
+
+        return $this->handleRegistration($invitation, $request, $userPasswordHasher, $em, $security, $registerFormLimiter, $invitationAccepter);
+    }
+
+    private function handleRegistration(?ProjectInvitation $invitation, Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $em, Security $security, RateLimiterFactoryInterface $registerFormLimiter, ?InvitationAccepter $invitationAccepter): Response
+    {
         $user = new User();
+
+        if ($invitation) {
+            $user->setEmail($invitation->getEmail());
+        }
+
         $form = $this->createForm(RegisterType::class, $user, [
-            'action' => $this->generateUrl('security.register'),
+            'action' => $invitation
+                ? $this->generateUrl('security.register.invitation', ['uniquid' => $invitation->getUniquid()])
+                : $this->generateUrl('security.register'),
+            'invitation' => $invitation,
         ]);
 
         $form->handleRequest($request);
@@ -56,13 +87,25 @@ class SecurityController extends AbstractController
             $user->setPassword($userPasswordHasher->hashPassword($user, $form->get('plainPassword')->getData()));
 
             $em->persist($user);
-            $em->flush();
+
+            if ($invitation && $invitationAccepter) {
+                // Filling in a form that names the project is the consent, so there is no
+                // extra confirmation step. The status must reach ACTIVE before login, or
+                // LoginSuccessListenerForOnboarding overrides the response and sends the
+                // invitee to /onboarding instead of the project.
+                $projectUser = $invitationAccepter->accept($invitation, $user);
+
+                $this->saveTargetPath($request->getSession(), 'main', $this->generateUrl('project.dashboard', ['uuid' => $projectUser->getProject()->getUuid()]));
+            } else {
+                $em->flush();
+            }
 
             return $security->login($user, GoogleAuthenticator::class, 'main');
         }
 
         return $this->render('dash/security/register.html.twig', [
             'form' => $form,
+            'invitation' => $invitation,
         ]);
     }
 

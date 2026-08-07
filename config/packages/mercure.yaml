@@ -2,9 +2,14 @@ mercure:
     hubs:
         default:
             url: '%env(default::MERCURE_URL)%'
-            # No public_url: App\Bridge\Mercure\SameOriginHub derives it from the current
+            # App\Bridge\Mercure\SameOriginHub derives the public URL from the current
             # request, so the browser subscribes on the origin it is already browsing —
-            # http or https, any port, no configuration.
+            # http or https, any port, no configuration. Hence null here (Hub then falls
+            # back to `url`). The key must be spelled out rather than omitted: under
+            # FrankenPHP, mercure_publish() exists, and mercure-bundle then leaves
+            # public_url without a default — omitting it makes any container compiled by
+            # an HTTP request fatal on an undefined array key.
+            public_url: ~
             jwt:
                 secret: '%env(MERCURE_JWT_SECRET)%'
                 publish: '*'

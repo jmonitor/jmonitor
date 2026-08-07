@@ -99,6 +99,31 @@ class EditionRoutingTest extends KernelTestCase
     }
 
     /**
+     * The invitation entry point is the same in both editions: only the ability to
+     * register *without* an invitation differs.
+     */
+    public function testJoinRouteMatchesInCloud(): void
+    {
+        self::bootKernel();
+
+        $parameters = $this->match('dash.jmonitor.io', '/join/0123456789abcdef');
+
+        $this->assertSame('invitation.join', $parameters['_route']);
+    }
+
+    public function testJoinRouteMatchesInSelfHosted(): void
+    {
+        // Symfony's env resolution checks $_ENV before $_SERVER (EnvVarProcessor::getEnv()),
+        // so both must be overridden or the bootstrap-loaded $_ENV value ("cloud") wins silently.
+        $_SERVER['APP_EDITION'] = $_ENV['APP_EDITION'] = 'selfhosted';
+        self::bootKernel();
+
+        $parameters = $this->match('dash.jmonitor.io', '/join/0123456789abcdef');
+
+        $this->assertSame('invitation.join', $parameters['_route']);
+    }
+
+    /**
      * Accepting an invitation mutates state and its link travels by e-mail:
      * a GET would let link scanners and prefetchers accept it silently.
      */

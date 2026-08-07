@@ -102,7 +102,7 @@ cs:
 cs-fix:
 	$(DC) exec app composer run lint:fix
 
-# Développement local — lier les packages locaux via path repositories Composer
+# Local development — link the sibling packages through Composer path repositories
 
 link-bundle:
 	composer config repositories.jmonitor-bundle '{"type":"path","url":"../jmonitor-bundle","options":{"symlink":true}}'

@@ -4,13 +4,12 @@
 
 set -e
 
-echo "🛑 Arrêt des workers Messenger..."
+echo "🛑 Stopping Messenger workers..."
 frankenphp php-cli bin/console messenger:stop-workers
 
-# Migrations Doctrine
-echo "📦 Exécution des migrations Doctrine..."
+echo "📦 Running Doctrine migrations..."
 frankenphp php-cli bin/console doctrine:migrations:migrate --no-interaction
 
-# Provisionnement idempotent du projet démo
-echo "🎭 Provisionnement du projet démo..."
-frankenphp php-cli bin/console app:demo:provision || echo "⚠️  Provisionnement démo échoué (non bloquant)"
+# Idempotent, so it is safe to run on every deployment.
+echo "🎭 Provisioning the demo project..."
+frankenphp php-cli bin/console app:demo:provision || echo "⚠️  Demo provisioning failed (non-blocking)"

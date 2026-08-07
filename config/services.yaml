@@ -12,8 +12,8 @@ parameters:
     menu.default_cache_tag: 'menu'
     stripe.portal_url: '%env(STRIPE_PORTAL_URL)%'
     app.mailer_sender_email: '%env(MAILER_SENDER_EMAIL)%'
-    # Expéditeur des mails d'alerte : ALERT_MAIL_FROM, ou (vide/absent) fallback sur
-    # MAILER_SENDER_EMAIL — permet au self-hosted de ne configurer qu'une adresse.
+    # Sender of alert emails: ALERT_MAIL_FROM, falling back to MAILER_SENDER_EMAIL when
+    # empty or absent — so a self-hoster only has to configure a single address.
     app.alert_mail_from: '%env(default:app.mailer_sender_email:ALERT_MAIL_FROM)%'
     # Collector agent config: cloud defaults, overridable per env var by the
     # self-hosted stack (docker/selfhosted/compose.yaml). The default: env
@@ -43,25 +43,26 @@ services:
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
 
-    # Créer un client qui utilise le client HTTP de Symfony par défaut, à savoir avec verify_peer à false en dev.
+    # A PSR-18 client wrapping Symfony's default HTTP client, so it inherits its options
+    # (notably verify_peer: false in dev).
     jmonitor_http_client:
         class: Symfony\Component\HttpClient\Psr18Client
         arguments:
             - '@http_client'
 
-    # Handler monolog des mails d'erreur prod (référencé par config/packages/monolog.yaml).
-    # Factory : renvoie un NullHandler si ERROR_MAIL_TO est vide/absent (self-hoster qui
-    # ne veut pas de mail d'erreur) ; les erreurs restent alors dans error_log.
+    # Monolog handler for prod error emails (referenced by config/packages/monolog.yaml).
+    # The factory returns a NullHandler when ERROR_MAIL_TO is empty or absent (a self-hoster
+    # who does not want error emails); errors then stay in error_log.
     app.monolog.error_mailer_handler:
         class: Monolog\Handler\HandlerInterface
         factory: ['@App\Logging\ErrorMailerHandlerFactory', 'create']
 
-    # L'édition (cloud / selfhosted) comme service injectable.
-    # L'env var est résolue au runtime, à l'instanciation du service.
-    # autoconfigure: false car FrameworkExtension autoconfigure \UnitEnum::class avec le tag
-    # "container.excluded" (toute enum est exclue de l'autowiring par défaut) : sans ce flag,
-    # ce tag serait aussi appliqué à cette définition manuelle et casserait l'injection de
-    # App\Plan\Edition dans les services qui la typehintent (ex. PlanResolver).
+    # The edition (cloud / selfhosted) as an injectable service. The env var is resolved
+    # at runtime, when the service is instantiated.
+    # autoconfigure: false because FrameworkExtension autoconfigures \UnitEnum::class with
+    # the "container.excluded" tag (every enum is excluded from autowiring by default):
+    # without this flag the tag would also apply to this manual definition and break the
+    # injection of App\Plan\Edition into the services that typehint it (e.g. PlanResolver).
     App\Plan\Edition:
         factory: ['App\Plan\Edition', 'from']
         arguments: ['%env(APP_EDITION)%']

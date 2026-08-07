@@ -1,16 +1,16 @@
 {
 	admin localhost:2019
 	metrics
-	# autres options globales…
+	# other global options…
 
 	frankenphp {
 		num_threads 8
-		# Threads supplémentaires créés à la demande lors des pics, libérés
-		# après max_idle_time (5s par défaut). 16 × memory_limit (128M) = 2G
-		# max théorique, l'usage réel reste très en dessous.
+		# Extra threads are spawned on demand during spikes and released after
+		# max_idle_time (5s by default). 16 × memory_limit (128M) = 2G in theory,
+		# actual usage stays well below that.
 		max_threads 16
-		# Sans thread libre au bout de 10s → 504, au lieu d'empiler les
-		# requêtes indéfiniment (effet boule de neige).
+		# No free thread after 10s → 504, rather than queueing requests
+		# indefinitely and snowballing.
 		max_wait_time 10s
 	}
 }
@@ -26,19 +26,19 @@
 	mercure {
 		transport local
 
-		# Clé injectée par env var ({$VAR} = substitution au parse du Caddyfile).
-		# Doit correspondre au MERCURE_JWT_SECRET de l'app.
+		# Key injected through an env var ({$VAR} = substituted when the Caddyfile
+		# is parsed). Must match the app's MERCURE_JWT_SECRET.
 		publisher_jwt {$MERCURE_JWT_SECRET} HS256
 		subscriber_jwt {$MERCURE_JWT_SECRET} HS256
 
-		# Pas de cors_origins/publish_origins : le navigateur s'abonne en same-origin
-		# (le hub est servi par ce site) et l'app publie avec un bearer token.
+		# No cors_origins/publish_origins: the browser subscribes same-origin (the
+		# hub is served by this site) and the app publishes with a bearer token.
 
-		# Pas d'`anonymous` : un JWT subscriber valide (cookie mercureAuthorization
-		# posé par l'app, scopé au topic du projet) est requis pour s'abonner.
+		# No `anonymous`: subscribing requires a valid subscriber JWT (the
+		# mercureAuthorization cookie set by the app, scoped to the project topic).
 
-		# expose the subscription web API and dispatch private updates when a subscription between the Hub and a subscriber is established or closed
-		# à priori pas besoin
+		# Exposes the subscription web API and dispatches private updates when a
+		# subscription between the hub and a subscriber opens or closes. Not needed here.
 		# subscriptions
 	}
 
@@ -46,8 +46,8 @@
 		worker {
 			file ./public/index.php
 			num 4
-			# Labellise les métriques Prometheus et les logs du worker
-			# (utilisé par notre propre collector caddy).
+			# Labels the worker's Prometheus metrics and logs
+			# (read by our own Caddy collector).
 			name jmonitor
 		}
 	}

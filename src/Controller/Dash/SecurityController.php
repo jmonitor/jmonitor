@@ -157,7 +157,7 @@ class SecurityController extends AbstractController
         ]);
     }
 
-    #[Route(path: '/login/oauth', name: 'security.login.oauth')]
+    #[Route(path: '/login/oauth', name: 'security.login.oauth', condition: "env('APP_EDITION') == 'cloud'")]
     public function googleLogin(ClientRegistry $clientRegistry): RedirectResponse
     {
         return $clientRegistry->getClient('google')->redirect(['openid', 'email', 'profile'], [
@@ -251,7 +251,7 @@ class SecurityController extends AbstractController
         ]);
     }
 
-    #[Route('/login/oauth/check', name: 'security.login.oauth.check')]
+    #[Route('/login/oauth/check', name: 'security.login.oauth.check', condition: "env('APP_EDITION') == 'cloud'")]
     public function oauthCheck(): Response
     {
         // Google seems to ping this URL sometimes when configuring OAuth.

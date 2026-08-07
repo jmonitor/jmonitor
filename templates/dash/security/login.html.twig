@@ -16,8 +16,10 @@
         <twig:Alert type="danger">{{ error.messageKey|trans(error.messageData, 'security') }}</twig:Alert>
     {% endif %}
 
-    <twig:Security:OauthLinks />
-    <twig:Security:Ou />
+    {% if is_cloud() %}
+        <twig:Security:OauthLinks />
+        <twig:Security:Ou />
+    {% endif %}
 
     <form action="{{ path('security.login.check') }}" method="post" data-turbo="false">
         <div class="mb-4">

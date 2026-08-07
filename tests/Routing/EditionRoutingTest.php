@@ -124,6 +124,41 @@ class EditionRoutingTest extends KernelTestCase
     }
 
     /**
+     * OAuth sign-in is cloud-only: wiring it up means a Google Cloud project per install,
+     * and it is a second door creating accounts on the fly. The authenticator itself stays
+     * registered — programmatic login after registration and password reset uses it.
+     */
+    public function testOauthRoutesMatchInCloud(): void
+    {
+        self::bootKernel();
+
+        $this->assertSame('security.login.oauth', $this->match('dash.jmonitor.io', '/login/oauth')['_route']);
+        $this->assertSame('security.login.oauth.check', $this->match('dash.jmonitor.io', '/login/oauth/check')['_route']);
+    }
+
+    public function testOauthLoginRouteIs404InSelfHosted(): void
+    {
+        // Symfony's env resolution checks $_ENV before $_SERVER (EnvVarProcessor::getEnv()),
+        // so both must be overridden or the bootstrap-loaded $_ENV value ("cloud") wins silently.
+        $_SERVER['APP_EDITION'] = $_ENV['APP_EDITION'] = 'selfhosted';
+        self::bootKernel();
+
+        $this->expectException(ResourceNotFoundException::class);
+        $this->match('dash.jmonitor.io', '/login/oauth');
+    }
+
+    public function testOauthCheckRouteIs404InSelfHosted(): void
+    {
+        // Symfony's env resolution checks $_ENV before $_SERVER (EnvVarProcessor::getEnv()),
+        // so both must be overridden or the bootstrap-loaded $_ENV value ("cloud") wins silently.
+        $_SERVER['APP_EDITION'] = $_ENV['APP_EDITION'] = 'selfhosted';
+        self::bootKernel();
+
+        $this->expectException(ResourceNotFoundException::class);
+        $this->match('dash.jmonitor.io', '/login/oauth/check');
+    }
+
+    /**
      * Registering through an invitation link stays reachable in both editions: it is the
      * only way in once self-hosted closes open registration. The bare /register route
      * matches everywhere too — the controller, not the router, turns it away.

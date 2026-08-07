@@ -15,8 +15,10 @@
         </twig:Alert>
     {% endif %}
 
-    <twig:Security:OauthLinks />
-    <twig:Security:Ou />
+    {% if is_cloud() %}
+        <twig:Security:OauthLinks />
+        <twig:Security:Ou />
+    {% endif %}
 
     {{ form_start(form) }}
     {{ form_rest(form) }}

@@ -40,5 +40,7 @@
         <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}" {{ stimulus_controller('csrf-protection') }} />
     </form>
 
-    <twig:Security:Terms />
+    {% if is_cloud() %}
+        <twig:Security:Terms />
+    {% endif %}
 {% endblock %}

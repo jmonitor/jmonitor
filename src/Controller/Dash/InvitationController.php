@@ -19,7 +19,8 @@ use Symfony\Component\Security\Http\Attribute\IsCsrfTokenValid;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
 
 /**
- * The same routes are used to accept an invitation from the account or from the onboarding.
+ * The same accept/refuse routes serve the account page, the onboarding and the
+ * confirmation page reached through an invitation link (join.html.twig).
  */
 class InvitationController extends AbstractController
 {

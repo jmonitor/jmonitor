@@ -65,7 +65,8 @@ readonly class AppTwigExtension
     }
 
     /**
-     * True in the cloud edition — used to gate the billing elements in the templates.
+     * True in the cloud edition — used to gate the cloud-only elements in the templates
+     * (billing screens, OAuth sign-in buttons).
      */
     #[AsTwigFunction('is_cloud')]
     public function isCloud(): bool

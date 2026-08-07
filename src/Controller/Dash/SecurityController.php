@@ -89,7 +89,12 @@ class SecurityController extends AbstractController
             if (!$limit->isAccepted()) {
                 $this->addFlash('danger', 'Too many registrations from your IP. Please try again in a minute.');
 
-                return $this->redirectToRoute('security.register');
+                // Back to the form they came from: sending an invitee to the bare /register
+                // would drop the invitation, and on an invite-only instance that route just
+                // bounces them to the login page.
+                return $invitation
+                    ? $this->redirectToRoute('security.register.invitation', ['uniquid' => $invitation->getUniquid()])
+                    : $this->redirectToRoute('security.register');
             }
 
             $user->setPassword($userPasswordHasher->hashPassword($user, $form->get('plainPassword')->getData()));

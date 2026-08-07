@@ -7,7 +7,7 @@ set -e
 
 composer dump-env prod
 
-# notez que les script post-install de composer ne s'execute pas, je les remets ici donc
+# Composer's post-install scripts do not run here, so replay them explicitly.
 frankenphp php-cli bin/console cache:clear
 frankenphp php-cli bin/console assets:install
 frankenphp php-cli bin/console importmap:install

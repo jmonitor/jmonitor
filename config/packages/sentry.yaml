@@ -12,8 +12,9 @@ when@prod:
                 - 'Symfony\Component\ErrorHandler\Error\FatalError'
                 - 'Symfony\Component\HttpKernel\Exception\NotFoundHttpException'
 
-                # Accès refusé sur une route protégée (ex: bot/crawler anonyme sur dash.jmonitor.io) :
-                # le firewall redirige vers le login, ce n'est pas une vraie erreur applicative.
+                # Access denied on a protected route (e.g. an anonymous bot or crawler
+                # on the dashboard): the firewall redirects to the login form, this is
+                # not a real application error.
                 - 'Symfony\Component\Security\Core\Exception\AccessDeniedException'
                 - 'Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException'
 

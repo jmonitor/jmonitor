@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=../../vendor/symfony/dependency-injection/Loader/schema/services.schema.json
-# Le bundle JmonitorBundle n'est enregistré qu'en dev/prod (voir config/bundles.php) :
-# la config est donc scopée sous when@dev / when@prod pour ne pas casser le boot en test.
+# JmonitorBundle is only registered in dev/prod (see config/bundles.php), so this
+# config is scoped under when@dev / when@prod to keep the test environment booting.
 when@dev:
     parameters:
         # Served by the `localhost` host of docker/dev/Caddyfile. The HTTPS overlay

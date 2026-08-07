@@ -20,6 +20,6 @@ framework:
             policy: 'fixed_window'
             limit: 1
             interval: '10 seconds'
-        # Édition self-hosted : pas de limite de push (spec §5.4)
+        # Self-hosted edition: no limit on metric pushes.
         collector.selfhosted:
             policy: 'no_limit'

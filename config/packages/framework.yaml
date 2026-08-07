@@ -2,7 +2,7 @@
 # see https://symfony.com/doc/current/reference/configuration/framework.html
 framework:
 
-    # https://www.cloudflare.com/fr-fr/ips/
+    # https://www.cloudflare.com/ips/
     trusted_proxies: '%env(csv:TRUSTED_PROXIES)%'
     trusted_headers: ['x-forwarded-for', 'x-forwarded-proto', 'x-forwarded-port', 'x-forwarded-host']
 
@@ -17,10 +17,10 @@ framework:
         cookie_secure: auto
         cookie_domain: '%env(APP_DOMAIN)%'
         name: 'JMONITOR_SESSID_%env(APP_ENV)%'
-        gc_probability: 1 # inutile avec redis
-        gc_divisor: 1000 # inutile avec redis
+        gc_probability: 1 # unused with Redis
+        gc_divisor: 1000 # unused with Redis
         cookie_lifetime: 0
-        # temps d'inactivité avant expiration de la session. Sera pas déco grace au rememberme.
+        # Idle time before the session expires. Users are not logged out thanks to remember-me.
         gc_maxlifetime: 1800 # 30 minutes.
 
     # https://symfony.com/doc/current/reference/configuration/framework.html#configuration-framework-http_cache

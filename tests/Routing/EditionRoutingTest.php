@@ -78,6 +78,29 @@ class EditionRoutingTest extends KernelTestCase
         $this->match('dash.jmonitor.io', '/p/0197fc70-0000-7000-8000-000000000000/settings/plan');
     }
 
+    public function testVersionUpdateRouteMatchesInSelfHosted(): void
+    {
+        // Symfony's env resolution checks $_ENV before $_SERVER (EnvVarProcessor::getEnv()),
+        // so both must be overridden or the bootstrap-loaded $_ENV value ("cloud") wins silently.
+        $_SERVER['APP_EDITION'] = $_ENV['APP_EDITION'] = 'selfhosted';
+        self::bootKernel();
+
+        $parameters = $this->match('dash.jmonitor.io', '/_version-update');
+
+        $this->assertSame('version.update', $parameters['_route']);
+    }
+
+    /**
+     * The cloud edition deploys from source and has no version to compare.
+     */
+    public function testVersionUpdateRouteIs404InCloud(): void
+    {
+        self::bootKernel();
+
+        $this->expectException(ResourceNotFoundException::class);
+        $this->match('dash.jmonitor.io', '/_version-update');
+    }
+
     public function testSubscribeRouteIs404InSelfHosted(): void
     {
         // Symfony's env resolution checks $_ENV before $_SERVER (EnvVarProcessor::getEnv()),

@@ -10,6 +10,10 @@ to that edition only, everything else applies to both.
 
 ## [Unreleased]
 
+### Added
+
+- The dashboard shows which JMonitor version the instance runs, and whether a newer release is available (self-hosted)
+
 ## [1.0.0] - 2026-08-07
 
 - Initial public release.

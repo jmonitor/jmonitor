@@ -305,6 +305,18 @@ Check the [changelog](https://github.com/jmonitor/jmonitor/blob/master/CHANGELOG
 before upgrading: anything you need to do by hand is listed under **Upgrade
 notes** for that version.
 
+### Update check
+
+The dashboard shows the version your instance runs and, when a newer release
+exists, which one. To do that the app queries the GitHub releases API
+(`api.github.com`) at most once a day; the result is cached for 24 hours, and a
+failed call is retried at most hourly.
+
+There is no setting to turn this off. Nothing about your instance is sent — it
+is a plain read of a public endpoint — and if your instance has no outbound
+access the check simply fails silently: you keep the version number, without
+the badge.
+
 ## Backup
 
 All application state lives in three named volumes: `mysql-data`,

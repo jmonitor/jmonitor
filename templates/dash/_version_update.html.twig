@@ -1,0 +1,9 @@
+<turbo-frame id="version-update">
+    {% if status.update %}
+        <a href="{{ status.update.url }}" target="_blank" class="text-decoration-none">
+            <twig:Html:Badge:Yellow icon="{{ true }}">{{ status.update.version }} available</twig:Html:Badge:Yellow>
+        </a>
+    {% elseif status.upToDate %}
+        <twig:Html:Badge:Green icon="{{ true }}">Up to date</twig:Html:Badge:Green>
+    {% endif %}
+</turbo-frame>

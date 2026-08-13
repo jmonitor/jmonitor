@@ -59,6 +59,11 @@ ENV APP_ENV=prod
 # This image IS the self-hosted edition (the cloud edition deploys from source
 # on Clever Cloud). Overridable at run time, but you should not need to.
 ENV APP_EDITION=selfhosted
+# Version of this image, passed by .github/workflows/docker-publish.yml from the git
+# tag. Distinct from JMONITOR_VERSION, which is the image tag selector in compose.yaml.
+# Local builds and CI smoke builds have no tag and stay on "dev".
+ARG JMONITOR_APP_VERSION=dev
+ENV JMONITOR_APP_VERSION=${JMONITOR_APP_VERSION}
 # PHP's embed SAPI checks cwd for php.ini before the compiled-in path; pin the
 # compiled path so a php.ini at the repo root (/app) could never shadow this
 # image's /usr/local/etc/php/php.ini. Same fix as docker/dev's compose.yaml.

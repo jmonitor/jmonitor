@@ -26,6 +26,7 @@ Behavior is gated by the `APP_EDITION` env var (`cloud` default / `selfhosted`) 
 - **Cloud-only gating:** billing/webhook routes return 404, billing menus/screens hidden, Stripe commands neutralized in self-hosted. The **collector** rate limiter uses a `no_limit` policy (`collector.selfhosted` in `config/packages/rate_limiter.yaml`) — the registration and password-reset limiters are unchanged and apply in both editions. OAuth sign-in routes are cloud-only too — but only the *routes*: `GoogleAuthenticator` stays registered in `security.yaml` because programmatic login after registration and password reset goes through it.
 - **Registration:** `App\Security\Registration\RegistrationGate` decides whether an account can be created without an invitation (cloud yes, self-hosted no), exposed to Twig as `registration_open()`. The invitation flow itself is identical in both editions: `GET /join/{uniquid}` is the single public entry point (routes to a confirmation page, the login form, or registration), `/register/{uniquid}` locks the address to the invited one and accepts the invitation on submit. `App\Project\InvitationAccepter` is the only path turning an invitation into a membership, shared with the in-app accept action.
 - **Errors:** Sentry is force-disabled in self-hosted (`CloudOnlyEnvVarProcessor` empties `SENTRY_DSN`); prod errors go by email instead, driven by `ERROR_MAIL_TO` (NullHandler if empty).
+- **Version:** `JMONITOR_APP_VERSION` is sealed into the self-hosted image at build time (`docker/selfhosted/Dockerfile`, fed by the publish workflow from the git tag) and read through the `app.version` parameter by `App\Version\AppVersion`; it defaults to `dev` everywhere else, including cloud. Not to be confused with `JMONITOR_VERSION`, which only selects the image tag to pull in `docker/selfhosted/compose.yaml`. The dashboard card (`Dashboard:Version`, self-hosted only) renders the version with no network access and pulls the up-to-date badge through a separate turbo-frame request (`/_version-update`).
 - **Packaging:** `docker/selfhosted/` (multi-stage Dockerfile, compose stack, entrypoint, own php.ini + README). `app:install` (idempotent, `src/Install/`: `EnvChecker`, `AdminProvisioner`, `SelfMonitoringProvisioner`) bootstraps a fresh install. Image published on Docker Hub (+ ghcr.io mirror) by `.github/workflows/docker-publish.yml` on `v*` tags (multi-arch amd64/arm64), with a compose smoke test.
 
 ## Architecture
@@ -64,6 +65,7 @@ src/
   Plan/            Edition + PlanResolver (cloud/self-hosted seam), Stripe sessions
   Security/        Voters, OAuth2 authenticators
   Twig/            Custom filters/functions
+  Version/         App version + update check against the latest GitHub release
 ```
 
 ## Development Environment (Docker)

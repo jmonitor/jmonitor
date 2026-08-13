@@ -28,6 +28,11 @@ parameters:
     # service name). Defaults to the public host, so nothing extra is exposed elsewhere.
     app.collector_host_default: 'collector.%app.domain%'
     app.collector_internal_host: '%env(default:app.collector_host_default:JMONITOR_COLLECTOR_INTERNAL_HOST)%'
+    # Version of the running application, sealed into the self-hosted image at build
+    # time (docker/selfhosted/Dockerfile). Not to be confused with JMONITOR_VERSION,
+    # which selects which image tag to pull in docker/selfhosted/compose.yaml.
+    app.version_default: 'dev'
+    app.version: '%env(default:app.version_default:JMONITOR_APP_VERSION)%'
 
 services:
     # default configuration for services in *this* file

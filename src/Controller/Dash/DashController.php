@@ -6,6 +6,7 @@ namespace App\Controller\Dash;
 
 use App\Entity\User;
 use App\Project\ProjectContext;
+use App\Version\UpdateChecker;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -36,5 +37,17 @@ class DashController extends AbstractController
         $em->getConnection()->executeQuery('SELECT 1');
 
         return new Response('HealthChecked');
+    }
+
+    /**
+     * Update badge for the dashboard's JMonitor card, loaded in its own request so the
+     * dashboard itself never waits on an outbound call.
+     */
+    #[Route('/_version-update', name: 'version.update', condition: "env('APP_EDITION') != 'cloud'")]
+    public function versionUpdate(UpdateChecker $updateChecker): Response
+    {
+        return $this->render('dash/_version_update.html.twig', [
+            'status' => $updateChecker->check(),
+        ]);
     }
 }

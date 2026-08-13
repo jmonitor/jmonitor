@@ -1,0 +1,14 @@
+<twig:Card {{ ...attributes }}>
+    <div class="d-flex align-items-center gap-2 mb-4">
+        <twig:ux:icon name="material-symbols:deployed-code-outline" width="1.5em" height="1.5em" class="text-primary"/>
+        <h6 class="card-title mb-0">JMonitor</h6>
+        {# Loaded in its own request so the dashboard never waits on the outbound call.
+           Not loading="lazy": the card sits below the fold, and the badge would only
+           appear for a user who scrolled down to it. #}
+        <turbo-frame id="version-update" src="{{ path('version.update') }}" class="ms-auto"></turbo-frame>
+    </div>
+
+    <twig:Metric:Metric:List>
+        <twig:InfoLine label="Version">{{ version }}</twig:InfoLine>
+    </twig:Metric:Metric:List>
+</twig:Card>

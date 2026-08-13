@@ -158,6 +158,8 @@ jobs:
                     platforms: linux/amd64,linux/arm64
                     tags: ${{ steps.meta.outputs.tags }}
                     labels: ${{ steps.meta.outputs.labels }}
+                    build-args: |
+                        JMONITOR_APP_VERSION=${{ steps.meta.outputs.version }}
                     cache-from: type=gha
 
             -   name: Sync README to Docker Hub

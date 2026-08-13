@@ -4,34 +4,21 @@ labels: [question]
 body:
     -   type: markdown
         attributes:
-            value: |
-                The answer may already be in the
-                [self-hosting guide](https://github.com/jmonitor/jmonitor/blob/master/docker/selfhosted/README.md)
-                or the [PaaS guide](https://github.com/jmonitor/jmonitor/blob/master/docs/paas.md).
+            value: The answer may already be in the [self-hosting guide](https://github.com/jmonitor/jmonitor/blob/master/docker/selfhosted/README.md) or the [PaaS guide](https://github.com/jmonitor/jmonitor/blob/master/docs/paas.md).
 
     -   type: dropdown
         id: edition
         attributes:
             label: Edition
             options:
-                - Self-hosted (Docker image)
+                - I don't know / both
                 - Cloud (jmonitor.io)
-                - Local development stack
-        validations:
-            required: true
+                - Self-hosted
+            default: 0
 
     -   type: textarea
-        id: question
+        id: description
         attributes:
-            label: Your question
-            description: What are you trying to do, and where are you stuck?
+            label: Description
         validations:
             required: true
-
-    -   type: textarea
-        id: context
-        attributes:
-            label: What you have tried
-            description: >
-                Relevant configuration, commands you ran and their output. Redact anything
-                sensitive — this issue is public.

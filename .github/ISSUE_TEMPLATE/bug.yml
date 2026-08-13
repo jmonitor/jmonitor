@@ -6,55 +6,15 @@ body:
         id: edition
         attributes:
             label: Edition
-            description: Where are you seeing this?
             options:
-                - Self-hosted (Docker image)
+                - I don't know / both
                 - Cloud (jmonitor.io)
-                - Local development stack
+                - Self-hosted
+            default: 0
+
+    -   type: textarea
+        id: description
+        attributes:
+            label: Description
         validations:
             required: true
-
-    -   type: input
-        id: version
-        attributes:
-            label: Version
-            description: >
-                Self-hosted: the image tag you are running (`docker compose images app`).
-                Cloud: leave this blank.
-            placeholder: v1.0.0
-
-    -   type: textarea
-        id: what-happened
-        attributes:
-            label: What happened
-            description: What you did, what you expected, and what you got instead.
-        validations:
-            required: true
-
-    -   type: textarea
-        id: reproduce
-        attributes:
-            label: Steps to reproduce
-            placeholder: |
-                1. Go to ...
-                2. Click ...
-                3. See ...
-        validations:
-            required: true
-
-    -   type: textarea
-        id: logs
-        attributes:
-            label: Logs
-            description: >
-                Self-hosted: `docker compose logs --tail=100 app`. Redact anything sensitive —
-                this issue is public. Pasted text is rendered as a code block, no backticks needed.
-            render: shell
-
-    -   type: textarea
-        id: environment
-        attributes:
-            label: Environment
-            description: >
-                Anything else about your setup that could matter: host OS, reverse proxy,
-                browser, whether the components are on the same machine as JMonitor.

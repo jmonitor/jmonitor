@@ -1,0 +1,10 @@
+<twig:Card {{ ...attributes }}>
+    <div class="d-flex align-items-center gap-2 mb-4">
+        <twig:ux:icon name="material-symbols:deployed-code-outline" width="1.5em" height="1.5em" class="text-primary"/>
+        <h6 class="card-title mb-0">JMonitor</h6>
+    </div>
+
+    <twig:Metric:Metric:List>
+        <twig:InfoLine label="Version">{{ version }}</twig:InfoLine>
+    </twig:Metric:Metric:List>
+</twig:Card>

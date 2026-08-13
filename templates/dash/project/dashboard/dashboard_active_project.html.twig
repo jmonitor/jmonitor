@@ -112,6 +112,11 @@
                     </twig:Card>
                 </div>
                 {% endif %}
+                {% if not is_cloud() %}
+                <div class="col-6 col-xxl-12">
+                    <twig:Dashboard:Version class="h-100" />
+                </div>
+                {% endif %}
                 <div class="col-6 col-xxl-12">
                     <twig:Dashboard:InviteTeam class="h-100" />
                 </div>

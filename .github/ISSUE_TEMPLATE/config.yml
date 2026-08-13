@@ -1,0 +1,11 @@
+blank_issues_enabled: true
+contact_links:
+    -   name: Security vulnerability
+        url: https://github.com/jmonitor/jmonitor/security/advisories/new
+        about: Never report a security issue publicly. Open a private advisory instead.
+    -   name: Issue with the collector library
+        url: https://github.com/jmonitor/collector/issues
+        about: For jmonitor/collector itself. If you are not sure where it belongs, open it here and we will move it.
+    -   name: Issue with the Symfony bundle
+        url: https://github.com/jmonitor/jmonitor-bundle/issues
+        about: For jmonitor/jmonitor-bundle itself. If you are not sure where it belongs, open it here and we will move it.

@@ -1,0 +1,27 @@
+name: Feature request
+description: Suggest a new feature, or an improvement to an existing one
+labels: [feature request]
+body:
+    -   type: textarea
+        id: problem
+        attributes:
+            label: What problem does this solve?
+            description: >
+                Describe the situation you are in, not the solution you have in mind.
+                What are you trying to do, and what makes it hard today?
+        validations:
+            required: true
+
+    -   type: textarea
+        id: proposal
+        attributes:
+            label: What would you like to see?
+            description: Your idea of how JMonitor could address it.
+        validations:
+            required: true
+
+    -   type: textarea
+        id: alternatives
+        attributes:
+            label: Alternatives you considered
+            description: Workarounds you use today, or other approaches you weighed.

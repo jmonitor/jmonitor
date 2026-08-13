@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4db04735d1784e66df84205f9fbfac4e",
+    "content-hash": "0b93f28b43f87f9f025c8f98fe442756",
     "packages": [
         {
             "name": "clue/stream-filter",
@@ -1959,22 +1959,22 @@
         },
         {
             "name": "jmonitor/collector",
-            "version": "v1.4.0",
+            "version": "v2.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/jmonitor/collector.git",
-                "reference": "84412f8d8ad1a68793bc0e465412419e4689afd1"
+                "reference": "878fb559634b6f5c5248a6313beef955871cc5d2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jmonitor/collector/zipball/84412f8d8ad1a68793bc0e465412419e4689afd1",
-                "reference": "84412f8d8ad1a68793bc0e465412419e4689afd1",
+                "url": "https://api.github.com/repos/jmonitor/collector/zipball/878fb559634b6f5c5248a6313beef955871cc5d2",
+                "reference": "878fb559634b6f5c5248a6313beef955871cc5d2",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
                 "ext-zlib": "*",
-                "php": "^7.4|^8.0",
+                "php": "^8.1",
                 "php-http/discovery": "^1.17",
                 "psr/http-client": "^1.0",
                 "psr/http-client-implementation": "*",
@@ -1989,7 +1989,7 @@
                 "nyholm/psr7": "^1.8",
                 "php-http/message": "^1.0",
                 "phpstan/phpstan": "^1.10",
-                "phpunit/phpunit": "^9.0|^10.0|^11.5",
+                "phpunit/phpunit": "^10.0|^11.5",
                 "predis/predis": "^3.0",
                 "symfony/http-client": "^6.4|^7.0|^8.0"
             },
@@ -2001,7 +2001,7 @@
             "extra": {
                 "branch-alias": {
                     "dev-1.x": "1.x-dev",
-                    "dev-master": "1.x-dev"
+                    "dev-2.x": "2.x-dev"
                 }
             },
             "autoload": {
@@ -2029,31 +2029,32 @@
                 "mysql",
                 "nginx",
                 "php",
+                "postgresql",
                 "redis",
                 "system"
             ],
             "support": {
                 "issues": "https://github.com/jmonitor/collector/issues",
-                "source": "https://github.com/jmonitor/collector/tree/v1.4.0"
+                "source": "https://github.com/jmonitor/collector/tree/v2.0.1"
             },
-            "time": "2026-06-05T12:49:31+00:00"
+            "time": "2026-08-08T16:12:31+00:00"
         },
         {
             "name": "jmonitor/jmonitor-bundle",
-            "version": "v1.4.0",
+            "version": "v2.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/jmonitor/jmonitor-bundle.git",
-                "reference": "a9b00b387358cf23545bfc86d119cba9f85785a2"
+                "reference": "b7b41e0de78ac7f01de9074425a7416cbb1d7a5b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jmonitor/jmonitor-bundle/zipball/a9b00b387358cf23545bfc86d119cba9f85785a2",
-                "reference": "a9b00b387358cf23545bfc86d119cba9f85785a2",
+                "url": "https://api.github.com/repos/jmonitor/jmonitor-bundle/zipball/b7b41e0de78ac7f01de9074425a7416cbb1d7a5b",
+                "reference": "b7b41e0de78ac7f01de9074425a7416cbb1d7a5b",
                 "shasum": ""
             },
             "require": {
-                "jmonitor/collector": "^1.3",
+                "jmonitor/collector": "^2.0",
                 "nyholm/psr7": "^1.8",
                 "php": "^8.1",
                 "symfony/console": "^6.4|^7.0|^8.0",
@@ -2064,6 +2065,7 @@
             },
             "require-dev": {
                 "friendsofphp/php-cs-fixer": "^3.86",
+                "monolog/monolog": "^3.0",
                 "phpstan/phpstan": "^2.1",
                 "phpunit/phpunit": "^10.5"
             },
@@ -2071,7 +2073,7 @@
             "extra": {
                 "branch-alias": {
                     "dev-1.x": "1.x-dev",
-                    "dev-master": "1.x-dev"
+                    "dev-2.x": "2.x-dev"
                 }
             },
             "autoload": {
@@ -2108,9 +2110,9 @@
             ],
             "support": {
                 "issues": "https://github.com/jmonitor/jmonitor-bundle/issues",
-                "source": "https://github.com/jmonitor/jmonitor-bundle/tree/v1.4.0"
+                "source": "https://github.com/jmonitor/jmonitor-bundle/tree/v2.0.1"
             },
-            "time": "2026-06-01T16:03:56+00:00"
+            "time": "2026-07-22T16:02:07+00:00"
         },
         {
             "name": "knpuniversity/oauth2-client-bundle",

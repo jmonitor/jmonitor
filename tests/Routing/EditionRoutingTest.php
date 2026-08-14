@@ -102,28 +102,30 @@ class EditionRoutingTest extends KernelTestCase
     }
 
     /**
-     * Unlike the app's own version, the collector's is project-scoped and means the
+     * Unlike the app's own version, an agent's packages are project-scoped and mean the
      * same thing in both editions.
      */
-    public function testCollectorUpdateRouteMatchesInCloud(): void
+    public function testPackageUpdateRouteMatchesInCloud(): void
     {
         self::bootKernel();
 
-        $parameters = $this->match('dash.jmonitor.io', '/p/0197fc70-0000-7000-8000-000000000000/_collector-update');
+        $parameters = $this->match('dash.jmonitor.io', '/p/0197fc70-0000-7000-8000-000000000000/_version-update/collector');
 
-        $this->assertSame('project.collector.update', $parameters['_route']);
+        $this->assertSame('project.version.update', $parameters['_route']);
+        $this->assertSame('collector', $parameters['package']);
     }
 
-    public function testCollectorUpdateRouteMatchesInSelfHosted(): void
+    public function testPackageUpdateRouteMatchesInSelfHosted(): void
     {
         // Symfony's env resolution checks $_ENV before $_SERVER (EnvVarProcessor::getEnv()),
         // so both must be overridden or the bootstrap-loaded $_ENV value ("cloud") wins silently.
         $_SERVER['APP_EDITION'] = $_ENV['APP_EDITION'] = 'selfhosted';
         self::bootKernel();
 
-        $parameters = $this->match('dash.jmonitor.io', '/p/0197fc70-0000-7000-8000-000000000000/_collector-update');
+        $parameters = $this->match('dash.jmonitor.io', '/p/0197fc70-0000-7000-8000-000000000000/_version-update/bundle');
 
-        $this->assertSame('project.collector.update', $parameters['_route']);
+        $this->assertSame('project.version.update', $parameters['_route']);
+        $this->assertSame('bundle', $parameters['package']);
     }
 
     public function testSubscribeRouteIs404InSelfHosted(): void

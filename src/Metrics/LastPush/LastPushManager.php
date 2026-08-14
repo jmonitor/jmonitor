@@ -29,6 +29,7 @@ class LastPushManager implements ResetInterface
         $data = [
             'received_at' => $event->receivedAt->getTimestamp(),
             'collector_version' => $event->jmonitorVersion,
+            'bundle_version' => $event->bundleVersion,
         ];
 
         $item = $this->cacheItemPool->getItem(sprintf('last_push_%s', $event->project->getId()));

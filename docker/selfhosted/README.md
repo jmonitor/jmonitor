@@ -308,14 +308,22 @@ notes** for that version.
 ### Update check
 
 The dashboard shows the version your instance runs and, when a newer release
-exists, which one. To do that the app queries the GitHub releases API
-(`api.github.com`) at most once a day; the result is cached for 24 hours, and a
-failed call is retried at most hourly.
+exists, which one. It does the same for the packages the agents pushing metrics
+advertise: `jmonitor/collector`, and `jmonitor/jmonitor-bundle` on Symfony
+projects.
+
+To do that the app queries the GitHub releases API (`api.github.com`), once a
+day per repository — so at most three calls a day whatever the number of
+projects. Each result is cached for 24 hours, and a failed call is retried at
+most hourly.
 
 There is no setting to turn this off. Nothing about your instance is sent — it
-is a plain read of a public endpoint — and if your instance has no outbound
-access the check simply fails silently: you keep the version number, without
-the badge.
+is a plain read of public endpoints — and if your instance has no outbound
+access the checks simply fail silently: you keep the version numbers, without
+the badges.
+
+Collectors older than 2.1 advertise a version number that was never bumped, so
+their version reads as `unknown`; upgrading them is what makes it accurate.
 
 ## Backup
 

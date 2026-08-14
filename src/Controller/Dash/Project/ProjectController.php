@@ -16,7 +16,8 @@ use App\Project\ProjectContext;
 use App\Project\ProjectCreator;
 use App\Repository\AlertRepository;
 use App\Security\Voter\ProjectVoter;
-use App\Version\CollectorUpdateChecker;
+use App\Version\Package;
+use App\Version\PackageUpdateChecker;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -82,16 +83,17 @@ class ProjectController extends AbstractController
     /**
      * Loaded in its own request so the dashboard never waits on the outbound call.
      */
-    #[Route('/p/{uuid:project}/_collector-update', name: 'project.collector.update')]
+    #[Route('/p/{uuid:project}/_version-update/{package}', name: 'project.version.update')]
     #[IsGranted(ProjectVoter::PROJECT_USER, subject: 'project')]
-    public function collectorUpdate(Project $project, ProjectContext $projectContext, CollectorContext $collectorContext, CollectorUpdateChecker $updateChecker): Response
+    public function versionUpdate(Project $project, Package $package, ProjectContext $projectContext, CollectorContext $collectorContext, PackageUpdateChecker $updateChecker): Response
     {
         // The project is taken from the URL rather than guessed from the session:
         // two tabs open on two projects would otherwise share one answer.
         $projectContext->setCurrentProject($project);
 
-        return $this->render('dash/project/_collector_update.html.twig', [
-            'status' => $updateChecker->check($collectorContext->getCollectorVersion()),
+        return $this->render('dash/project/_version_update.html.twig', [
+            'package' => $package,
+            'status' => $updateChecker->check($collectorContext->getAdvertisedVersion($package)),
         ]);
     }
 }

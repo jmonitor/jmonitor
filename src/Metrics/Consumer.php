@@ -43,7 +43,7 @@ readonly class Consumer
         private EntityManagerInterface $em,
     ) {}
 
-    public function consume(array $batch, Project $project, \DateTimeImmutable $receivedAt, string $jmonitorVersion): void
+    public function consume(array $batch, Project $project, \DateTimeImmutable $receivedAt, string $jmonitorVersion, ?string $bundleVersion = null): void
     {
         $inputConstraints = $this->getInputConstraints();
         $bags = [];
@@ -140,7 +140,7 @@ readonly class Consumer
         }
 
         // dispatch event
-        $this->eventDispatcher->dispatch(new PostConsumeEvent($project, $bags, $receivedAt, $jmonitorVersion));
+        $this->eventDispatcher->dispatch(new PostConsumeEvent($project, $bags, $receivedAt, $jmonitorVersion, $bundleVersion));
     }
 
     private function getInputConstraints(): Assert\Collection

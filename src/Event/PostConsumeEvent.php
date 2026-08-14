@@ -15,16 +15,18 @@ class PostConsumeEvent extends Event
     public private(set) Project $project;
     public private(set) \DateTimeImmutable $receivedAt;
     public private(set) string $jmonitorVersion;
+    public private(set) ?string $bundleVersion;
 
     /**
      * @params MetricBagDto[] $metricBags
      */
-    public function __construct(Project $project, array $metricBags, \DateTimeImmutable $receivedAt, string $jmonitorVersion)
+    public function __construct(Project $project, array $metricBags, \DateTimeImmutable $receivedAt, string $jmonitorVersion, ?string $bundleVersion = null)
     {
         $this->metricBags = $metricBags;
         $this->project = $project;
         $this->receivedAt = $receivedAt;
         $this->jmonitorVersion = $jmonitorVersion;
+        $this->bundleVersion = $bundleVersion;
     }
 
     /**

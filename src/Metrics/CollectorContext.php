@@ -9,7 +9,8 @@ use App\Metrics\LastPush\LastPushManager;
 use App\Metrics\LastPush\LastPushStatus;
 use App\Plan\PlanResolver;
 use App\Project\ProjectContext;
-use App\Version\CollectorVersion;
+use App\Version\AdvertisedVersion;
+use App\Version\Package;
 
 /**
  * Gathers information about the "state" of the current project's collector.
@@ -27,9 +28,16 @@ readonly class CollectorContext
         return $this->lastPushManager->getLastPushBag();
     }
 
-    public function getCollectorVersion(): CollectorVersion
+    public function getAdvertisedVersion(Package $package): AdvertisedVersion
     {
-        return new CollectorVersion($this->getLastPushBag()?->collectorVersion);
+        $bag = $this->getLastPushBag();
+
+        $version = match ($package) {
+            Package::COLLECTOR => $bag?->collectorVersion,
+            Package::BUNDLE => $bag?->bundleVersion,
+        };
+
+        return new AdvertisedVersion($package, $version);
     }
 
     public function getLastPushStatus(): LastPushStatus

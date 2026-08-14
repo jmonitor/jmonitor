@@ -8,7 +8,11 @@ readonly class MetricsReceivedMessage
 {
     private \DateTimeImmutable $receivedAt;
 
-    public function __construct(private int $projectId, private array $metrics, private string $jmonitorVersion)
+    /**
+     * $bundleVersion defaults to null so messages queued by a previous deployment still
+     * unserialize while they drain.
+     */
+    public function __construct(private int $projectId, private array $metrics, private string $jmonitorVersion, private ?string $bundleVersion = null)
     {
         $this->receivedAt = new \DateTimeImmutable();
     }
@@ -31,5 +35,10 @@ readonly class MetricsReceivedMessage
     public function getJmonitorVersion(): string
     {
         return $this->jmonitorVersion;
+    }
+
+    public function getBundleVersion(): ?string
+    {
+        return $this->bundleVersion;
     }
 }

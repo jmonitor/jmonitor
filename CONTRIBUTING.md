@@ -128,7 +128,9 @@ automatically. A pre-commit hook running these checks is installed automatically
 - Reference the related issue in the PR description.
 - Add a line under `## [Unreleased]` in `CHANGELOG.md` for anything a user would
   notice: new features, behavior changes, fixes, upgrade steps. Dependency
-  bumps, refactors and CI changes do not belong there. Suffix the line with
+  bumps, refactors, CI changes and internal hardening do not belong there — a
+  fix nobody ever hit is an internal change, however real the bug was in the
+  code. Suffix the line with
   `(cloud)` or `(self-hosted)` when it only applies to one edition. If your
   change needs a manual step when upgrading, say so in that line — the
   maintainers turn it into upgrade notes at release time. Once released, the

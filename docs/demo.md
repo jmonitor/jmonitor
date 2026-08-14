@@ -28,4 +28,5 @@ In dev, `make demo` runs both commands in a dedicated container (compose profile
 
 - Generators emit metrics in the exact shape each `Consumer` expects — validate against `Consumer::getConstraints()` in tests (see `tests/Demo/`), and cross-check the rendered shape since constraints often validate sub-arrays loosely.
 - `SymfonyGenerator` renders scheduler tasks with `AsPeriodicTask` notation (`every <interval> with <jitter> second jitter`), which the dashboard's `SchedulerTaskBag` splits into `trigger` + `jitter`.
+- The demo agent advertises the `jmonitor/collector` and `jmonitor/jmonitor-bundle` versions installed in this app (`DemoAgentVersions`), so the collector status card checks them against real releases like it does for any project.
 - Demo code (`App\Demo`, `App\Command\Demo`) is distinct from `src/Dev/` self-monitoring.

@@ -9,11 +9,14 @@ use App\Entity\Enums\UserStatus;
 use App\Entity\Project;
 use App\Entity\User;
 use App\Form\Project\ProjectType;
+use App\Metrics\CollectorContext;
 use App\Plan\Edition;
 use App\Plan\PlanResolver;
+use App\Project\ProjectContext;
 use App\Project\ProjectCreator;
 use App\Repository\AlertRepository;
 use App\Security\Voter\ProjectVoter;
+use App\Version\CollectorUpdateChecker;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -73,6 +76,22 @@ class ProjectController extends AbstractController
             'subscription' => $project->getActiveSubscription(),
             'stripe_portal_url' => $this->edition->isCloud() ? $this->getParameter('stripe.portal_url') : null,
             'nb_alerts' => $alertRepository->count(['project' => $project]),
+        ]);
+    }
+
+    /**
+     * Loaded in its own request so the dashboard never waits on the outbound call.
+     */
+    #[Route('/p/{uuid:project}/_collector-update', name: 'project.collector.update')]
+    #[IsGranted(ProjectVoter::PROJECT_USER, subject: 'project')]
+    public function collectorUpdate(Project $project, ProjectContext $projectContext, CollectorContext $collectorContext, CollectorUpdateChecker $updateChecker): Response
+    {
+        // The project is taken from the URL rather than guessed from the session:
+        // two tabs open on two projects would otherwise share one answer.
+        $projectContext->setCurrentProject($project);
+
+        return $this->render('dash/project/_collector_update.html.twig', [
+            'status' => $updateChecker->check($collectorContext->getCollectorVersion()),
         ]);
     }
 }

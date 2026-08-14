@@ -13,4 +13,9 @@ class InfoLine
     public ?string $label = null;
     public string|float|bool|null $value = null;
     public ?string $icon = null;
+
+    /**
+     * Off when the value holds more than text, which the ellipsis would cut off.
+     */
+    public bool $truncate = true;
 }

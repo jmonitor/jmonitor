@@ -7,6 +7,7 @@ namespace App\Twig\Components\Dashboard;
 use App\Metrics\CollectorContext;
 use App\Metrics\LastPush\LastPushBag;
 use App\Metrics\LastPush\LastPushStatus;
+use App\Version\CollectorVersion;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 use Symfony\UX\TwigComponent\Attribute\ExposeInTemplate;
 
@@ -27,5 +28,11 @@ readonly class Status
     public function getLastPushStatus(): LastPushStatus
     {
         return $this->collectorContext->getLastPushStatus();
+    }
+
+    #[ExposeInTemplate]
+    public function getCollectorVersion(): CollectorVersion
+    {
+        return $this->collectorContext->getCollectorVersion();
     }
 }

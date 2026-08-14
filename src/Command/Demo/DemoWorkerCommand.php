@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Command\Demo;
 
+use App\Demo\DemoAgentVersions;
 use App\Demo\DemoBatchBuilder;
 use App\Demo\State\DemoState;
 use App\Entity\Project;
@@ -27,6 +28,7 @@ class DemoWorkerCommand extends Command implements SignalableCommandInterface
     public function __construct(
         private readonly DemoBatchBuilder $batchBuilder,
         private readonly DemoState $state,
+        private readonly DemoAgentVersions $versions,
         private readonly MessageBusInterface $bus,
         private readonly ProjectRepository $projectRepository,
         private readonly LoggerInterface $logger,
@@ -59,7 +61,7 @@ class DemoWorkerCommand extends Command implements SignalableCommandInterface
         while (!$this->isStopping()) {
             try {
                 $batch = $this->batchBuilder->build($project, $this->state);
-                $this->bus->dispatch(new MetricsReceivedMessage((int) $project->getId(), $batch, '1'));
+                $this->bus->dispatch(new MetricsReceivedMessage((int) $project->getId(), $batch, $this->versions->collector(), $this->versions->bundle()));
                 $this->state->persist();
 
                 $output->writeln(sprintf('Pushed %d demo metric inputs', count($batch)), OutputInterface::VERBOSITY_VERBOSE);

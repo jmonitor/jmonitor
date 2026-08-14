@@ -51,6 +51,7 @@ src/
   Admin/           EasyAdmin CRUD
   Alerting/        Alert checking strategies + notifications
   Bridge/          External integrations (InfluxDB, Stripe, Mercure, EOL API)
+  Changelog/       Release notes read from CHANGELOG.md, filtered by edition
   Chart/           Chart config and unit conversion
   Collector/       Rate limiting for metric pushes
   Command/         Console commands (Demo/ = demo account, Dev/ = dev provisioning, InstallCommand)
@@ -126,7 +127,7 @@ A public, read-only demo account (`demo@jmonitor.io` / `demo`, project `"Demo pr
 - Comments and docs: short and factual (1-3 sentences), no hosting-provider details in public-facing code/docs
 - Never use Yoda conditions (`$var === 'x'`, not `'x' === $var`)
 - **Keep docs in sync with code:** whenever a change modifies, contradicts, or leaves incomplete anything documented in this `CLAUDE.md`, the root `README.md`, `docker/selfhosted/README.md`, or `CONTRIBUTING.md`, update that doc in the same change — stale or contradictory docs are treated as part of the diff, not a follow-up
-- **Changelog:** any user-visible change (feature, behavior change, fix, upgrade step) gets a line under `## [Unreleased]` in `CHANGELOG.md`, suffixed with `(cloud)` / `(self-hosted)` when edition-specific. Dependency bumps, refactors and CI changes are excluded. **Cutting a release is a maintainer task with its own procedure — read [docs/releasing.md](../docs/releasing.md) before tagging anything.**
+- **Changelog:** any user-visible change (feature, behavior change, fix, upgrade step) gets a line under `## [Unreleased]` in `CHANGELOG.md`, suffixed with `(cloud)` / `(self-hosted)` when edition-specific. Dependency bumps, refactors and CI changes are excluded. The file is not just documentation: the `Dashboard:WhatsNew` card renders the released entries in the app, and those suffixes are what hides a line from the other edition (`App\Changelog\ChangelogReader`). **Cutting a release is a maintainer task with its own procedure — read [docs/releasing.md](../docs/releasing.md) before tagging anything.**
 
 ## Frontend Stack
 

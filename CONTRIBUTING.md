@@ -131,7 +131,8 @@ automatically. A pre-commit hook running these checks is installed automatically
   bumps, refactors and CI changes do not belong there. Suffix the line with
   `(cloud)` or `(self-hosted)` when it only applies to one edition. If your
   change needs a manual step when upgrading, say so in that line — the
-  maintainers turn it into upgrade notes at release time.
+  maintainers turn it into upgrade notes at release time. Once released, the
+  line is shown to users in the dashboard, so write it for them.
 
 Releases are cut by the maintainers; you never need to tag or bump a version in
 a PR.

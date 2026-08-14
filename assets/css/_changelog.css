@@ -1,0 +1,14 @@
+.changelog-entry {
+    padding-left: 1rem;
+    position: relative;
+}
+
+.changelog-entry::before {
+    content: '•';
+    left: 0;
+    position: absolute;
+}
+
+.changelog-entry p:last-child {
+    margin-bottom: 0;
+}

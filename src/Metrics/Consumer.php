@@ -151,9 +151,9 @@ readonly class Consumer
                     // all collectors are at version 1 for now
                     constraints: new Assert\IdenticalTo(1),
                 ),
-                'metrics' => [
-                    new Assert\Type('array'),
-                ],
+                'metrics' => new Assert\Optional(
+                    constraints: new Assert\Type('array'),
+                ),
                 'name' => new Assert\Required(
                     constraints: [
                         new Assert\Type('string'),
@@ -161,23 +161,28 @@ readonly class Consumer
                     ],
                 ),
                 // @deprecated, replaced by 'duration', kept while older collectors are still deployed
-                'time' => [
-                    new Assert\Type('float'),
-                    new Assert\GreaterThan(0),
-                ],
-                'duration' => [
-                    new Assert\Type('float'),
-                    new Assert\GreaterThan(0),
-                ],
-                'threw' => new Assert\Required(
+                'time' => new Assert\Optional(
+                    constraints: [
+                        new Assert\Type('float'),
+                        new Assert\GreaterThan(0),
+                    ],
+                ),
+                'duration' => new Assert\Optional(
+                    constraints: [
+                        new Assert\Type('float'),
+                        new Assert\GreaterThan(0),
+                    ],
+                ),
+                // collectors only send 'threw' and 'skipped' when they are true
+                'threw' => new Assert\Optional(
                     constraints: new Assert\Type('bool'),
                 ),
-                'skipped' => [
-                    new Assert\Type('bool'),
-                ],
+                'skipped' => new Assert\Optional(
+                    constraints: new Assert\Type('bool'),
+                ),
             ],
             allowExtraFields: false,
-            allowMissingFields: true,
+            allowMissingFields: false,
         );
     }
 }

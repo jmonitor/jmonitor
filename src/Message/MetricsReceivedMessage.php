@@ -8,13 +8,26 @@ readonly class MetricsReceivedMessage
 {
     private \DateTimeImmutable $receivedAt;
 
-    /**
-     * $bundleVersion defaults to null so messages queued by a previous deployment still
-     * unserialize while they drain.
-     */
     public function __construct(private int $projectId, private array $metrics, private string $jmonitorVersion, private ?string $bundleVersion = null)
     {
         $this->receivedAt = new \DateTimeImmutable();
+    }
+
+    /**
+     * Messages a deployment leaves queued are unserialized without their constructor,
+     * so a property added since carries no default and stays uninitialized.
+     *
+     * @param array<string, mixed> $data
+     */
+    public function __unserialize(array $data): void
+    {
+        $property = static fn(string $name): string => sprintf("\0%s\0%s", self::class, $name);
+
+        $this->projectId = $data[$property('projectId')];
+        $this->metrics = $data[$property('metrics')];
+        $this->jmonitorVersion = $data[$property('jmonitorVersion')];
+        $this->bundleVersion = $data[$property('bundleVersion')] ?? null;
+        $this->receivedAt = $data[$property('receivedAt')];
     }
 
     public function getProjectId(): int

@@ -162,8 +162,20 @@ jobs:
                         JMONITOR_APP_VERSION=${{ steps.meta.outputs.version }}
                     cache-from: type=gha
 
+            # Straight after the push: a release is never announced for an image
+            # that failed to push, and nothing cosmetic may hold it back.
+            -   name: Create the GitHub release
+                if: startsWith(github.ref, 'refs/tags/v')
+                env:
+                    GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                run: gh release create "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" --notes-file release-notes.md --verify-tag
+
+            # The v1.0.0 run got a Forbidden here: editing the repository metadata
+            # needs rights the image-push token does not carry. Cosmetic, so it
+            # only warns.
             -   name: Sync README to Docker Hub
                 if: startsWith(github.ref, 'refs/tags/v')
+                continue-on-error: true
                 uses: peter-evans/dockerhub-description@v5
                 with:
                     username: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -171,10 +183,3 @@ jobs:
                     repository: ${{ env.IMAGE }}
                     readme-filepath: docker/selfhosted/README.md
                     short-description: Web monitoring for PHP stacks — dashboards and alerts for MySQL, Redis, Nginx, PHP, Symfony...
-
-            # Last: a release is never announced for an image that failed to push.
-            -   name: Create the GitHub release
-                if: startsWith(github.ref, 'refs/tags/v')
-                env:
-                    GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                run: gh release create "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" --notes-file release-notes.md --verify-tag

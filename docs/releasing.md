@@ -14,6 +14,8 @@ continuously deployed and does not follow these versions.
    (new env var, long migration, changed default) under an `### Upgrade notes`
    heading at the top of the entry, before the other sections. The self-hosted
    README points readers at that heading, so it has to be there when it matters.
+   These lines are also what the dashboard's "What's new" card shows once the tag
+   is out, each edition seeing only the lines that apply to it.
 2. Rename `## [Unreleased]` to `## [X.Y.Z] - YYYY-MM-DD`, using the date you are
    tagging, and add a fresh empty `## [Unreleased]` above it.
 3. Update the link definitions at the bottom of the file: point `[Unreleased]`

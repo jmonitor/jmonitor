@@ -1,0 +1,32 @@
+{% if releases %}
+    <twig:Card {{ ...attributes }}>
+        <div class="d-flex align-items-center gap-2 mb-4">
+            <twig:ux:icon name="material-symbols:rocket-launch-outline" width="1.5em" height="1.5em" class="text-primary"/>
+            <h6 class="card-title mb-0">What's new</h6>
+            <a href="https://github.com/jmonitor/jmonitor/blob/master/CHANGELOG.md" target="_blank" class="ms-auto small">Full changelog</a>
+        </div>
+
+        <div class="d-flex flex-column gap-2 align-items-start" {{ stimulus_controller('show-more', {visible: 8}) }}>
+            {% for release in releases %}
+                <div class="d-flex align-items-baseline gap-2" data-show-more-target="item">
+                    <span class="fw-semibold">{{ release.version }}</span>
+                    {% if release.date %}
+                        <span class="text-secondary small">{{ release.date|date('F j, Y') }}</span>
+                    {% endif %}
+                </div>
+
+                {% for group in release.groups %}
+                    {% if group.title %}
+                        <div class="text-secondary small text-uppercase" data-show-more-target="item">{{ group.title }}</div>
+                    {% endif %}
+
+                    {% for entry in group.entries %}
+                        <div class="changelog-entry" data-show-more-target="item">{{ entry|markdown_to_html }}</div>
+                    {% endfor %}
+                {% endfor %}
+            {% endfor %}
+
+            <button type="button" class="btn btn-link btn-sm p-0 mt-2" data-show-more-target="button" {{ stimulus_action('show-more', 'expand') }}>Show more</button>
+        </div>
+    </twig:Card>
+{% endif %}

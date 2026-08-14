@@ -7,7 +7,8 @@ namespace App\Twig\Components\Dashboard;
 use App\Metrics\CollectorContext;
 use App\Metrics\LastPush\LastPushBag;
 use App\Metrics\LastPush\LastPushStatus;
-use App\Version\CollectorVersion;
+use App\Version\AdvertisedVersion;
+use App\Version\Package;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 use Symfony\UX\TwigComponent\Attribute\ExposeInTemplate;
 
@@ -31,8 +32,14 @@ readonly class Status
     }
 
     #[ExposeInTemplate]
-    public function getCollectorVersion(): CollectorVersion
+    public function getCollectorVersion(): AdvertisedVersion
     {
-        return $this->collectorContext->getCollectorVersion();
+        return $this->collectorContext->getAdvertisedVersion(Package::COLLECTOR);
+    }
+
+    #[ExposeInTemplate]
+    public function getBundleVersion(): AdvertisedVersion
+    {
+        return $this->collectorContext->getAdvertisedVersion(Package::BUNDLE);
     }
 }

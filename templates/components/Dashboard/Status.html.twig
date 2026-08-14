@@ -7,12 +7,21 @@
 
     {% if lastPush %}
         <twig:Metric:Metric:List>
-            <twig:InfoLine label="Version" truncate="{{ false }}">
+            <twig:InfoLine label="Collector version" truncate="{{ false }}">
                 <span class="d-inline-flex align-items-center gap-2">
                     {{ collectorVersion.display }}
-                    <turbo-frame id="collector-update" src="{{ path('project.collector.update', {uuid: current_project().uuid}) }}"></turbo-frame>
+                    <turbo-frame id="version-update-collector" src="{{ path('project.version.update', {uuid: current_project().uuid, package: 'collector'}) }}"></turbo-frame>
                 </span>
             </twig:InfoLine>
+
+            {% if not bundleVersion.absent %}
+                <twig:InfoLine label="Bundle version" truncate="{{ false }}">
+                    <span class="d-inline-flex align-items-center gap-2">
+                        {{ bundleVersion.display }}
+                        <turbo-frame id="version-update-bundle" src="{{ path('project.version.update', {uuid: current_project().uuid, package: 'bundle'}) }}"></turbo-frame>
+                    </span>
+                </twig:InfoLine>
+            {% endif %}
             <twig:InfoLine label="Last push">
                 <span {{ stimulus_controller('relative-time', {timestamp: lastPush.lastPushAt.timestamp}) }}></span>
             </twig:InfoLine>

@@ -14,6 +14,7 @@ use Symfony\Contracts\Service\ResetInterface;
  * Lets us know (and display)
  * - whether (and when) data was received from the project's collector
  * - the collector version
+ * - the version of the framework integration it runs behind, when it has one
  */
 class LastPushManager implements ResetInterface
 {
@@ -29,6 +30,7 @@ class LastPushManager implements ResetInterface
         $data = [
             'received_at' => $event->receivedAt->getTimestamp(),
             'collector_version' => $event->jmonitorVersion,
+            'bundle_version' => $event->bundleVersion,
         ];
 
         $item = $this->cacheItemPool->getItem(sprintf('last_push_%s', $event->project->getId()));

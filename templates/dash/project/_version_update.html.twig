@@ -1,4 +1,4 @@
-<turbo-frame id="collector-update">
+<turbo-frame id="version-update-{{ package.value }}">
     {% if status.update %}
         <a href="{{ status.update.url }}" target="_blank" class="text-decoration-none">
             <twig:Html:Badge:Yellow icon="{{ true }}">{{ status.update.version }} available</twig:Html:Badge:Yellow>

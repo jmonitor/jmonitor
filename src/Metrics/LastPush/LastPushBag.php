@@ -21,4 +21,8 @@ class LastPushBag extends Bag
     public ?string $collectorVersion {
         get => $this->get('collector_version');
     }
+
+    public ?string $bundleVersion {
+        get => $this->get('bundle_version');
+    }
 }

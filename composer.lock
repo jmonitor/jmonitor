@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0b93f28b43f87f9f025c8f98fe442756",
+    "content-hash": "d59b8e78bde87ba217ee847586c1cfc1",
     "packages": [
         {
             "name": "clue/stream-filter",
@@ -1959,16 +1959,16 @@
         },
         {
             "name": "jmonitor/collector",
-            "version": "v2.1.0",
+            "version": "v2.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/jmonitor/collector.git",
-                "reference": "a36566685e2c4c4bad429d7312f258cc67276461"
+                "reference": "6044314c4d2be15785f60a27bd4e5d7ffb34e565"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jmonitor/collector/zipball/a36566685e2c4c4bad429d7312f258cc67276461",
-                "reference": "a36566685e2c4c4bad429d7312f258cc67276461",
+                "url": "https://api.github.com/repos/jmonitor/collector/zipball/6044314c4d2be15785f60a27bd4e5d7ffb34e565",
+                "reference": "6044314c4d2be15785f60a27bd4e5d7ffb34e565",
                 "shasum": ""
             },
             "require": {
@@ -2036,26 +2036,26 @@
             ],
             "support": {
                 "issues": "https://github.com/jmonitor/collector/issues",
-                "source": "https://github.com/jmonitor/collector/tree/v2.1.0"
+                "source": "https://github.com/jmonitor/collector/tree/v2.2.0"
             },
-            "time": "2026-08-14T09:08:55+00:00"
+            "time": "2026-08-14T11:03:33+00:00"
         },
         {
             "name": "jmonitor/jmonitor-bundle",
-            "version": "v2.0.1",
+            "version": "v2.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/jmonitor/jmonitor-bundle.git",
-                "reference": "b7b41e0de78ac7f01de9074425a7416cbb1d7a5b"
+                "reference": "1011da4613502e256564d6d63351758923213f17"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jmonitor/jmonitor-bundle/zipball/b7b41e0de78ac7f01de9074425a7416cbb1d7a5b",
-                "reference": "b7b41e0de78ac7f01de9074425a7416cbb1d7a5b",
+                "url": "https://api.github.com/repos/jmonitor/jmonitor-bundle/zipball/1011da4613502e256564d6d63351758923213f17",
+                "reference": "1011da4613502e256564d6d63351758923213f17",
                 "shasum": ""
             },
             "require": {
-                "jmonitor/collector": "^2.0",
+                "jmonitor/collector": "^2.2",
                 "nyholm/psr7": "^1.8",
                 "php": "^8.1",
                 "symfony/console": "^6.4|^7.0|^8.0",
@@ -2111,9 +2111,9 @@
             ],
             "support": {
                 "issues": "https://github.com/jmonitor/jmonitor-bundle/issues",
-                "source": "https://github.com/jmonitor/jmonitor-bundle/tree/v2.0.1"
+                "source": "https://github.com/jmonitor/jmonitor-bundle/tree/v2.1.0"
             },
-            "time": "2026-07-22T16:02:07+00:00"
+            "time": "2026-08-14T12:45:48+00:00"
         },
         {
             "name": "knpuniversity/oauth2-client-bundle",

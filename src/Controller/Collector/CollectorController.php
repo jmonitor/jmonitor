@@ -30,6 +30,8 @@ class CollectorController extends AbstractController
     {
         $apiKey = $request->headers->get('x-jmonitor-api-key');
         $jmonitorVersion = $request->headers->get('x-jmonitor-version');
+        // Only sent by agents running a framework integration; absent means there is none.
+        $bundleVersion = $request->headers->get('x-jmonitor-bundle-version');
 
         if (!$apiKey) {
             return new JsonResponse([
@@ -86,7 +88,7 @@ class CollectorController extends AbstractController
             ], Response::HTTP_BAD_REQUEST, $headers);
         }
 
-        $bus->dispatch(new MetricsReceivedMessage($project->getId(), $batch, $jmonitorVersion));
+        $bus->dispatch(new MetricsReceivedMessage($project->getId(), $batch, $jmonitorVersion, $bundleVersion));
 
         return new JsonResponse(status: Response::HTTP_ACCEPTED, headers: $headers);
     }

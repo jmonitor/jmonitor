@@ -22,7 +22,7 @@ final readonly class MetricsReceivedMessageHandler
         $project = $this->projectRepository->find($message->getProjectId());
 
         if ($project) {
-            $this->consumer->consume($message->getMetrics(), $project, $message->getReceivedAt(), $message->getJmonitorVersion());
+            $this->consumer->consume($message->getMetrics(), $project, $message->getReceivedAt(), $message->getJmonitorVersion(), $message->getBundleVersion());
         }
     }
 }

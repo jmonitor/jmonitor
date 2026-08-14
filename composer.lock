@@ -1959,19 +1959,20 @@
         },
         {
             "name": "jmonitor/collector",
-            "version": "v2.0.1",
+            "version": "v2.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/jmonitor/collector.git",
-                "reference": "878fb559634b6f5c5248a6313beef955871cc5d2"
+                "reference": "a36566685e2c4c4bad429d7312f258cc67276461"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jmonitor/collector/zipball/878fb559634b6f5c5248a6313beef955871cc5d2",
-                "reference": "878fb559634b6f5c5248a6313beef955871cc5d2",
+                "url": "https://api.github.com/repos/jmonitor/collector/zipball/a36566685e2c4c4bad429d7312f258cc67276461",
+                "reference": "a36566685e2c4c4bad429d7312f258cc67276461",
                 "shasum": ""
             },
             "require": {
+                "composer-runtime-api": "^2.0",
                 "ext-json": "*",
                 "ext-zlib": "*",
                 "php": "^8.1",
@@ -1988,7 +1989,7 @@
                 "friendsofphp/php-cs-fixer": "^3.86",
                 "nyholm/psr7": "^1.8",
                 "php-http/message": "^1.0",
-                "phpstan/phpstan": "^1.10",
+                "phpstan/phpstan": "^2.1",
                 "phpunit/phpunit": "^10.0|^11.5",
                 "predis/predis": "^3.0",
                 "symfony/http-client": "^6.4|^7.0|^8.0"
@@ -2035,9 +2036,9 @@
             ],
             "support": {
                 "issues": "https://github.com/jmonitor/collector/issues",
-                "source": "https://github.com/jmonitor/collector/tree/v2.0.1"
+                "source": "https://github.com/jmonitor/collector/tree/v2.1.0"
             },
-            "time": "2026-08-08T16:12:31+00:00"
+            "time": "2026-08-14T09:08:55+00:00"
         },
         {
             "name": "jmonitor/jmonitor-bundle",

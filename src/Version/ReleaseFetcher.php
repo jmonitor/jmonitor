@@ -10,7 +10,7 @@ use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 /**
- * Latest JMonitor release published on GitHub.
+ * Latest release of a JMonitor repository published on GitHub.
  *
  * Every failure is swallowed and returns null: an instance without outbound
  * access must see no error, only the absence of a result. Failures are cached
@@ -18,7 +18,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
  */
 readonly class ReleaseFetcher
 {
-    private const string URL = 'https://api.github.com/repos/jmonitor/jmonitor/releases/latest';
+    private const string URL = 'https://api.github.com/repos/%s/releases/latest';
     private const int TTL_SUCCESS = 86400;
     private const int TTL_FAILURE = 3600;
 
@@ -28,18 +28,26 @@ readonly class ReleaseFetcher
         private LoggerInterface $logger,
     ) {}
 
-    public function fetch(): ?LatestRelease
+    /**
+     * @param string $repository "owner/name" on GitHub
+     */
+    public function fetch(string $repository): ?LatestRelease
     {
-        return $this->cache->get('jmonitor_latest_release', function (ItemInterface $item): ?LatestRelease {
+        $key = 'jmonitor_latest_release_' . str_replace('/', '.', $repository);
+
+        return $this->cache->get($key, function (ItemInterface $item) use ($repository): ?LatestRelease {
             $item->expiresAfter(self::TTL_FAILURE);
 
             try {
-                $response = $this->httpClient->request('GET', self::URL, [
+                $response = $this->httpClient->request('GET', sprintf(self::URL, $repository), [
                     'timeout' => 3,
                     'headers' => ['Accept' => 'application/vnd.github+json'],
                 ])->toArray();
             } catch (\Throwable $e) {
-                $this->logger->info('Could not fetch the latest JMonitor release.', ['exception' => $e]);
+                $this->logger->info('Could not fetch the latest release of {repository}.', [
+                    'repository' => $repository,
+                    'exception' => $e,
+                ]);
 
                 return null;
             }

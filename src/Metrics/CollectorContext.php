@@ -9,6 +9,7 @@ use App\Metrics\LastPush\LastPushManager;
 use App\Metrics\LastPush\LastPushStatus;
 use App\Plan\PlanResolver;
 use App\Project\ProjectContext;
+use App\Version\CollectorVersion;
 
 /**
  * Gathers information about the "state" of the current project's collector.
@@ -24,6 +25,11 @@ readonly class CollectorContext
     public function getLastPushBag(): ?LastPushBag
     {
         return $this->lastPushManager->getLastPushBag();
+    }
+
+    public function getCollectorVersion(): CollectorVersion
+    {
+        return new CollectorVersion($this->getLastPushBag()?->collectorVersion);
     }
 
     public function getLastPushStatus(): LastPushStatus

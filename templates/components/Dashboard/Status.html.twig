@@ -7,7 +7,12 @@
 
     {% if lastPush %}
         <twig:Metric:Metric:List>
-            <twig:InfoLine label="Version">{{ lastPush.collectorVersion }}</twig:InfoLine>
+            <twig:InfoLine label="Version" truncate="{{ false }}">
+                <span class="d-inline-flex align-items-center gap-2">
+                    {{ collectorVersion.display }}
+                    <turbo-frame id="collector-update" src="{{ path('project.collector.update', {uuid: current_project().uuid}) }}"></turbo-frame>
+                </span>
+            </twig:InfoLine>
             <twig:InfoLine label="Last push">
                 <span {{ stimulus_controller('relative-time', {timestamp: lastPush.lastPushAt.timestamp}) }}></span>
             </twig:InfoLine>

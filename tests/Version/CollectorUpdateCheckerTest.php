@@ -1,0 +1,118 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Tests\Version;
+
+use App\Version\CollectorUpdateChecker;
+use App\Version\CollectorVersion;
+use App\Version\ReleaseFetcher;
+use PHPUnit\Framework\TestCase;
+use Psr\Log\NullLogger;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
+use Symfony\Component\HttpClient\MockHttpClient;
+use Symfony\Component\HttpClient\Response\MockResponse;
+
+class CollectorUpdateCheckerTest extends TestCase
+{
+    private MockHttpClient $client;
+
+    private function checker(?string $latestTag): CollectorUpdateChecker
+    {
+        $response = $latestTag === null
+            ? new MockResponse('', ['http_code' => 500])
+            : new MockResponse(json_encode([
+                'tag_name' => $latestTag,
+                'html_url' => 'https://github.com/jmonitor/collector/releases/tag/' . $latestTag,
+            ], JSON_THROW_ON_ERROR));
+
+        $this->client = new MockHttpClient($response);
+
+        return new CollectorUpdateChecker(new ReleaseFetcher($this->client, new ArrayAdapter(), new NullLogger()));
+    }
+
+    public function testAnOlderCollectorHasAnUpdateAvailable(): void
+    {
+        $status = $this->checker('v2.1.0')->check(new CollectorVersion('v2.0.1'));
+
+        $this->assertTrue($status->known);
+        $this->assertFalse($status->upToDate);
+        $this->assertNotNull($status->update);
+        $this->assertSame('2.1.0', $status->update->version);
+        $this->assertSame('https://github.com/jmonitor/collector/releases/tag/v2.1.0', $status->update->url);
+    }
+
+    public function testTheLatestCollectorIsUpToDate(): void
+    {
+        $status = $this->checker('v2.1.0')->check(new CollectorVersion('v2.1.0'));
+
+        $this->assertTrue($status->known);
+        $this->assertTrue($status->upToDate);
+        $this->assertNull($status->update);
+    }
+
+    /**
+     * A collector installed from a development branch can be ahead of the latest tag.
+     */
+    public function testANewerCollectorIsUpToDate(): void
+    {
+        $this->assertTrue($this->checker('v2.1.0')->check(new CollectorVersion('2.2.0'))->upToDate);
+    }
+
+    /**
+     * Every collector below 2.1 advertises "1.0" whatever it runs. The version cannot
+     * be compared, but it is known to predate 2.1, so an update certainly exists.
+     */
+    public function testALegacyCollectorHasAnUpdateAvailableWithoutBeingCompared(): void
+    {
+        $status = $this->checker('v2.1.0')->check(new CollectorVersion('1.0'));
+
+        $this->assertTrue($status->known);
+        $this->assertFalse($status->upToDate);
+        $this->assertNotNull($status->update);
+        $this->assertSame('2.1.0', $status->update->version);
+    }
+
+    public function testACollectorThatCouldNotResolveItselfIsLeftAlone(): void
+    {
+        $status = $this->checker('v2.1.0')->check(new CollectorVersion('unknown'));
+
+        $this->assertFalse($status->known);
+        $this->assertNull($status->update);
+    }
+
+    public function testAProjectWithoutAPushIsLeftAlone(): void
+    {
+        $status = $this->checker('v2.1.0')->check(new CollectorVersion(null));
+
+        $this->assertFalse($status->known);
+        $this->assertNull($status->update);
+    }
+
+    /**
+     * Nothing can be said about a version we cannot read, so GitHub is not even called.
+     */
+    public function testAnUnreadableVersionTriggersNoOutboundCall(): void
+    {
+        $this->checker('v2.1.0')->check(new CollectorVersion(null));
+
+        $this->assertSame(0, $this->client->getRequestsCount());
+    }
+
+    public function testAnUnreachableGithubLeavesTheStatusUnknown(): void
+    {
+        $status = $this->checker(null)->check(new CollectorVersion('2.0.1'));
+
+        $this->assertFalse($status->known);
+        $this->assertFalse($status->upToDate);
+        $this->assertNull($status->update);
+    }
+
+    public function testAnUnreachableGithubLeavesALegacyCollectorUnknownToo(): void
+    {
+        $status = $this->checker(null)->check(new CollectorVersion('1.0'));
+
+        $this->assertFalse($status->known);
+        $this->assertNull($status->update);
+    }
+}

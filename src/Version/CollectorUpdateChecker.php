@@ -4,18 +4,17 @@ declare(strict_types=1);
 
 namespace App\Version;
 
-readonly class UpdateChecker
+readonly class CollectorUpdateChecker
 {
-    private const string REPOSITORY = 'jmonitor/jmonitor';
+    private const string REPOSITORY = 'jmonitor/collector';
 
     public function __construct(
-        private AppVersion $appVersion,
         private ReleaseFetcher $releaseFetcher,
     ) {}
 
-    public function check(): UpdateStatus
+    public function check(CollectorVersion $version): UpdateStatus
     {
-        if (!$this->appVersion->isRelease()) {
+        if (!$version->isKnown() && !$version->isLegacy()) {
             return UpdateStatus::unknown();
         }
 
@@ -25,7 +24,11 @@ readonly class UpdateChecker
             return UpdateStatus::unknown();
         }
 
-        return version_compare($this->appVersion->get(), $latest->version, '<')
+        if ($version->isLegacy()) {
+            return UpdateStatus::updateAvailable($latest);
+        }
+
+        return version_compare($version->get(), $latest->version, '<')
             ? UpdateStatus::updateAvailable($latest)
             : UpdateStatus::upToDate();
     }

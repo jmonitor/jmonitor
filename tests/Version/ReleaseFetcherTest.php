@@ -27,7 +27,7 @@ class ReleaseFetcherTest extends TestCase
             'html_url' => 'https://github.com/jmonitor/jmonitor/releases/tag/v1.2.0',
         ], JSON_THROW_ON_ERROR)));
 
-        $release = $this->fetcher($client)->fetch();
+        $release = $this->fetcher($client)->fetch('jmonitor/jmonitor');
 
         $this->assertNotNull($release);
         $this->assertSame('1.2.0', $release->version);
@@ -38,28 +38,28 @@ class ReleaseFetcherTest extends TestCase
     {
         $client = new MockHttpClient(new MockResponse('{"message":"Not Found"}', ['http_code' => 404]));
 
-        $this->assertNull($this->fetcher($client)->fetch());
+        $this->assertNull($this->fetcher($client)->fetch('jmonitor/jmonitor'));
     }
 
     public function testBeingRateLimitedYieldsNothing(): void
     {
         $client = new MockHttpClient(new MockResponse('{"message":"API rate limit exceeded"}', ['http_code' => 403]));
 
-        $this->assertNull($this->fetcher($client)->fetch());
+        $this->assertNull($this->fetcher($client)->fetch('jmonitor/jmonitor'));
     }
 
     public function testAnUnparsableBodyYieldsNothing(): void
     {
         $client = new MockHttpClient(new MockResponse('<html>not json</html>'));
 
-        $this->assertNull($this->fetcher($client)->fetch());
+        $this->assertNull($this->fetcher($client)->fetch('jmonitor/jmonitor'));
     }
 
     public function testAResponseWithoutATagYieldsNothing(): void
     {
         $client = new MockHttpClient(new MockResponse('{"html_url":"https://example.com"}'));
 
-        $this->assertNull($this->fetcher($client)->fetch());
+        $this->assertNull($this->fetcher($client)->fetch('jmonitor/jmonitor'));
     }
 
     /**
@@ -72,7 +72,7 @@ class ReleaseFetcherTest extends TestCase
             throw new TransportException('Could not resolve host');
         });
 
-        $this->assertNull($this->fetcher($client)->fetch());
+        $this->assertNull($this->fetcher($client)->fetch('jmonitor/jmonitor'));
     }
 
     /**
@@ -84,8 +84,8 @@ class ReleaseFetcherTest extends TestCase
         $client = new MockHttpClient(new MockResponse('', ['http_code' => 500]));
         $fetcher = $this->fetcher($client);
 
-        $fetcher->fetch();
-        $fetcher->fetch();
+        $fetcher->fetch('jmonitor/jmonitor');
+        $fetcher->fetch('jmonitor/jmonitor');
 
         $this->assertSame(1, $client->getRequestsCount());
     }
@@ -98,9 +98,37 @@ class ReleaseFetcherTest extends TestCase
         ], JSON_THROW_ON_ERROR)));
         $fetcher = $this->fetcher($client);
 
-        $fetcher->fetch();
-        $fetcher->fetch();
+        $fetcher->fetch('jmonitor/jmonitor');
+        $fetcher->fetch('jmonitor/jmonitor');
 
         $this->assertSame(1, $client->getRequestsCount());
+    }
+
+    public function testItAsksGithubForTheGivenRepository(): void
+    {
+        $response = new MockResponse('{"tag_name":"v2.1.0","html_url":"https://example.com"}');
+
+        $this->fetcher(new MockHttpClient($response))->fetch('jmonitor/collector');
+
+        $this->assertSame('https://api.github.com/repos/jmonitor/collector/releases/latest', $response->getRequestUrl());
+    }
+
+    /**
+     * The app and the collector are released on their own schedules: one cache entry
+     * each, or whichever is fetched first would answer for both.
+     */
+    public function testEachRepositoryGetsItsOwnCacheEntry(): void
+    {
+        $client = new MockHttpClient([
+            new MockResponse('{"tag_name":"v1.2.0","html_url":"https://example.com/app"}'),
+            new MockResponse('{"tag_name":"v2.1.0","html_url":"https://example.com/collector"}'),
+        ]);
+        $fetcher = $this->fetcher($client);
+
+        $app = $fetcher->fetch('jmonitor/jmonitor');
+        $collector = $fetcher->fetch('jmonitor/collector');
+
+        $this->assertSame('1.2.0', $app?->version);
+        $this->assertSame('2.1.0', $collector?->version);
     }
 }

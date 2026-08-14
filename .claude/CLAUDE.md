@@ -65,7 +65,7 @@ src/
   Plan/            Edition + PlanResolver (cloud/self-hosted seam), Stripe sessions
   Security/        Voters, OAuth2 authenticators
   Twig/            Custom filters/functions
-  Version/         App version + update check against the latest GitHub release
+  Version/         App and collector versions + update checks against the latest GitHub release
 ```
 
 ## Development Environment (Docker)

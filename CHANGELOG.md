@@ -13,6 +13,7 @@ to that edition only, everything else applies to both.
 ### Added
 
 - The dashboard shows which JMonitor version the instance runs, and whether a newer release is available (self-hosted)
+- The collector status card shows whether the collector pushing metrics is up to date. Collectors older than 2.1 advertise a version that was never bumped, so their version reads as unknown and they are reported as outdated
 
 ## [1.0.0] - 2026-08-07
 

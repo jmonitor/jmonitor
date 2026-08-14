@@ -14,7 +14,6 @@
                 </span>
             </twig:InfoLine>
 
-            {# An agent running no framework integration advertises no bundle at all. #}
             {% if not bundleVersion.absent %}
                 <twig:InfoLine label="Bundle version" truncate="{{ false }}">
                     <span class="d-inline-flex align-items-center gap-2">

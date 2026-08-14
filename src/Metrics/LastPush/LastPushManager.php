@@ -14,6 +14,7 @@ use Symfony\Contracts\Service\ResetInterface;
  * Lets us know (and display)
  * - whether (and when) data was received from the project's collector
  * - the collector version
+ * - the version of the framework integration it runs behind, when it has one
  */
 class LastPushManager implements ResetInterface
 {

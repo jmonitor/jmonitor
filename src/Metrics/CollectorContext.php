@@ -13,7 +13,8 @@ use App\Version\AdvertisedVersion;
 use App\Version\Package;
 
 /**
- * Gathers information about the "state" of the current project's collector.
+ * Gathers information about the "state" of the agent pushing metrics for the current
+ * project: when it last did, and which versions it advertises.
  */
 readonly class CollectorContext
 {

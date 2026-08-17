@@ -47,7 +47,13 @@ readonly class AlertNotifier
         $email = new Email();
         $email->from(new Address($this->alertFromEmail, 'Jmonitor'));
         $email->to($user->getEmail());
-        $subject = sprintf('[ALERT][%s] %s Alert triggered', $spottedAlert->getAlert()->getProject()->getName(), $spottedAlert->getAlert()->getAlertMetric()->label());
+        $alertMetric = $spottedAlert->getAlert()->getAlertMetric();
+        $subject = sprintf(
+            '[ALERT][%s] %s - %s alert triggered',
+            $spottedAlert->getAlert()->getProject()->getName(),
+            $alertMetric->component()->label(),
+            $alertMetric->label(),
+        );
         $email->subject(mb_substr($subject, 0, 125));
         $email->html($this->twig->render('email/alerting/alert_spotted.html.twig', [
             'spottedAlert' => $spottedAlert,

@@ -12,6 +12,7 @@ var
 vendor
 node_modules
 public/assets
+public/bundles
 assets/vendor
 docker/dev
 docker/pg-demo

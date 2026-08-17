@@ -10,6 +10,10 @@ to that edition only, everything else applies to both.
 
 ## [Unreleased]
 
+### Fixed
+
+- Admin panel is now served with its CSS and JavaScript (self-hosted)
+
 ## [1.0.0] - 2026-08-14
 
 - Initial public release.

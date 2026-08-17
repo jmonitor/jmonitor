@@ -69,6 +69,10 @@ jobs:
                     test "$(curl -fsS -o /dev/null -w '%{http_code}' -H 'Host: dash.example.com' http://localhost:8080/login)" = "200"
                     curl -fsS -H 'Host: dash.example.com' http://localhost:8080/login | grep -q 'assets/'
 
+                    # The admin panel's assets live outside AssetMapper (assets:install
+                    # publishes them); serving them is what keeps the panel usable.
+                    test "$(curl -fsS -o /dev/null -w '%{http_code}' -H 'Host: admin.example.com' http://localhost:8080/bundles/easyadmin/entrypoints.json)" = "200"
+
                     # Install ran
                     docker compose logs app | grep -q 'Install complete'
                     docker compose logs app | grep -q 'Admin account created: admin@example.com'

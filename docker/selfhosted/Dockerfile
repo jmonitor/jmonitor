@@ -35,7 +35,11 @@ COPY . .
 
 RUN composer dump-autoload --no-dev --classmap-authoritative
 
-# AssetMapper: download the importmap packages and compile the assets.
+# Assets. `composer install --no-scripts` above skipped the auto-scripts, so both
+# steps are run explicitly here:
+# - assets:install publishes the bundles' own public/ directories (EasyAdmin ships
+#   its CSS/JS that way, outside AssetMapper) into public/bundles/;
+# - AssetMapper downloads the importmap packages and compiles public/assets/.
 # Boots the kernel on the committed .env defaults — asset compilation does not
 # touch external services, so empty DSNs are fine here.
 # Exception: config/packages/mercure.yaml's %env(default::MERCURE_URL)% resolves
@@ -44,7 +48,8 @@ RUN composer dump-autoload --no-dev --classmap-authoritative
 # never reachable and never baked into the runtime stage (real value comes from
 # the container's actual MERCURE_URL/MERCURE_JWT_SECRET at runtime).
 ENV MERCURE_URL=https://localhost/.well-known/mercure
-RUN php bin/console importmap:install \
+RUN php bin/console assets:install public \
+    && php bin/console importmap:install \
     && php bin/console asset-map:compile \
     # The build-time cache resolved nothing real: the entrypoint warms a fresh
     # one at runtime, when the actual env vars exist.

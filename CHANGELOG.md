@@ -13,17 +13,11 @@ to that edition only, everything else applies to both.
 ### Fixed
 
 - Admin panel is now served with its CSS and JavaScript (self-hosted)
+- Opening the admin panel without admin rights no longer loops the browser on redirects (self-hosted)
 
 ## [1.0.0] - 2026-08-14
 
 - Initial public release.
-
-### Added
-
-- The dashboard shows which JMonitor version the instance runs, and whether a newer release is available (self-hosted)
-- The collector status card shows whether the collector pushing metrics is up to date. Collectors older than 2.1 advertise a version that was never bumped, so their version reads as unknown and they are reported as outdated
-- Symfony projects also get the version of `jmonitor/jmonitor-bundle`, checked against its own releases: the bundle carries the Symfony collectors and is released on its own schedule, so an up-to-date collector says nothing about it. The line appears once the agent advertises it
-- A "What's new" card on the dashboard lists the release notes of the running version, read from its own changelog. Each edition only sees the lines that apply to it
 
 [Unreleased]: https://github.com/jmonitor/jmonitor/compare/v1.0.0...HEAD
 [1.0.0]: https://github.com/jmonitor/jmonitor/releases/tag/v1.0.0

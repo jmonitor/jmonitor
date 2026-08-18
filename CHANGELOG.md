@@ -10,8 +10,13 @@ to that edition only, everything else applies to both.
 
 ## [Unreleased]
 
+### Changed
+
+- The scheduler no longer lists the subscription purge task (self-hosted)
+
 ### Fixed
 
+- The container logs no longer carry deprecation notices (self-hosted)
 - Admin panel is now served with its CSS and JavaScript (self-hosted)
 - Opening the admin panel without admin rights no longer loops the browser on redirects (self-hosted)
 

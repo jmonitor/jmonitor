@@ -4,3 +4,8 @@ doctrine_migrations:
         # as migrations classes should NOT be autoloaded
         'DoctrineMigrations': '%kernel.project_dir%/migrations'
     enable_profiler: false
+    # MySQL commits implicitly on every DDL statement, so a migration is never really
+    # rolled back — asking for a transaction only made doctrine/migrations warn that it
+    # was committing an already committed one. This only affects generated migrations:
+    # make:migration writes the isTransactional() override for us from now on.
+    transactional: false

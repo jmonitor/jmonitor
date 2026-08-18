@@ -1,0 +1,6 @@
+{% macro line(string) %}
+    <li class="d-flex align-items-center gap-2" {{ stimulus_controller('clipboard', {successContent: '✓'}) }}>
+        <span class="clamp clamp-1" title="{{ string }}" {{ stimulus_target('clipboard', 'source') }}>{{ string }}</span>
+        <button class="btn btn-transparent px-1 lh-1" type="button" title="Copy to clipboard" {{ stimulus_action('clipboard', 'copy') }} {{ stimulus_target('clipboard', 'button') }}>{{ ux_icon('fa7-regular:clone') }}</button>
+    </li>
+{% endmacro %}

@@ -1,0 +1,7 @@
+{% macro check(doCheck) %}
+    {% if doCheck -%}
+        <twig:ux:icon name="material-symbols:check" class="text-success" width="1.8em" height="1.8em" />
+    {%- else -%}
+        <twig:ux:icon name="material-symbols:cancel-outline" class="text-border" width="1.1em" height="1.1em" />
+    {% endif %}
+{% endmacro %}

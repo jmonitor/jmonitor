@@ -11,7 +11,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Scheduler\Attribute\AsPeriodicTask;
 
-#[AsCommand('app:messenger-monitor:purge', 'Purge les logs de messenger monitor')]
+#[AsCommand('app:messenger-monitor:purge', 'Purge the messenger monitor logs')]
 #[AsPeriodicTask('24 hours', from: '04:00', jitter: 5)]
 class MessengerMonitorPurger extends Command
 {

@@ -62,6 +62,12 @@ services:
         class: Monolog\Handler\HandlerInterface
         factory: ['@App\Logging\ErrorMailerHandlerFactory', 'create']
 
+    # Monolog handler for the deprecation channel (referenced by config/packages/monolog.yaml).
+    # The factory returns a NullHandler in the self-hosted edition.
+    app.monolog.deprecation_handler:
+        class: Monolog\Handler\HandlerInterface
+        factory: ['@App\Logging\DeprecationHandlerFactory', 'create']
+
     # The edition (cloud / selfhosted) as an injectable service. The env var is resolved
     # at runtime, when the service is instantiated.
     # autoconfigure: false because FrameworkExtension autoconfigures \UnitEnum::class with

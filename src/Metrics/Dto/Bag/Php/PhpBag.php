@@ -143,8 +143,9 @@ class PhpBag extends MetricBagDto
             'E_USER_ERROR'        => \E_USER_ERROR,
             'E_USER_WARNING'      => \E_USER_WARNING,
             'E_USER_NOTICE'       => \E_USER_NOTICE,
-            // E_STRICT no longer exists in PHP 8, guard it with defined()
-            ...(defined('E_STRICT') ? ['E_STRICT' => \E_STRICT] : []),
+            // Hard-coded: the constant is deprecated since PHP 8.4, and a monitored
+            // server can still report the bit.
+            'E_STRICT'            => 2048,
             'E_RECOVERABLE_ERROR' => \E_RECOVERABLE_ERROR,
             'E_DEPRECATED'        => \E_DEPRECATED,
             'E_USER_DEPRECATED'   => \E_USER_DEPRECATED,

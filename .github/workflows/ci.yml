@@ -5,6 +5,12 @@ on:
         branches: [master]
     pull_request:
 
+# A new push supersedes the runs of the previous one, on pull requests only:
+# master keeps a run per commit.
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
     tests:
         name: Lint, static analysis & tests

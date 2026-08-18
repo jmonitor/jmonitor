@@ -131,7 +131,8 @@ automatically. A pre-commit hook running these checks is installed automatically
   bumps, refactors, CI changes and internal hardening do not belong there — a
   fix nobody ever hit is an internal change, however real the bug was in the
   code. Suffix the line with
-  `(cloud)` or `(self-hosted)` when it only applies to one edition. If your
+  `(cloud)` or `(self-hosted)` when it only applies to one edition — the admin
+  panel is always `(self-hosted)`. If your
   change needs a manual step when upgrading, say so in that line — the
   maintainers turn it into upgrade notes at release time. Once released, the
   line is shown to users in the dashboard, so write it for them.

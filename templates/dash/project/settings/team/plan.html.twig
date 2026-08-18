@@ -62,6 +62,7 @@
     </div>
 
     <twig:Card>
+        {% import 'dash/project/settings/team/_plan_macros.html.twig' as macros %}
         <div class="table-responsive">
             <table class="table align-middle table-pricing">
                 <thead>
@@ -79,13 +80,13 @@
                         <br><small class="text-body-secondary"><sup>*</sup>Updates when you push data</small>
                     </td>
                     {% for plan in plans %}
-                        <td>{{ _self.check(true) }}</td>
+                        <td>{{ macros.check(true) }}</td>
                     {% endfor %}
                 </tr>
                 <tr>
                     <td>Invite collaborators</td>
                     {% for plan in plans %}
-                        <td>{{ _self.check(true) }}</td>
+                        <td>{{ macros.check(true) }}</td>
                     {% endfor %}
                 </tr>
                 <tr>
@@ -97,25 +98,25 @@
                 <tr>
                     <td>Auto refresh</td>
                     {% for plan in plans %}
-                        <td>{{ _self.check(plan.autoRefresh) }}</td>
+                        <td>{{ macros.check(plan.autoRefresh) }}</td>
                     {% endfor %}
                 </tr>
                 <tr>
                     <td>History charts</td>
                     {% for plan in plans %}
-                        <td>{{ _self.check(plan.historyChart) }}</td>
+                        <td>{{ macros.check(plan.historyChart) }}</td>
                     {% endfor %}
                 </tr>
                 <tr>
                     <td>Alerting</td>
                     {% for plan in plans %}
-                        <td>{{ _self.check(plan.alerting) }}</td>
+                        <td>{{ macros.check(plan.alerting) }}</td>
                     {% endfor %}
                 </tr>
                 <tr>
                     <td>Embed metrics</td>
                     {% for plan in plans %}
-                        <td>{{ _self.check(plan.embedable) }}</td>
+                        <td>{{ macros.check(plan.embedable) }}</td>
                     {% endfor %}
                 </tr>
                 <tr>
@@ -124,7 +125,7 @@
                         <br><small class="text-body-secondary">for history charts</small>
                     </td>
                     {% for plan in plans %}
-                        <td>{{ plan.dataRetention|default(_self.check(false)) }}</td>
+                        <td>{{ plan.dataRetention|default(macros.check(false)) }}</td>
                     {% endfor %}
                 </tr>
                 <tr>
@@ -140,7 +141,7 @@
                                 {% elseif component.value === 'frankenphp' %}
                                     {{ plan.nbFrankenPhpWorkers }} worker{{ plan.nbFrankenPhpWorkers > 1 ? 's' }}
                                 {% else %}
-                                    {{ _self.check(true) }}
+                                    {{ macros.check(true) }}
                                 {% endif %}
                             </td>
                         {% endfor %}
@@ -149,14 +150,6 @@
                 </tbody>
             </table>
         </div>
-
-        {% macro check(doCheck) %}
-            {% if doCheck -%}
-                <twig:ux:icon name="material-symbols:check" class="text-success" width="1.8em" height="1.8em" />
-            {%- else -%}
-                <twig:ux:icon name="material-symbols:cancel-outline" class="text-border" width="1.1em" height="1.1em" />
-            {% endif %}
-        {% endmacro %}
     </twig:Card>
 
     <twig:Card title="Fair-use limitations">

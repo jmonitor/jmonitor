@@ -10,6 +10,10 @@ to that edition only, everything else applies to both.
 
 ## [Unreleased]
 
+### Changed
+
+- Inviting a member now defaults to the viewer role
+
 ### Fixed
 
 - Admin panel is now served with its CSS and JavaScript (self-hosted)

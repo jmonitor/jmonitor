@@ -39,6 +39,7 @@ class SettingsTeamController extends AbstractController
     {
         $invitation = new ProjectInvitation();
         $invitation->setProject($project);
+        $invitation->setRole(ProjectRole::VIEWER);
 
         $form = $this->createForm(ProjectInvitationType::class, $invitation, [
             'action' => $this->generateUrl('project.settings.team.invite', ['uuid' => $project->getUuid()]),

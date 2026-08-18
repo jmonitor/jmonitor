@@ -10,24 +10,27 @@ to that edition only, everything else applies to both.
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-08-18
+
 ### Changed
 
-- The scheduler no longer lists the subscription purge task (self-hosted)
 - Inviting a member now defaults to the viewer role
+- The scheduler no longer lists the subscription purge task (self-hosted)
 
 ### Fixed
 
-- The container logs no longer carry deprecation notices (self-hosted)
-- Admin panel is now served with its CSS and JavaScript (self-hosted)
+- The admin panel is now served with its CSS and JavaScript (self-hosted)
 - Opening the admin panel without admin rights no longer loops the browser on redirects (self-hosted)
-- The info icon of an empty metric card now opens its help panel instead of an error page
-- The login page no longer links to a website the instance does not serve (self-hosted)
+- The container logs no longer carry deprecation notices (self-hosted)
+- The info icon of an empty metric card no longer opens an error page
 - Empty metric cards read "No data" instead of "No datas"
 - The scheduler card no longer describes one of its tasks in French
+- The login page no longer links to a website the instance does not serve (self-hosted)
 
 ## [1.0.0] - 2026-08-14
 
 - Initial public release.
 
-[Unreleased]: https://github.com/jmonitor/jmonitor/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/jmonitor/jmonitor/compare/v1.0.1...HEAD
+[1.0.1]: https://github.com/jmonitor/jmonitor/releases/tag/v1.0.1
 [1.0.0]: https://github.com/jmonitor/jmonitor/releases/tag/v1.0.0

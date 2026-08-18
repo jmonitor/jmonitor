@@ -8,10 +8,12 @@
         <div class="container min-vh-100 d-flex flex-column pt-3">
             <div class="h-100 my-auto">
 
-                <a href="//{{ app.request.host|replace({'dash.': ''}) }}" class="btn btn-default rounded-5 mb-2 fw-light">
-                    <twig:ux:icon name="material-symbols:arrow-left-alt" />
-                    Back to website
-                </a>
+                {% if is_cloud() %}
+                    <a href="//{{ app.request.host|replace({'dash.': ''}) }}" class="btn btn-default rounded-5 mb-2 fw-light">
+                        <twig:ux:icon name="material-symbols:arrow-left-alt" />
+                        Back to website
+                    </a>
+                {% endif %}
 
                 <twig:Card cardBody:class="p-lg-3">
                     <div class="row">

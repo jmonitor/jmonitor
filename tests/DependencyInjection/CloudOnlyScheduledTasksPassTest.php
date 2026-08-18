@@ -21,7 +21,7 @@ final class CloudOnlyScheduledTasksPassTest extends TestCase
 
     protected function tearDown(): void
     {
-        if (null === $this->originalEdition) {
+        if ($this->originalEdition === null) {
             unset($_ENV['APP_EDITION'], $_SERVER['APP_EDITION']);
 
             return;

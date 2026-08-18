@@ -10,10 +10,9 @@ use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
- * Drops the cloud-only periodic tasks in the self-hosted edition. They already
- * return early there, but the Symfony page of a monitored instance lists its
- * scheduled tasks: without this, a self-hoster reads about expiring
- * subscriptions on an instance that has no billing.
+ * Drops the cloud-only periodic tasks in the self-hosted edition: the Symfony
+ * page of a monitored instance lists its scheduled tasks, and a self-hoster
+ * would read about expiring subscriptions on an instance that has no billing.
  *
  * The edition is read at compile time, so a change to APP_EDITION only takes
  * effect on the next cache warmup — which is when the self-hosted image builds

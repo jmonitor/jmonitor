@@ -265,10 +265,12 @@ class SecurityController extends AbstractController
         return new Response('', Response::HTTP_NO_CONTENT);
     }
 
-    #[Route('/login/check', name: 'security.login.check', methods: ['POST'])]
-    public function check(): void
+    #[Route('/login/check', name: 'security.login.check')]
+    public function check(): Response
     {
-        throw new \Exception('Should not be reached');
+        // The firewall intercepts the POST; only a GET reaches here, sent by a
+        // password manager or the browser history on the form's action URL.
+        return $this->redirectToRoute('security.login');
     }
 
     #[Route('/logout', name: 'security.logout')]

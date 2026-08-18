@@ -10,6 +10,10 @@ to that edition only, everything else applies to both.
 
 ## [Unreleased]
 
+### Fixed
+
+- Reaching the login form from a password manager no longer shows an error page
+
 ## [1.0.1] - 2026-08-18
 
 ### Changed

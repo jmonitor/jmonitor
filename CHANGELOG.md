@@ -13,6 +13,7 @@ to that edition only, everything else applies to both.
 ### Changed
 
 - The scheduler no longer lists the subscription purge task (self-hosted)
+- Inviting a member now defaults to the viewer role
 
 ### Fixed
 

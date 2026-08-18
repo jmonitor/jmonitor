@@ -1,0 +1,13 @@
+{% extends 'dash/common/_turbo_offcanvas_end.html.twig' %}
+
+{% block title %}No data{% endblock %}
+
+{% block body %}
+    <p>This card has nothing to show for the selected period. The usual reasons:</p>
+    <ul>
+        <li>The agent hasn't pushed this metric yet — it can take a few minutes after the first run.</li>
+        <li>The component doesn't expose it: the feature is disabled on the server, or the version you run doesn't report it.</li>
+        <li>The agent runs where it can't read it, typically from another machine or another container than the component itself.</li>
+    </ul>
+    <p>If the other cards of the same page are filled, the agent is running fine and the metric itself is missing.</p>
+{% endblock %}

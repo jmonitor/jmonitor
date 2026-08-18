@@ -33,8 +33,14 @@ class HelpController extends AbstractController
 
     #[Route('/help/{uuid:project}/item/{item}', name: 'project.help.item')]
     #[IsGranted(ProjectVoter::PROJECT_USER, subject: 'project')]
-    public function helpItem(Project $project, string $item): Response
+    public function helpItem(Project $project, string $item, Environment $twig): Response
     {
-        return $this->render('dash/help/item/' . $item . '.html.twig');
+        $template = 'dash/help/item/' . $item . '.html.twig';
+
+        if (!$twig->getLoader()->exists($template)) {
+            throw $this->createNotFoundException();
+        }
+
+        return $this->render($template);
     }
 }

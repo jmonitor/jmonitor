@@ -30,13 +30,13 @@ readonly class MetricRenderer
         $dto = $this->metricDtoProvider->getDto($metric, $renderer, $dtoOptions);
 
         if (!$dto) {
-            return $this->twig->render('dash/project/metrics/error/_no_datas.html.twig', [
+            return $this->twig->render('dash/project/metrics/error/_no_data.html.twig', [
                 'mode' => $renderer->getDefaultEmptyDataMode(),
             ]);
         }
 
         if (!$dto->valueAvailable) {
-            return $this->twig->render('dash/project/metrics/error/_no_datas.html.twig', [
+            return $this->twig->render('dash/project/metrics/error/_no_data.html.twig', [
                 'mode' => $dto->emptyDataMode ?? $renderer->getDefaultEmptyDataMode(),
             ]);
         }
@@ -50,7 +50,7 @@ readonly class MetricRenderer
         try {
             return $rendererService->render($dto, $options);
         } catch (EmptyDataException) {
-            return $this->twig->render('dash/project/metrics/error/_no_datas.html.twig', [
+            return $this->twig->render('dash/project/metrics/error/_no_data.html.twig', [
                 'mode' => $dto->emptyDataMode ?? $renderer->getDefaultEmptyDataMode(),
             ]);
         } catch (RenderingException) {

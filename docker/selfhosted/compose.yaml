@@ -7,9 +7,6 @@ name: jmonitor
 # which reaches these containers through env_file, immune to a TZ exported in
 # the host shell (compose ${} interpolation would silently prefer the shell).
 x-app-environment: &app-environment
-  # serverVersion carries the patch digit on purpose: DBAL compares it with version_compare()
-  # against "8.0.0", and a bare "8.0" reads as lower — it logged a "MySQL < 8 is deprecated"
-  # line on every connection.
   DATABASE_URL: "mysql://root:${MYSQL_ROOT_PASSWORD:?}@mysql:3306/jmonitor?serverVersion=8.0.0&charset=utf8mb4"
   REDIS_SESSION_DSN: redis://redis:6379/1
   REDIS_CACHE_DSN: redis://redis:6379/0

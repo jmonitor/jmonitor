@@ -18,6 +18,12 @@ on:
             - '.env'
     workflow_dispatch:
 
+# A new push supersedes the runs of the previous one; a tag run is publishing an
+# image and is never cancelled.
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 permissions:
     contents: write # the release step creates a GitHub release on version tags
     packages: write

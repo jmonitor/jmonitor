@@ -49,7 +49,7 @@ class InfluxDb
             'debug' => false,
             'org' => $orgName,
             'httpClient' => $httpClient,
-            'timeout' => 2,
+            'timeout' => 5,
             'precision' => WritePrecision::S,
         ]);
         $this->bucketSevice = $this->influxClient->createService(BucketsService::class);

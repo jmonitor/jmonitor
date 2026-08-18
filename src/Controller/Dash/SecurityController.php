@@ -268,8 +268,7 @@ class SecurityController extends AbstractController
     #[Route('/login/check', name: 'security.login.check')]
     public function check(): Response
     {
-        // The firewall intercepts the POST; only a GET reaches here, sent by a
-        // password manager or the browser history on the form's action URL.
+        // The firewall intercepts the POST; only a GET reaches here.
         return $this->redirectToRoute('security.login');
     }
 

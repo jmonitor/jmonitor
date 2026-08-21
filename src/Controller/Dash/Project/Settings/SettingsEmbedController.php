@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Dash\Project\Settings;
 
 use App\Entity\Embed;
+use App\Entity\Enums\Component;
 use App\Entity\Project;
 use App\Repository\EmbedRepository;
 use App\Security\Voter\ProjectVoter;
@@ -23,8 +24,22 @@ class SettingsEmbedController extends AbstractController
     #[Route('', name: 'project.settings.embeds')]
     public function embeds(Project $project, EmbedRepository $embedRepository): Response
     {
+        $embeds = $embedRepository->findBy(['project' => $project], ['createdAt' => 'DESC']);
+
+        $byComponent = [];
+        foreach ($embeds as $embed) {
+            $byComponent[$embed->getDto()->metric->component()->value][] = $embed;
+        }
+
+        $groups = [];
+        foreach (Component::cases() as $component) {
+            if (isset($byComponent[$component->value])) {
+                $groups[] = ['component' => $component, 'embeds' => $byComponent[$component->value]];
+            }
+        }
+
         return $this->render('dash/project/settings/embeds/embeds.html.twig', [
-            'embeds' => $embedRepository->findBy(['project' => $project], ['createdAt' => 'DESC']),
+            'groups' => $groups,
         ]);
     }
 

@@ -14,7 +14,6 @@ to that edition only, everything else applies to both.
 
 ### Changed
 
-- Inviting a member now defaults to the viewer role
 - The scheduler no longer lists the subscription purge task (self-hosted)
 
 ### Fixed
@@ -22,8 +21,6 @@ to that edition only, everything else applies to both.
 - The admin panel is now served with its CSS and JavaScript (self-hosted)
 - Opening the admin panel without admin rights no longer loops the browser on redirects (self-hosted)
 - The container logs no longer carry deprecation notices (self-hosted)
-- The info icon of an empty metric card no longer opens an error page
-- Empty metric cards read "No data" instead of "No datas"
 - The scheduler card no longer describes one of its tasks in French
 - The login page no longer links to a website the instance does not serve (self-hosted)
 

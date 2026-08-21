@@ -1,8 +1,10 @@
 # JMonitor
 
-JMonitor is an easy-to-use, self-hostable monitoring tool for PHP web stacks: it turns your server metrics (MySQL, Redis, Nginx, PHP…) into clear dashboards and alerts. Self-hosting is optional — the same application runs as a hosted service at [jmonitor.io](https://jmonitor.io).
+JMonitor is an easy-to-use monitoring tool for PHP web stacks: it turns your server metrics (MySQL, Redis, Nginx, PHP…) into clear dashboards and alerts.
 
-[**Website**](https://jmonitor.io) · [**Collector**](https://github.com/jmonitor/collector) · [**Symfony bundle**](https://github.com/jmonitor/jmonitor-bundle)
+It comes in two editions: a self-hostable version, and a hosted service at [jmonitor.io](https://jmonitor.io).
+
+Quick links: [**Homepage**](https://jmonitor.io) | [**Collector**](https://github.com/jmonitor/collector) | [**Symfony bundle**](https://github.com/jmonitor/jmonitor-bundle) | [**Docker Hub**](https://hub.docker.com/r/jmonitor/jmonitor)
 
 [![CI](https://github.com/jmonitor/jmonitor/actions/workflows/ci.yml/badge.svg)](https://github.com/jmonitor/jmonitor/actions/workflows/ci.yml)
 [![License: AGPL-3.0](https://img.shields.io/badge/license-AGPL--3.0-blue.svg)](LICENSE)

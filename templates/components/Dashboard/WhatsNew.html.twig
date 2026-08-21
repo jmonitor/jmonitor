@@ -8,11 +8,16 @@
 
         <div class="d-flex flex-column gap-2 align-items-start" {{ stimulus_controller('show-more', {visible: 8}) }}>
             {% for release in releases %}
-                <div class="d-flex align-items-baseline gap-2" data-show-more-target="item">
-                    <span class="fw-semibold">{{ release.version }}</span>
-                    {% if release.date %}
-                        <span class="text-secondary small">{{ release.date|date('F j, Y') }}</span>
+                <div class="w-100" data-show-more-target="item">
+                    {% if not loop.first %}
+                        <hr class="my-3">
                     {% endif %}
+                    <div class="d-flex align-items-baseline gap-2">
+                        <span class="fw-semibold">{{ release.version }}</span>
+                        {% if release.date %}
+                            <span class="text-secondary small">{{ release.date|date('F j, Y') }}</span>
+                        {% endif %}
+                    </div>
                 </div>
 
                 {% for group in release.groups %}

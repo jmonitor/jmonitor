@@ -4,10 +4,27 @@ JMonitor is an easy-to-use monitoring tool for PHP web stacks: it turns your ser
 
 It comes in two editions: a self-hostable version, and a hosted service at [jmonitor.io](https://jmonitor.io).
 
-Quick links: [**Homepage**](https://jmonitor.io) | [**Collector**](https://github.com/jmonitor/collector) | [**Symfony bundle**](https://github.com/jmonitor/jmonitor-bundle) | [**Docker Hub**](https://hub.docker.com/r/jmonitor/jmonitor)
-
 [![CI](https://github.com/jmonitor/jmonitor/actions/workflows/ci.yml/badge.svg)](https://github.com/jmonitor/jmonitor/actions/workflows/ci.yml)
 [![License: AGPL-3.0](https://img.shields.io/badge/license-AGPL--3.0-blue.svg)](LICENSE)
+
+<table>
+  <tr>
+    <th valign="top">jmonitor/jmonitor<br><img src="https://img.shields.io/badge/you_are_here-0969da?style=flat-square" alt="you are here"></th>
+    <th valign="top"><a href="https://github.com/jmonitor/collector">jmonitor/collector</a><br>&nbsp;</th>
+    <th valign="top"><a href="https://github.com/jmonitor/jmonitor-bundle">jmonitor/jmonitor-bundle</a><br>&nbsp;</th>
+  </tr>
+  <tr>
+    <td>Self-hostable backend — not needed with the cloud version</td>
+    <td>The collectors — install them in the project to monitor</td>
+    <td>Symfony-specific integration of the collectors</td>
+  </tr>
+  <tr>
+    <td colspan="3" align="center">
+      <a href="https://jmonitor.io">Website and cloud edition</a> ·
+      <a href="https://hub.docker.com/r/jmonitor/jmonitor">Docker Hub image for self-hosting</a>
+    </td>
+  </tr>
+</table>
 
 <img src=".github/assets/hero-dashboard.png" alt="JMonitor dashboard" width="700">
 
@@ -50,6 +67,9 @@ This repository is the server application: it ingests the metrics, stores time s
 
 ## Self-hosting
 
+> [!TIP]
+> Not sure which edition you need? Try the cloud one first: every new project starts with **7 days of the Pro plan**, no credit card asked. Once the trial is over the project falls back to the Free plan, which never expires — and if you'd rather host it yourself, switching is a matter of pointing the collector at your own instance.
+
 JMonitor is free to self-host: the full stack (app, worker, MySQL, Redis, InfluxDB) runs from a prebuilt Docker image published on Docker Hub ([`jmonitor/jmonitor`](https://hub.docker.com/r/jmonitor/jmonitor)). See the **[self-hosting guide](docker/selfhosted/README.md)** — or the **[container platform guide](docs/paas.md)** to deploy through Coolify and similar PaaS.
 
 ## Stack
@@ -62,11 +82,6 @@ JMonitor is free to self-host: the full stack (app, worker, MySQL, Redis, Influx
 ## Contributing
 
 Development setup, quality checks and guidelines live in [CONTRIBUTING.md](CONTRIBUTING.md). To report a vulnerability, see [SECURITY.md](SECURITY.md).
-
-## Related packages
-
-- [jmonitor/collector](https://github.com/jmonitor/collector) — the PHP collectors that gather metrics on your servers
-- [jmonitor/jmonitor-bundle](https://github.com/jmonitor/jmonitor-bundle) — Symfony integration of the collector (plus a Symfony-specific collector)
 
 ## License
 

@@ -57,6 +57,10 @@ class SymfonyConsumer implements ConsumerInterface
                                         fields: [
                                             'trigger' => [new Assert\NotBlank(), new Assert\Type('string')],
                                             'command' => [new Assert\NotBlank(), new Assert\Type('string')],
+                                            'arguments' => new Assert\Optional(constraints: [
+                                                new Assert\Type('array'),
+                                                new Assert\All(constraints: [new Assert\Type('string')]),
+                                            ]),
                                             'next_run' => [new Assert\NotBlank(), new Assert\Type('integer')],
                                             'description' => [new Assert\Optional(constraints: [new Assert\Type('string')])],
                                         ],

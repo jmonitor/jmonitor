@@ -15,7 +15,7 @@ use Symfony\Component\Mime\Email;
 
 /**
  * Builds the monolog handler for error emails: NullHandler when ERROR_MAIL_TO
- * is empty, a MailerHandler otherwise.
+ * is empty, a FailSafeMailerHandler otherwise.
  */
 final readonly class ErrorMailerHandlerFactory
 {
@@ -49,6 +49,6 @@ final readonly class ErrorMailerHandlerFactory
         $handler = new MailerHandler($this->mailer, $prototype, Level::Debug);
         $handler->setFormatter(new HtmlFormatter());
 
-        return $handler;
+        return new FailSafeMailerHandler($handler);
     }
 }

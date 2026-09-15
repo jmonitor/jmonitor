@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace App\Tests\Logging;
 
 use App\Logging\ErrorMailerHandlerFactory;
+use App\Logging\FailSafeMailerHandler;
 use Monolog\Handler\NullHandler;
 use Monolog\Level;
 use Monolog\LogRecord;
-use Symfony\Bridge\Monolog\Handler\MailerHandler;
 use Symfony\Component\Mailer\Envelope;
+use Symfony\Component\Mailer\Exception\TransportException;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Mime\RawMessage;
@@ -25,7 +26,7 @@ final class ErrorMailerHandlerFactoryTest extends TestCase
             'errors@example.com',
         );
 
-        self::assertInstanceOf(MailerHandler::class, $factory->create());
+        self::assertInstanceOf(FailSafeMailerHandler::class, $factory->create());
     }
 
     public function testReturnsNullHandlerWhenRecipientIsEmpty(): void
@@ -64,6 +65,34 @@ final class ErrorMailerHandlerFactoryTest extends TestCase
         $email = $this->handleRecord($message);
 
         self::assertStringContainsString(rtrim($message), (string) $email->getHtmlBody());
+    }
+
+    public function testTransportFailureDoesNotPropagate(): void
+    {
+        $mailer = new class implements MailerInterface {
+            public int $attempts = 0;
+
+            public function send(RawMessage $message, ?Envelope $envelope = null): void
+            {
+                ++$this->attempts;
+
+                throw new TransportException('451 4.4.2 Timeout waiting for data from client.');
+            }
+        };
+
+        $handler = new ErrorMailerHandlerFactory($mailer, 'from@example.com', 'errors@example.com')->create();
+        $record = new LogRecord(new \DateTimeImmutable(), 'app', Level::Error, 'Invalid metrics');
+
+        $errorLog = ini_set('error_log', '/dev/null');
+
+        try {
+            $handler->handle($record);
+            $handler->handleBatch([$record]);
+        } finally {
+            ini_set('error_log', (string) $errorLog);
+        }
+
+        self::assertSame(2, $mailer->attempts);
     }
 
     private function handleRecord(string $message): Email

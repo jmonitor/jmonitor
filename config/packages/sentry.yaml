@@ -11,6 +11,7 @@ when@prod:
             ignore_exceptions:
                 - 'Symfony\Component\ErrorHandler\Error\FatalError'
                 - 'Symfony\Component\HttpKernel\Exception\NotFoundHttpException'
+                - 'Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException'
 
                 # Access denied on a protected route (e.g. an anonymous bot or crawler
                 # on the dashboard): the firewall redirects to the login form, this is

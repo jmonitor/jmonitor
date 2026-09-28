@@ -7,6 +7,7 @@ namespace App\Http;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\HttpFoundation\Exception\SessionNotFoundException;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
@@ -69,10 +70,17 @@ class FlashMessenger
             && $event->getRequest()->headers->has('turbo-frame')
             && !$response->isRedirection()
             && $event->getRequest()->isMethod('GET')
+            && $this->mayHoldFlashes($event->getRequest())
             && ($flashes = $this->getFlashBag()?->all())
         ) {
             $response->headers->set('X-toasts', json_encode($flashes));
         }
+    }
+
+    private function mayHoldFlashes(Request $request): bool
+    {
+        return $request->hasPreviousSession()
+            || ($request->hasSession() && $request->getSession()->isStarted());
     }
 
     private function getFlashBag(): ?FlashBagInterface

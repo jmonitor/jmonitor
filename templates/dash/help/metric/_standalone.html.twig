@@ -1,0 +1,25 @@
+{# Full-page shell of a metric help, framed by third-party back-offices or opened alone: no JS, no app chrome, nothing session-dependent. #}
+<!DOCTYPE html>
+<html lang="{{ app.locale }}" data-bs-theme="{{ theme ?? 'dark' }}">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{{ metric.label }} | Jmonitor help</title>
+        <meta name="robots" content="noindex">
+
+        <link rel="stylesheet" href="{{ asset('vendor/bootstrap/dist/css/bootstrap.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+
+        <link rel="icon" href="{{ asset('im/favicons/logo-96x96.png') }}" sizes="96x96" type="image/png">
+        <link rel="icon" type="image/svg+xml" href="{{ asset('im/favicons/logo.svg') }}" />
+    </head>
+    <body class="bg-body">
+        <main class="container-fluid px-3 py-3 mx-auto" style="max-width: var(--container-3xl)">
+            <h1 class="h4 d-flex align-items-center gap-2 mb-4">
+                {{ ux_icon('material-symbols:info-outline', {width: '1.2em', height: '1.2em'}) }}
+                {{ metric.label }}
+            </h1>
+            {% block body %}{% endblock %}
+        </main>
+    </body>
+</html>

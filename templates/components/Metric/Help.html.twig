@@ -1,4 +1,4 @@
-{% extends 'dash/common/_turbo_offcanvas_end.html.twig' %}
+{% extends standalone ? 'dash/help/metric/_standalone.html.twig' : 'dash/common/_turbo_offcanvas_end.html.twig' %}
 
 {% block title %}<twig:Metric:Help:Title>{{ metric.label }}</twig:Metric:Help:Title>{% endblock %}
 

@@ -16,6 +16,8 @@ use Symfony\UX\TwigComponent\Attribute\ExposeInTemplate;
 class Help
 {
     public Metric $metric;
+    public bool $standalone = false;
+    public ?string $theme = null;
     private HelpProvider $helpProvider;
 
     public function __construct(HelpProvider $helpProvider)

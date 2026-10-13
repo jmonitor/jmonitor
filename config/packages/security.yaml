@@ -66,6 +66,8 @@ security:
 
         # Public embeds: authorization is the embed token itself
         - { path: ^/e/, roles: PUBLIC_ACCESS, host: 'dash.%app.domain%' }
+        # Public metric help, embedded by third-party back-offices (jmonitor/easyadmin-bundle)
+        - { path: ^/help/metric/, roles: PUBLIC_ACCESS, host: 'dash.%app.domain%' }
         - { path: ^/, roles: ROLE_USER, host: 'dash.%app.domain%' }
 
         # webhooks

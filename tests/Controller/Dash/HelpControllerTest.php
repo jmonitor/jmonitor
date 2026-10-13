@@ -141,6 +141,37 @@ class HelpControllerTest extends WebTestCase
         $this->assertSelectorExists('meta[name="robots"][content="noindex"]');
     }
 
+    /**
+     * Framed in a back-office, an in-place navigation would replace the help with the target site.
+     */
+    public function testEveryLinkOpensInANewTab(): void
+    {
+        $client = $this->client();
+        $container = self::getContainer();
+        $helpProvider = $container->get(HelpProvider::class);
+        /** @var Environment $twig */
+        $twig = $container->get('twig');
+        $checked = 0;
+
+        foreach (Metric::cases() as $metric) {
+            if ($helpProvider->getHelp($metric) === null && !$twig->getLoader()->exists('dash/help/metric/' . $metric->value . '.html.twig')) {
+                continue;
+            }
+
+            $crawler = $client->request('GET', '/help/metric/' . $metric->value . '?theme=dark');
+            $this->assertResponseIsSuccessful($metric->value);
+
+            foreach ($crawler->filter('a[href]') as $link) {
+                $this->assertInstanceOf(\DOMElement::class, $link);
+                $this->assertSame('_blank', $link->getAttribute('target'), $metric->value . ': ' . $link->getAttribute('href'));
+                $this->assertStringContainsString('noopener', $link->getAttribute('rel'), $metric->value . ': ' . $link->getAttribute('href'));
+                ++$checked;
+            }
+        }
+
+        $this->assertGreaterThan(10, $checked, 'the help content is expected to contain links');
+    }
+
     public function testTheDashboardOffcanvasShellIsStillTheDefault(): void
     {
         self::bootKernel();

@@ -95,7 +95,7 @@ return [
     Metric::ApacheVersion->value => [
         'definitions' => [
             'Apache HTTP Server is one of the most widely used open-source web servers, commonly used to serve websites and web applications.',
-            'Endoflife timeline: <a href="https://endoflife.date/apache-http-server" target="_blank">https://endoflife.date/apache-http-server</a>.',
+            'Endoflife timeline: <a href="https://endoflife.date/apache-http-server" target="_blank" rel="noopener">https://endoflife.date/apache-http-server</a>.',
         ],
         'why_it_matters' => [
             'Old versions are vulnerable to security exploits and lack modern performance fixes.',
@@ -273,7 +273,7 @@ return [
     Metric::NginxVersion->value => [
         'definitions' => [
             'Nginx is a high-performance open-source web server, also widely used as a reverse proxy and load balancer.',
-            'Endoflife timeline: <a href="https://endoflife.date/nginx" target="_blank">https://endoflife.date/nginx</a>.',
+            'Endoflife timeline: <a href="https://endoflife.date/nginx" target="_blank" rel="noopener">https://endoflife.date/nginx</a>.',
         ],
         'why_it_matters' => [
             'Running an outdated version exposes your server to security vulnerabilities. Modern versions also bring better support for protocols like HTTP/3 and improved caching performance.',
@@ -460,7 +460,7 @@ return [
     Metric::CaddyVersion->value => [
         'definitions' => [
             'Caddy is a modern open-source web server with automatic HTTPS, often used as a reverse proxy or application server.',
-            'Endoflife timeline: <a href="https://endoflife.date/caddy" target="_blank">https://endoflife.date/caddy</a>.',
+            'Endoflife timeline: <a href="https://endoflife.date/caddy" target="_blank" rel="noopener">https://endoflife.date/caddy</a>.',
         ],
         'why_it_matters' => [
             'Staying updated ensures you have the latest security patches and the most efficient implementation of modern protocols like HTTP/3 and QUIC, which Caddy supports natively.',
@@ -713,7 +713,7 @@ return [
     Metric::FrankenPhpVersion->value => [
         'definitions' => [
             'FrankenPHP is a modern PHP application server built on top of Caddy, designed to run PHP applications with high performance and worker mode support.',
-            'FrankenPHP releases: <a href="https://github.com/dunglas/frankenphp/releases" target="_blank">https://github.com/dunglas/frankenphp/releases</a>.',
+            'FrankenPHP releases: <a href="https://github.com/dunglas/frankenphp/releases" target="_blank" rel="noopener">https://github.com/dunglas/frankenphp/releases</a>.',
             'Only the latest version is supported, and new versions are released "when ready".',
         ],
         'why_it_matters' => ['Important for performance features like "Worker Mode".'],
@@ -784,7 +784,7 @@ return [
     Metric::FrankenPhpVersion->value => [
         'definitions' => [
             'FrankenPHP is a modern PHP application server built on top of Caddy, designed to run PHP applications with high performance and worker mode support.',
-            'FrankenPHP releases: <a href="https://github.com/dunglas/frankenphp/releases" target="_blank">https://github.com/dunglas/frankenphp/releases</a>.',
+            'FrankenPHP releases: <a href="https://github.com/dunglas/frankenphp/releases" target="_blank" rel="noopener">https://github.com/dunglas/frankenphp/releases</a>.',
             'Only the latest version is supported, and new versions are released "when ready".',
         ],
         'why_it_matters' => [
@@ -1003,8 +1003,8 @@ return [
     Metric::PhpVersion->value => [
         'definitions' => [
             'PHP is the server-side scripting language used to run your application.',
-            'Official timeline: <a href="https://www.php.net/supported-versions.php" target="_blank">https://www.php.net/supported-versions.php</a>.',
-            'Endoflife timeline: <a href="https://endoflife.date/php" target="_blank">https://endoflife.date/php</a>.',
+            'Official timeline: <a href="https://www.php.net/supported-versions.php" target="_blank" rel="noopener">https://www.php.net/supported-versions.php</a>.',
+            'Endoflife timeline: <a href="https://endoflife.date/php" target="_blank" rel="noopener">https://endoflife.date/php</a>.',
         ],
         'why_it_matters' => ['Performance and security. Older versions (like 7.x) are no longer supported.'],
         'good_to_know' => [
@@ -1014,7 +1014,7 @@ return [
     Metric::PostgresVersion->value => [
         'definitions' => [
             'PostgreSQL is a powerful, open-source object-relational database system known for its reliability, data integrity, and standards compliance.',
-            'Endoflife timeline: <a href="https://endoflife.date/postgresql" target="_blank">https://endoflife.date/postgresql</a>.',
+            'Endoflife timeline: <a href="https://endoflife.date/postgresql" target="_blank" rel="noopener">https://endoflife.date/postgresql</a>.',
         ],
         'why_it_matters' => [
             'The database holds the most critical part of your stack. Running an EOL (End of Life) version means no more security patches or bug fixes, exposing your data to known vulnerabilities. Each major release also brings significant gains in performance (query planner, parallelism, indexing) and new features.',
@@ -1518,7 +1518,7 @@ return [
     Metric::MysqlVersion->value => [
         'definitions' => [
             'MySQL is one of the most widely used open-source relational database management systems.',
-            'Endoflife timeline: <a href="https://endoflife.date/mysql" target="_blank">https://endoflife.date/mysql</a>.',
+            'Endoflife timeline: <a href="https://endoflife.date/mysql" target="_blank" rel="noopener">https://endoflife.date/mysql</a>.',
         ],
         'why_it_matters' => [
             'Databases are the most sensitive part of your stack. Running an EOL (End of Life) version means no more security patches, making your data vulnerable to exploits. Newer versions also introduce major performance boosts like improved indexing and JSON processing.',
@@ -2041,8 +2041,8 @@ return [
     Metric::PhpVersion->value => [
         'definitions' => [
             'PHP is the server-side scripting language used to run your application.',
-            'Official timeline: <a href="https://www.php.net/supported-versions.php" target="_blank">https://www.php.net/supported-versions.php</a>.',
-            'Endoflife timeline: <a href="https://endoflife.date/php" target="_blank">https://endoflife.date/php</a>.',
+            'Official timeline: <a href="https://www.php.net/supported-versions.php" target="_blank" rel="noopener">https://www.php.net/supported-versions.php</a>.',
+            'Endoflife timeline: <a href="https://endoflife.date/php" target="_blank" rel="noopener">https://endoflife.date/php</a>.',
         ],
         'why_it_matters' => [
             'PHP is the heart of your app. Using an unsupported version (EOL) means no more security patches, making your server a target for exploits. Furthermore, each major version (e.g., from 7.4 to 8.x) typically brings a 10% to 30% performance boost and reduced memory footprint without changing a single line of code.',
@@ -2373,7 +2373,7 @@ return [
     Metric::RedisVersion->value => [
         'definitions' => [
             'Redis is an open-source in-memory data store, commonly used as a cache, session store, or message broker.',
-            'Endoflife timeline: <a href="https://endoflife.date/redis" target="_blank">https://endoflife.date/redis</a>.',
+            'Endoflife timeline: <a href="https://endoflife.date/redis" target="_blank" rel="noopener">https://endoflife.date/redis</a>.',
         ],
         'why_it_matters' => [
             'Redis is a critical piece of infrastructure. Older versions (like 5.x or earlier) lack modern security features and efficient multi-threading capabilities. Upgrading to newer versions (7.x+) often introduces significant performance boosts, such as improved I/O multithreading and the "Redis Functions" engine, which can reduce the load on your web server.',
@@ -2521,8 +2521,8 @@ return [
     Metric::SymfonyVersion->value => [
         'definitions' => [
             'Symfony is the PHP framework used to build your application.',
-            'Official timeline: <a href="https://symfony.com/releases" target="_blank">https://symfony.com/releases</a>.',
-            'Endoflife timeline: <a href="https://endoflife.date/symfony" target="_blank">https://endoflife.date/symfony</a>.',
+            'Official timeline: <a href="https://symfony.com/releases" target="_blank" rel="noopener">https://symfony.com/releases</a>.',
+            'Endoflife timeline: <a href="https://endoflife.date/symfony" target="_blank" rel="noopener">https://endoflife.date/symfony</a>.',
         ],
         'why_it_matters' => [
             'Each Symfony version has a specific window for "Bug Fixes" and "Security Fixes." Once a version reaches End of Life (EOL), any newly discovered vulnerability in the framework will remain unpatched on your server. Furthermore, modern PHP versions often require modern Symfony versions to remain compatible and performant.',
@@ -2599,7 +2599,7 @@ return [
             [
                 'case' => 'If you need deeper visibility into your message queues',
                 'actions' => [
-                    'Consider installing <a href="https://github.com/zenstruck/messenger-monitor-bundle" target="_blank">zenstruck/messenger-monitor-bundle</a>, a Composer package that provides a monitoring interface for Symfony Messenger transports and workers.',
+                    'Consider installing <a href="https://github.com/zenstruck/messenger-monitor-bundle" target="_blank" rel="noopener">zenstruck/messenger-monitor-bundle</a>, a Composer package that provides a monitoring interface for Symfony Messenger transports and workers.',
                 ],
             ],
         ],

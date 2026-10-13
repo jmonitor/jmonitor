@@ -109,6 +109,14 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
     --app-danger-hover-rgb: 235,35,74; /*#EB234A*/
 }
 
+/* The dashboard is dark-only; the public help page may be framed in a light back-office. */
+[data-bs-theme="light"] {
+    --app-body-color-full: #000;
+    --app-primary-light: #3451b2;
+    --app-muted-color: #6c757d;
+    --bs-code-color: var(--app-primary-light);
+}
+
 [data-bs-theme="dark"] .dropdown-menu {
     --bs-dropdown-link-active-bg: #2f3645;
 }

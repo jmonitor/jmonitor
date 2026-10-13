@@ -41,9 +41,12 @@ class HelpController extends AbstractController
             throw $this->createNotFoundException();
         }
 
+        $theme = $request->query->all()['theme'] ?? null;
+
         return $this->render($template, [
             'metric' => $metric,
             'standalone' => true,
+            'theme' => in_array($theme, ['light', 'dark'], true) ? $theme : null,
         ]);
     }
 

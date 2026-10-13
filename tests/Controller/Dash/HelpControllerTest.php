@@ -78,6 +78,55 @@ class HelpControllerTest extends WebTestCase
         $this->assertCount(2, $crawler->filter('link[rel="stylesheet"]'));
     }
 
+    public function testThemeLightIsApplied(): void
+    {
+        $client = $this->client();
+        $crawler = $client->request('GET', '/help/metric/system.ram_usage?theme=light');
+
+        $this->assertSame('light', $crawler->filter('html')->attr('data-bs-theme'));
+        $this->assertCount(0, $crawler->filter('script'));
+    }
+
+    public function testThemeDarkIsApplied(): void
+    {
+        $client = $this->client();
+        $crawler = $client->request('GET', '/help/metric/system.ram_usage?theme=dark');
+
+        $this->assertSame('dark', $crawler->filter('html')->attr('data-bs-theme'));
+        $this->assertCount(0, $crawler->filter('script'));
+    }
+
+    public function testWithoutThemeThePageFollowsTheSystemPreference(): void
+    {
+        $client = $this->client();
+        $crawler = $client->request('GET', '/help/metric/system.ram_usage');
+
+        $this->assertSame('dark', $crawler->filter('html')->attr('data-bs-theme'));
+        $this->assertCount(1, $crawler->filter('script'));
+        $this->assertStringContainsString('prefers-color-scheme: light', $crawler->filter('script')->text());
+    }
+
+    /**
+     * @return iterable<string, array{string}>
+     */
+    public static function invalidThemes(): iterable
+    {
+        yield 'unknown value' => ['?theme=sepia'];
+        yield 'empty value' => ['?theme='];
+        yield 'array value' => ['?theme[]=light'];
+    }
+
+    #[DataProvider('invalidThemes')]
+    public function testAnInvalidThemeIsIgnored(string $query): void
+    {
+        $client = $this->client();
+        $crawler = $client->request('GET', '/help/metric/system.ram_usage' . $query);
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSame('dark', $crawler->filter('html')->attr('data-bs-theme'));
+        $this->assertCount(1, $crawler->filter('script'));
+    }
+
     public function testTheDashboardOffcanvasShellIsStillTheDefault(): void
     {
         self::bootKernel();

@@ -3,7 +3,7 @@
 # Published to Docker Hub (+ ghcr.io mirror) by .github/workflows/docker-publish.yml on version tags.
 # The dev image is separate (docker/dev/, bind-mounted sources, no worker mode).
 
-FROM dunglas/frankenphp:1-php8.4 AS base
+FROM dunglas/frankenphp:1.13-php8.4 AS base
 
 # Same extensions as dev minus pdo_pgsql (only used by the dev pg-demo stack).
 RUN install-php-extensions \

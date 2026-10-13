@@ -25,6 +25,9 @@
 
 	mercure {
 		transport local
+		# Required by Mercure 1.0 for publisher_jwt/subscriber_jwt and the 0.x tokens
+		# (claim "mercure", mercureAuthorization cookie) symfony/mercure still mints.
+		protocol_version_compatibility 8
 
 		# Key injected through an env var ({$VAR} = substituted when the Caddyfile
 		# is parsed). Must match the app's MERCURE_JWT_SECRET.

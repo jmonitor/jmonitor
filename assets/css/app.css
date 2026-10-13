@@ -115,6 +115,10 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
     --app-primary-light: #3451b2;
     --app-muted-color: #6c757d;
     --bs-code-color: var(--app-primary-light);
+
+    .text-bg-info {
+        background: #e4e9f8!important;
+    }
 }
 
 [data-bs-theme="dark"] .dropdown-menu {

@@ -27,6 +27,13 @@ class FrameAncestorsListenerTest extends TestCase
         $this->assertFalse($response->headers->has('Content-Security-Policy'));
     }
 
+    public function testAllowsFramingThePublicMetricHelpByAnyone(): void
+    {
+        $response = $this->dispatch('help.metric.public');
+
+        $this->assertSame('frame-ancestors *', $response->headers->get('Content-Security-Policy'));
+    }
+
     public function testDoesNotOverrideAnExistingPolicy(): void
     {
         $response = new Response();

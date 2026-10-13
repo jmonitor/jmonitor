@@ -127,6 +127,20 @@ class HelpControllerTest extends WebTestCase
         $this->assertCount(1, $crawler->filter('script'));
     }
 
+    public function testThePageIsPubliclyCacheableAndNotIndexed(): void
+    {
+        $client = $this->client();
+        $client->request('GET', '/help/metric/system.ram_usage?theme=dark');
+
+        $cacheControl = $client->getResponse()->headers->get('Cache-Control');
+        $this->assertStringContainsString('public', (string) $cacheControl);
+        $this->assertStringContainsString('max-age=3600', (string) $cacheControl);
+        $this->assertResponseHeaderSame('X-Robots-Tag', 'noindex');
+        $this->assertResponseHeaderSame('Content-Security-Policy', 'frame-ancestors *');
+        $this->assertFalse($client->getResponse()->headers->has('Set-Cookie'));
+        $this->assertSelectorExists('meta[name="robots"][content="noindex"]');
+    }
+
     public function testTheDashboardOffcanvasShellIsStillTheDefault(): void
     {
         self::bootKernel();

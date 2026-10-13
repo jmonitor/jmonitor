@@ -43,11 +43,16 @@ class HelpController extends AbstractController
 
         $theme = $request->query->all()['theme'] ?? null;
 
-        return $this->render($template, [
+        $response = $this->render($template, [
             'metric' => $metric,
             'standalone' => true,
             'theme' => in_array($theme, ['light', 'dark'], true) ? $theme : null,
         ]);
+        $response->setPublic();
+        $response->setMaxAge(3600);
+        $response->headers->set('X-Robots-Tag', 'noindex');
+
+        return $response;
     }
 
     #[Route('/help/{uuid:project}/item/{item}', name: 'project.help.item')]

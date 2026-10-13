@@ -172,6 +172,40 @@ class HelpControllerTest extends WebTestCase
         $this->assertGreaterThan(10, $checked, 'the help content is expected to contain links');
     }
 
+    /**
+     * The keys jmonitor/easyadmin-bundle links to. Removing one here breaks every installed bundle.
+     *
+     * @return iterable<string, array{string}>
+     */
+    public static function bundleKeys(): iterable
+    {
+        $keys = [
+            'system.ram_usage', 'system.cpu_usage', 'system.disk_usage', 'system.informations',
+            'php.version', 'php.base_config', 'php.opcache_memory', 'php.opcache_hit_rate', 'php.opcache_config',
+            'php.apcu_memory_usage', 'php.apcu_hit_rate', 'php.apcu_config', 'php.fpm_active_processes',
+            'php.fpm_memory_peak_percent', 'php.fpm_config',
+            'mysql.informations', 'mysql.queries_per_sec', 'mysql.connections_usage', 'mysql.innodb_buffer_pool_usage',
+            'mysql.innodb_buffer_pool_hit_rate', 'mysql.tmp_tables', 'mysql.thread_cache_miss',
+            'mysql.tables_lock_waits_percent', 'mysql.slow_queries_top', 'mysql.config',
+            'redis.informations', 'redis.memory_usage', 'redis.hit_rate', 'redis.stats', 'redis.persistence', 'redis.db_keys',
+            'symfony.version', 'symfony.messenger', 'symfony.scheduler_tasks', 'symfony.flex',
+        ];
+
+        foreach ($keys as $key) {
+            yield $key => [$key];
+        }
+    }
+
+    #[DataProvider('bundleKeys')]
+    public function testEveryKeyUsedByTheEasyAdminBundleAnswers(string $key): void
+    {
+        $client = $this->client();
+        $crawler = $client->request('GET', '/help/metric/' . $key . '?theme=dark');
+
+        $this->assertResponseIsSuccessful();
+        $this->assertGreaterThan(0, $crawler->filter('main h5')->count(), $key . ' renders no help section');
+    }
+
     public function testTheDashboardOffcanvasShellIsStillTheDefault(): void
     {
         self::bootKernel();

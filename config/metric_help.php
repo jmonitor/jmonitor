@@ -92,6 +92,36 @@ return [
         ],
     ],
 
+    Metric::SystemInformations->value => [
+        'definitions' => [
+            'The server\'s identity and vital signs: hostname, operating system, uptime, load average and timezone.',
+        ],
+        'why_it_matters' => [
+            'They give the context needed to read every other metric: a load average of 4 means nothing without the number of cores, and a short uptime after an unexpected reboot is a warning in itself.',
+        ],
+        'how_to_read' => [
+            'The load average is the number of processes waiting for the CPU over the last 1, 5 and 15 minutes. Compare it to the number of cores: a load of 2 on a 2-core server means the CPU is fully busy, the same value on 8 cores is quiet.',
+            'Uptime is the time since the last boot. A sudden reset means the server restarted.',
+        ],
+        'actions' => [
+            [
+                'case' => 'If the load average stays above the number of cores',
+                'actions' => ['Look at CPU usage and at the processes consuming it: web server, PHP workers, database, cron jobs.'],
+            ],
+            [
+                'case' => 'If uptime dropped unexpectedly',
+                'actions' => ['Check the system logs for a crash, an out-of-memory kill or a scheduled maintenance reboot.'],
+            ],
+            [
+                'case' => 'If the timezone is not the one you expect',
+                'actions' => ['Scheduled tasks and log timestamps follow it. Align the server, PHP and database timezones to avoid off-by-hours surprises.'],
+            ],
+        ],
+        'good_to_know' => [
+            'The three load values tell a spike from a trend: 1-minute high and 15-minute low is a burst, all three high is sustained pressure.',
+        ],
+    ],
+
     Metric::ApacheVersion->value => [
         'definitions' => [
             'Apache HTTP Server is one of the most widely used open-source web servers, commonly used to serve websites and web applications.',
@@ -1918,6 +1948,62 @@ return [
             'A very high number of Threads Running can lead to "Internal Thrashing," where the database spends more time context-switching between tasks than actually executing them. In this state, the server can become completely unresponsive even if the RAM is still free.',
         ],
     ],
+    Metric::MysqlInformations->value => [
+        'definitions' => [
+            'Key facts about the MySQL server: version, uptime, the monitored schema, data and index sizes, and whether the slow query log is enabled with its <code>long_query_time</code> threshold.',
+        ],
+        'why_it_matters' => [
+            'The version tells whether you still receive security fixes, the sizes whether the data fits in the InnoDB buffer pool, and the slow query log is the only way to see which queries hurt.',
+        ],
+        'how_to_read' => [
+            'Data size plus index size is what MySQL has to serve. Compare it to <code>innodb_buffer_pool_size</code>: when the data is larger than the pool, the hot set may not fit in memory.',
+            '<code>long_query_time</code> is the duration in seconds above which a query is logged. The default of 10 seconds is far too lenient for a web application.',
+        ],
+        'actions' => [
+            [
+                'case' => 'If the slow query log is OFF',
+                'actions' => ['Enable it (<code>slow_query_log = ON</code>) with a <code>long_query_time</code> around 1 second. The overhead is negligible and the top slow queries card depends on it.'],
+            ],
+            [
+                'case' => 'If data + index size exceed the buffer pool',
+                'actions' => ['Raise <code>innodb_buffer_pool_size</code> if RAM allows, or archive and purge old data.'],
+            ],
+            [
+                'case' => 'If uptime is unexpectedly low',
+                'actions' => ['The server restarted: check the MySQL error log for crashes or out-of-memory kills.'],
+            ],
+        ],
+        'good_to_know' => [
+            'A restart also resets every cumulative counter (queries, slow queries, cache hits), so rates computed since startup are unreliable in the first minutes.',
+        ],
+    ],
+
+    Metric::MysqlConfig->value => [
+        'definitions' => [
+            'The server variables as MySQL reports them: connection limits, memory buffers, caches and logging settings.',
+        ],
+        'why_it_matters' => [
+            'Most MySQL performance problems are configuration problems: a buffer pool left at its 128 MB default, too few connections, or temporary tables spilling to disk.',
+        ],
+        'how_to_read' => [
+            'Variables are static settings, not live measurements. Read each one next to the status metric it governs: <code>max_connections</code> with connections usage, <code>innodb_buffer_pool_size</code> with the buffer pool hit rate, <code>tmp_table_size</code> with temporary tables on disk.',
+            'The ones worth knowing: <code>innodb_buffer_pool_size</code>, <code>max_connections</code>, <code>tmp_table_size</code> and <code>max_heap_table_size</code>, <code>thread_cache_size</code>, <code>table_open_cache</code>, <code>slow_query_log</code> and <code>long_query_time</code>.',
+        ],
+        'actions' => [
+            [
+                'case' => 'If innodb_buffer_pool_size is still at the 128 MB default on a dedicated database server',
+                'actions' => ['Set it to 50–70% of the RAM so the working set stays in memory.'],
+            ],
+            [
+                'case' => 'If a limit is hit (connections, temporary tables, open tables)',
+                'actions' => ['Raise the variable carefully and watch RAM: most buffers are allocated per connection.'],
+            ],
+        ],
+        'good_to_know' => [
+            'A value changed with <code>SET GLOBAL</code> lasts until the next restart. Persist it in <code>my.cnf</code> (or with <code>SET PERSIST</code> on MySQL 8) or the fix silently disappears.',
+        ],
+    ],
+
     Metric::MysqlThreadCacheMiss->value => [
         'definitions' => [
             'This represents the percentage of new connections that forced MySQL to create a fresh system thread instead of reusing an idle one from the cache.',
@@ -2370,6 +2456,32 @@ return [
             'A 100% hit rate isn\'t always perfect—it might mean you are never updating your data! However, in production, you should see a very steady line. If the line is "jagged" (constantly going up and down), it indicates "Cache Churn," where data is being deleted and recreated too frequently.',
         ],
     ],
+    Metric::RedisDbKeys->value => [
+        'definitions' => [
+            'The number of keys stored in each Redis database, how many of them carry an expiration, and their average remaining time to live.',
+        ],
+        'why_it_matters' => [
+            'Keys without a TTL never leave memory on their own. When most keys are not expiring, the dataset only grows until <code>maxmemory</code> evicts data or the server runs out of RAM.',
+        ],
+        'how_to_read' => [
+            'Compare keys to expiring keys: a cache should have nearly all of its keys expiring. A large gap means persistent data (sessions, queues, counters) or a forgotten TTL.',
+            'The average TTL tells how long entries live: very short values on a cache hint at churn, very long ones at entries that will outlive their usefulness.',
+        ],
+        'actions' => [
+            [
+                'case' => 'If the number of keys grows steadily without expiring',
+                'actions' => ['Find the writer that omits the TTL (sessions, Doctrine cache, locks) and set one, or move that data to its own database with a suitable eviction policy.'],
+            ],
+            [
+                'case' => 'If keys drop suddenly',
+                'actions' => ['Check for a <code>FLUSHDB</code>, a restart without persistence, or an eviction storm under <code>maxmemory</code>.'],
+            ],
+        ],
+        'good_to_know' => [
+            'A key count that does not match what your application wrote usually means several applications share the same Redis database. Give each its own database number or key prefix.',
+        ],
+    ],
+
     Metric::RedisVersion->value => [
         'definitions' => [
             'Redis is an open-source in-memory data store, commonly used as a cache, session store, or message broker.',

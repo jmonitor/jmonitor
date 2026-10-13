@@ -1,6 +1,6 @@
 # Dev-only image (see compose.yaml and the README "Development setup" section).
 # The self-hosted reference image is a separate, future concern.
-FROM dunglas/frankenphp:1-php8.4
+FROM dunglas/frankenphp:1.13-php8.4
 
 # git/unzip: composer; pdo_pgsql: docker/pg-demo connection; pcntl: signal handling
 # in long-running console commands (app:demo:run); redis: phpredis (predis stays a

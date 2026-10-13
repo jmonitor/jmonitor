@@ -94,20 +94,17 @@ return [
 
     Metric::SystemInformations->value => [
         'definitions' => [
-            'The server\'s identity and vital signs: hostname, operating system, uptime, load average and timezone.',
+            'The server\'s identity and vital signs: hostname, operating system, number of CPU cores, uptime, server time and timezone, and on some views the load average.',
         ],
         'why_it_matters' => [
-            'They give the context needed to read every other metric: a load average of 4 means nothing without the number of cores, and a short uptime after an unexpected reboot is a warning in itself.',
+            'They give the context needed to read every other metric: CPU usage means nothing without the number of cores, a short uptime after an unexpected reboot is a warning in itself, and a wrong timezone shifts every scheduled task and log line.',
         ],
         'how_to_read' => [
-            'The load average is the number of processes waiting for the CPU over the last 1, 5 and 15 minutes. Compare it to the number of cores: a load of 2 on a 2-core server means the CPU is fully busy, the same value on 8 cores is quiet.',
             'Uptime is the time since the last boot. A sudden reset means the server restarted.',
+            'Server time and timezone are what the operating system reports. Compare them to your application and database settings: they should agree.',
+            'When a load average is shown, it is the number of processes waiting for the CPU over the last 1, 5 and 15 minutes. Compare it to the number of cores: a load of 2 on a 2-core server means the CPU is fully busy, the same value on 8 cores is quiet.',
         ],
         'actions' => [
-            [
-                'case' => 'If the load average stays above the number of cores',
-                'actions' => ['Look at CPU usage and at the processes consuming it: web server, PHP workers, database, cron jobs.'],
-            ],
             [
                 'case' => 'If uptime dropped unexpectedly',
                 'actions' => ['Check the system logs for a crash, an out-of-memory kill or a scheduled maintenance reboot.'],
@@ -116,12 +113,15 @@ return [
                 'case' => 'If the timezone is not the one you expect',
                 'actions' => ['Scheduled tasks and log timestamps follow it. Align the server, PHP and database timezones to avoid off-by-hours surprises.'],
             ],
+            [
+                'case' => 'If the load average stays above the number of cores',
+                'actions' => ['Look at CPU usage and at the processes consuming it: web server, PHP workers, database, cron jobs.'],
+            ],
         ],
         'good_to_know' => [
             'The three load values tell a spike from a trend: 1-minute high and 15-minute low is a burst, all three high is sustained pressure.',
         ],
     ],
-
     Metric::ApacheVersion->value => [
         'definitions' => [
             'Apache HTTP Server is one of the most widely used open-source web servers, commonly used to serve websites and web applications.',
@@ -740,19 +740,6 @@ return [
         ],
     ],
 
-    Metric::FrankenPhpVersion->value => [
-        'definitions' => [
-            'FrankenPHP is a modern PHP application server built on top of Caddy, designed to run PHP applications with high performance and worker mode support.',
-            'FrankenPHP releases: <a href="https://github.com/dunglas/frankenphp/releases" target="_blank" rel="noopener">https://github.com/dunglas/frankenphp/releases</a>.',
-            'Only the latest version is supported, and new versions are released "when ready".',
-        ],
-        'why_it_matters' => ['Important for performance features like "Worker Mode".'],
-        'how_to_read' => [],
-        'actions' => [],
-        'good_to_know' => [
-            'FrankenPHP allows PHP to stay in memory between requests, making it significantly faster.',
-        ],
-    ],
     Metric::CaddyAvgRequestSize->value => [
         'definitions' => [
             'This metric calculates the average size (in bytes) of incoming HTTP requests sent by your visitors.',
@@ -1028,17 +1015,6 @@ return [
         ],
         'good_to_know' => [
             'Worker Mode is sensitive. A simple "exit()" or "die()" in your PHP code will kill the entire worker thread. Ensure your application handles errors gracefully with exceptions instead of terminating the script.',
-        ],
-    ],
-    Metric::PhpVersion->value => [
-        'definitions' => [
-            'PHP is the server-side scripting language used to run your application.',
-            'Official timeline: <a href="https://www.php.net/supported-versions.php" target="_blank" rel="noopener">https://www.php.net/supported-versions.php</a>.',
-            'Endoflife timeline: <a href="https://endoflife.date/php" target="_blank" rel="noopener">https://endoflife.date/php</a>.',
-        ],
-        'why_it_matters' => ['Performance and security. Older versions (like 7.x) are no longer supported.'],
-        'good_to_know' => [
-            'Each PHP version is supported for exactly 3 years. Once "End of Life", it no longer receives security patches.',
         ],
     ],
     Metric::PostgresVersion->value => [
@@ -1950,34 +1926,34 @@ return [
     ],
     Metric::MysqlInformations->value => [
         'definitions' => [
-            'Key facts about the MySQL server: version, uptime, the monitored schema, data and index sizes, and whether the slow query log is enabled with its <code>long_query_time</code> threshold.',
+            'Key facts about the MySQL server: uptime, its date and timezones, and on some views the version, the monitored schema, data and index sizes, and whether the slow query log is enabled with its <code>long_query_time</code> threshold.',
         ],
         'why_it_matters' => [
-            'The version tells whether you still receive security fixes, the sizes whether the data fits in the InnoDB buffer pool, and the slow query log is the only way to see which queries hurt.',
+            'A short uptime means the server restarted and every cumulative counter started over. A timezone that differs from the system or the application shifts every stored timestamp. The slow query log is the only way to see which queries hurt.',
         ],
         'how_to_read' => [
-            'Data size plus index size is what MySQL has to serve. Compare it to <code>innodb_buffer_pool_size</code>: when the data is larger than the pool, the hot set may not fit in memory.',
+            '<code>Timezone</code> is the value MySQL applies to sessions (<code>time_zone</code>); <code>System timezone</code> is the one the operating system gave it at startup. <code>SYSTEM</code> means the first follows the second.',
+            'When sizes are shown, data size plus index size is what MySQL has to serve. Compare it to <code>innodb_buffer_pool_size</code>: when the data is larger than the pool, the hot set may not fit in memory.',
             '<code>long_query_time</code> is the duration in seconds above which a query is logged. The default of 10 seconds is far too lenient for a web application.',
         ],
         'actions' => [
             [
-                'case' => 'If the slow query log is OFF',
-                'actions' => ['Enable it (<code>slow_query_log = ON</code>) with a <code>long_query_time</code> around 1 second. The overhead is negligible and the top slow queries card depends on it.'],
-            ],
-            [
-                'case' => 'If data + index size exceed the buffer pool',
-                'actions' => ['Raise <code>innodb_buffer_pool_size</code> if RAM allows, or archive and purge old data.'],
-            ],
-            [
                 'case' => 'If uptime is unexpectedly low',
                 'actions' => ['The server restarted: check the MySQL error log for crashes or out-of-memory kills.'],
+            ],
+            [
+                'case' => 'If the MySQL timezone differs from the application\'s',
+                'actions' => ['Dates written by one side and read by the other drift by the offset. Set <code>default-time-zone</code> (or use UTC everywhere) so they agree.'],
+            ],
+            [
+                'case' => 'If the slow query log is OFF',
+                'actions' => ['Enable it (<code>slow_query_log = ON</code>) with a <code>long_query_time</code> around 1 second. The overhead is negligible and the top slow queries card depends on it.'],
             ],
         ],
         'good_to_know' => [
             'A restart also resets every cumulative counter (queries, slow queries, cache hits), so rates computed since startup are unreliable in the first minutes.',
         ],
     ],
-
     Metric::MysqlConfig->value => [
         'definitions' => [
             'The server variables as MySQL reports them: connection limits, memory buffers, caches and logging settings.',
@@ -2458,18 +2434,18 @@ return [
     ],
     Metric::RedisDbKeys->value => [
         'definitions' => [
-            'The number of keys stored in each Redis database, how many of them carry an expiration, and their average remaining time to live.',
+            'The number of keys stored in each Redis database.',
         ],
         'why_it_matters' => [
-            'Keys without a TTL never leave memory on their own. When most keys are not expiring, the dataset only grows until <code>maxmemory</code> evicts data or the server runs out of RAM.',
+            'The key count is the size of your dataset. A count that only grows means data is written faster than it expires or gets deleted, until <code>maxmemory</code> evicts data or the server runs out of RAM.',
         ],
         'how_to_read' => [
-            'Compare keys to expiring keys: a cache should have nearly all of its keys expiring. A large gap means persistent data (sessions, queues, counters) or a forgotten TTL.',
-            'The average TTL tells how long entries live: very short values on a cache hint at churn, very long ones at entries that will outlive their usefulness.',
+            'Read it together with the expiring keys of the same database: on a cache, nearly every key should carry an expiration.',
+            'A sudden drop is a flush, a restart without persistence, or an eviction storm.',
         ],
         'actions' => [
             [
-                'case' => 'If the number of keys grows steadily without expiring',
+                'case' => 'If the number of keys grows steadily',
                 'actions' => ['Find the writer that omits the TTL (sessions, Doctrine cache, locks) and set one, or move that data to its own database with a suitable eviction policy.'],
             ],
             [
@@ -2482,6 +2458,48 @@ return [
         ],
     ],
 
+    Metric::RedisDbExpiringKeys->value => [
+        'definitions' => [
+            'The number of keys in the database that carry an expiration (a TTL).',
+        ],
+        'why_it_matters' => [
+            'Keys without a TTL never leave memory on their own. When most keys are not expiring, the dataset only grows until <code>maxmemory</code> evicts data or the server runs out of RAM.',
+        ],
+        'how_to_read' => [
+            'Compare it to the total number of keys: a cache should have nearly all of its keys expiring. A large gap means persistent data (sessions, queues, counters) or a forgotten TTL.',
+        ],
+        'actions' => [
+            [
+                'case' => 'If few keys expire on a database used as a cache',
+                'actions' => ['Find the writer that omits the TTL and set one, or move the persistent data to its own database with a suitable eviction policy.'],
+            ],
+        ],
+    ],
+
+    Metric::RedisDbAvgTtl->value => [
+        'definitions' => [
+            'The average remaining time to live of the expiring keys in the database.',
+        ],
+        'why_it_matters' => [
+            'It tells how long entries actually live, which is what decides how much memory the cache needs and how often it has to be rebuilt.',
+        ],
+        'how_to_read' => [
+            'Very short values on a cache hint at churn: entries are rebuilt more often than they are reused. Very long values hint at entries that will outlive their usefulness and hold memory for nothing.',
+        ],
+        'actions' => [
+            [
+                'case' => 'If the average TTL is far shorter than the time data stays valid',
+                'actions' => ['Raise the TTL on the cache entries that are rebuilt the most; the hit rate should follow.'],
+            ],
+            [
+                'case' => 'If the average TTL is days or weeks on a cache',
+                'actions' => ['Shorten it, or rely on an eviction policy such as <code>allkeys-lru</code> instead of expirations.'],
+            ],
+        ],
+        'good_to_know' => [
+            'Redis computes this value by sampling keys, so it is an estimate that moves between refreshes.',
+        ],
+    ],
     Metric::RedisVersion->value => [
         'definitions' => [
             'Redis is an open-source in-memory data store, commonly used as a cache, session store, or message broker.',

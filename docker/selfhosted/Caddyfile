@@ -40,9 +40,8 @@
 	mercure {
 		name jmonitor
 		transport local
-		# Required by Mercure 1.0 for publisher_jwt/subscriber_jwt and the 0.x tokens
-		# (claim "mercure", mercureAuthorization cookie) symfony/mercure still mints.
-		protocol_version_compatibility 8
+		# 7: the only value both Mercure 0.x (production) and 1.0 accept.
+		protocol_version_compatibility 7
 
 		# Same env var as the app (config/packages/mercure.yaml).
 		publisher_jwt {$MERCURE_JWT_SECRET} HS256
@@ -84,7 +83,7 @@ http://app:2021 {
 	mercure {
 		name jmonitor
 		transport local
-		protocol_version_compatibility 8
+		protocol_version_compatibility 7
 		publisher_jwt {$MERCURE_JWT_SECRET} HS256
 		subscriber_jwt {$MERCURE_JWT_SECRET} HS256
 	}

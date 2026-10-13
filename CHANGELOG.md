@@ -10,6 +10,10 @@ to that edition only, everything else applies to both.
 
 ## [Unreleased]
 
+### Added
+
+- Metric help pages can be opened without an account at `/help/metric/{metric}`.
+
 ## [1.0.1] - 2026-08-18
 
 ### Changed

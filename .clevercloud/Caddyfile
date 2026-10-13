@@ -25,6 +25,8 @@
 
 	mercure {
 		transport local
+		# 7: the only value both Mercure 0.x (production) and 1.0 accept.
+		protocol_version_compatibility 7
 
 		# Key injected through an env var ({$VAR} = substituted when the Caddyfile
 		# is parsed). Must match the app's MERCURE_JWT_SECRET.

@@ -38,7 +38,10 @@
 	}
 
 	mercure {
+		name jmonitor
 		transport local
+		# 7: the only value both Mercure 0.x (production) and 1.0 accept.
+		protocol_version_compatibility 7
 
 		# Same env var as the app (config/packages/mercure.yaml).
 		publisher_jwt {$MERCURE_JWT_SECRET} HS256
@@ -72,13 +75,15 @@
 # site sits unused. Plain php_server on purpose: FrankenPHP sums `worker`
 # pools across listeners, so a worker here would double PHP memory for a
 # handful of internal requests per minute. The mercure handler shares the main
-# site's hub (the module pools transports process-wide), so events published
-# here reach browsers subscribed through the public site.
+# site's hub (hubs with the same `name` share their transport), so events
+# published here reach browsers subscribed through the public site.
 http://app:2021 {
 	root * public/
 
 	mercure {
+		name jmonitor
 		transport local
+		protocol_version_compatibility 7
 		publisher_jwt {$MERCURE_JWT_SECRET} HS256
 		subscriber_jwt {$MERCURE_JWT_SECRET} HS256
 	}

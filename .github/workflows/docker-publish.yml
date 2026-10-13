@@ -121,6 +121,13 @@ jobs:
                     # (401 = handler reached, anonymous subscribe rejected)
                     test "$(docker compose exec -T app curl -s -o /dev/null -w '%{http_code}' http://app:2021/.well-known/mercure)" = "401"
 
+                    # An update published through :2021 reaches a subscriber of the public site
+                    MERCURE_JWT_SECRET="$(sed -n 's/^MERCURE_JWT_SECRET=//p' .env)" \
+                    PUBLIC_HUB_URL=https://dash.example.com/.well-known/mercure \
+                    SUBSCRIBE_CURL_OPTS="-k --resolve dash.example.com:443:127.0.0.1" \
+                    PUBLISH_CURL="docker compose exec -T app curl" \
+                        ../../.github/scripts/mercure-shared-transport.sh
+
                     # Metrics still flow end-to-end, now through :2021: clear the stamp
                     # and wait for the collector -> app -> worker chain to set it again.
                     docker compose exec -T mysql sh -c "mysql -p\"\$MYSQL_ROOT_PASSWORD\" jmonitor -e \"UPDATE project SET last_data_push_date = NULL WHERE uuid = 0x98be4322e5855c5d9aa4c81b0f20b241\""

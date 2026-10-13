@@ -31,7 +31,10 @@
 	}
 
 	mercure {
+		name jmonitor
 		transport local
+		# 7: the only value both Mercure 0.x (production) and 1.0 accept.
+		protocol_version_compatibility 7
 
 		# Dev secret — must match MERCURE_JWT_SECRET in .env.dev.
 		publisher_jwt "!ChangeThisDevMercureSecret-min-32-bytes!" HS256
@@ -77,14 +80,16 @@
 # pushes here instead; in the default HTTP mode they use :80 and this site sits
 # unused. Plain php_server on purpose: FrankenPHP sums `worker` pools across
 # listeners, so a worker here would double PHP memory for a handful of internal
-# requests. The mercure handler shares the main site's hub (the module pools
-# transports process-wide), so events published here reach browsers subscribed
-# through the public site.
+# requests. The mercure handler shares the main site's hub (hubs with the same
+# `name` share their transport), so events published here reach browsers
+# subscribed through the public site.
 :2021 {
 	root * public/
 
 	mercure {
+		name jmonitor
 		transport local
+		protocol_version_compatibility 7
 		publisher_jwt "!ChangeThisDevMercureSecret-min-32-bytes!" HS256
 		subscriber_jwt "!ChangeThisDevMercureSecret-min-32-bytes!" HS256
 	}

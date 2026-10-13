@@ -1,0 +1,12 @@
+version: 2
+updates:
+    # The base images are pinned to a FrankenPHP minor: a bump must go through a PR,
+    # where the image smoke test exercises the Caddyfile against the new Mercure.
+    -   package-ecosystem: docker
+        directory: /docker/selfhosted
+        schedule:
+            interval: weekly
+    -   package-ecosystem: docker
+        directory: /docker/dev
+        schedule:
+            interval: weekly

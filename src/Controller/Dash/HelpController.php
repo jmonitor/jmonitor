@@ -35,12 +35,11 @@ class HelpController extends AbstractController
     #[Route('/help/metric/{metric}', name: 'help.metric.public')]
     public function publicHelp(Metric $metric, Request $request, Environment $twig, HelpProvider $helpProvider): Response
     {
-        $template = $this->metricTemplate($metric, $twig);
-
-        if ($template === self::DEFAULT_TEMPLATE && $helpProvider->getHelp($metric) === null) {
+        if (!$helpProvider->hasHelp($metric)) {
             throw $this->createNotFoundException();
         }
 
+        $template = $this->metricTemplate($metric, $twig);
         $theme = $request->query->all()['theme'] ?? null;
 
         $response = $this->render($template, [
@@ -73,7 +72,7 @@ class HelpController extends AbstractController
      */
     private function metricTemplate(Metric $metric, Environment $twig): string
     {
-        $template = 'dash/help/metric/' . $metric->value . '.html.twig';
+        $template = HelpProvider::template($metric);
 
         return $twig->getLoader()->exists($template) ? $template : self::DEFAULT_TEMPLATE;
     }

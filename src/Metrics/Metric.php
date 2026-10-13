@@ -382,13 +382,20 @@ enum Metric: string
         };
     }
 
-    public function hasHelp(): bool
+    /**
+     * Title of the help read out of the dashboard, where the page heading no longer tells
+     * which component, or which PHP card, a label like "Config" belongs to.
+     */
+    public function helpTitle(): string
     {
-        return match ($this) {
-            self::SystemInformations,
-            self::ApacheUptime,
-            self::CaddyUptime => false,
-            default => true,
+        $label = match ($this) {
+            self::PhpBaseConfig => 'PHP config',
+            self::PhpOpcacheConfig => 'OPcache config',
+            self::PhpApcuConfig => 'APCu config',
+            default => $this->getLabel() ?? $this->value,
         };
+        $component = $this->component()->label();
+
+        return str_starts_with($label, $component) ? $label : $component . ' ' . $label;
     }
 }

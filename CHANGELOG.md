@@ -14,6 +14,10 @@ to that edition only, everything else applies to both.
 
 - Metric help pages can be opened without an account at `/help/metric/{metric}`.
 
+### Fixed
+
+- Metric cards no longer show a help icon that opens an empty panel.
+
 ## [1.0.1] - 2026-08-18
 
 ### Changed

@@ -15,7 +15,10 @@ class HelpControllerTest extends WebTestCase
 {
     private function client(): KernelBrowser
     {
-        return static::createClient([], ['HTTP_HOST' => 'dash.jmonitor.io']);
+        $client = static::createClient([], ['HTTP_HOST' => 'dash.jmonitor.io']);
+        $client->disableReboot();
+
+        return $client;
     }
 
     public function testAMetricDocumentedInTheConfigIsPublic(): void
@@ -26,6 +29,26 @@ class HelpControllerTest extends WebTestCase
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h1', 'RAM usage');
         $this->assertSame('dark', $crawler->filter('html')->attr('data-bs-theme'));
+    }
+
+    /**
+     * Out of the dashboard, four bundle keys are labelled "Config": the component tells them apart.
+     */
+    public function testTheTitleNamesTheComponentWhenTheLabelDoesNot(): void
+    {
+        $client = $this->client();
+        $crawler = $client->request('GET', '/help/metric/mysql.config');
+
+        $this->assertSame('MySQL Config | Jmonitor help', $crawler->filter('title')->text());
+        $this->assertSelectorTextContains('h1', 'MySQL Config');
+    }
+
+    public function testTheTitleDoesNotRepeatTheComponent(): void
+    {
+        $client = $this->client();
+        $crawler = $client->request('GET', '/help/metric/system.informations');
+
+        $this->assertSame('System informations | Jmonitor help', $crawler->filter('title')->text());
     }
 
     public function testAMetricDocumentedByATemplateOnlyIsPublic(): void
@@ -149,12 +172,10 @@ class HelpControllerTest extends WebTestCase
         $client = $this->client();
         $container = self::getContainer();
         $helpProvider = $container->get(HelpProvider::class);
-        /** @var Environment $twig */
-        $twig = $container->get('twig');
         $checked = 0;
 
         foreach (Metric::cases() as $metric) {
-            if ($helpProvider->getHelp($metric) === null && !$twig->getLoader()->exists('dash/help/metric/' . $metric->value . '.html.twig')) {
+            if (!$helpProvider->hasHelp($metric)) {
                 continue;
             }
 

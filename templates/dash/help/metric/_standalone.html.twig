@@ -4,7 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>{{ metric.label }} | Jmonitor help</title>
+        <title>{{ metric.helpTitle }} | Jmonitor help</title>
         <meta name="robots" content="noindex">
         {% if theme is null %}
             <script>if (window.matchMedia('(prefers-color-scheme: light)').matches) { document.documentElement.dataset.bsTheme = 'light'; }</script>
@@ -20,7 +20,7 @@
         <main class="container-fluid px-3 py-3 mx-auto" style="max-width: var(--container-3xl)">
             <h1 class="h4 d-flex align-items-center gap-2 mb-4">
                 {{ ux_icon('material-symbols:info-outline', {width: '1.2em', height: '1.2em'}) }}
-                {{ metric.label }}
+                {{ metric.helpTitle }}
             </h1>
             {% block body %}{% endblock %}
         </main>

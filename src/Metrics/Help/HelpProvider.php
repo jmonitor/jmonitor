@@ -8,6 +8,7 @@ use App\Metrics\Help\Dto\Help;
 use App\Metrics\Metric;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Twig\Attribute\AsTwigFunction;
+use Twig\Loader\LoaderInterface;
 
 class HelpProvider
 {
@@ -17,6 +18,8 @@ class HelpProvider
     public function __construct(
         #[Autowire('%kernel.project_dir%')]
         string $projectDir,
+        #[Autowire(service: 'twig.loader.native_filesystem')]
+        private readonly LoaderInterface $templates,
     ) {
         $config = require $projectDir . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'metric_help.php';
 
@@ -27,6 +30,20 @@ class HelpProvider
     public function getHelp(Metric|string $metric): ?Help
     {
         return $this->instances[$metric instanceof Metric ? $metric->value : $metric] ?? null;
+    }
+
+    /**
+     * A metric is documented by a config entry, by a dedicated template, or both.
+     */
+    #[AsTwigFunction('metric_has_help')]
+    public function hasHelp(Metric $metric): bool
+    {
+        return $this->getHelp($metric) !== null || $this->templates->exists(self::template($metric));
+    }
+
+    public static function template(Metric $metric): string
+    {
+        return 'dash/help/metric/' . $metric->value . '.html.twig';
     }
 
     /**

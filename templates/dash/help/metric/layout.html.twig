@@ -14,7 +14,7 @@
     {% set good_to_know = block('good_to_know') %}
 {% endif %}
 
-<twig:Metric:Help metric="{{ metric }}">
+<twig:Metric:Help metric="{{ metric }}" :standalone="standalone|default(false)" :theme="theme|default(null)">
     <twig:block name="definition">
         {% if definition is defined %}
             <twig:Metric:Help:Section:Definition>{{ definition|raw }}</twig:Metric:Help:Section:Definition>

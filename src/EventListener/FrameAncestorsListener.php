@@ -9,7 +9,8 @@ use Symfony\Component\HttpKernel\Event\ResponseEvent;
 
 /**
  * Denies iframe embedding app-wide (clickjacking) except on the public embed route,
- * whose whole purpose is to be framed by third-party pages and widgets.
+ * whose whole purpose is to be framed by third-party pages and widgets, and on the public
+ * metric help, framed by third-party back-offices.
  */
 #[AsEventListener(event: ResponseEvent::class, method: 'onResponse')]
 readonly class FrameAncestorsListener
@@ -27,6 +28,12 @@ readonly class FrameAncestorsListener
         $response = $event->getResponse();
 
         if ($response->headers->has('Content-Security-Policy')) {
+            return;
+        }
+
+        if ($event->getRequest()->attributes->get('_route') === 'help.metric.public') {
+            $response->headers->set('Content-Security-Policy', 'frame-ancestors *');
+
             return;
         }
 

@@ -44,6 +44,8 @@ sets it to the compose service name, because libcurl resolves `*.localhost` to l
 
 Multi-tenant: User → ProjectUser (OWNER/ADMIN/VIEWER) → Project → InfluxDB bucket
 
+Public metric help: `dash.{domain}/help/metric/{metric}` renders the same help as the dashboard offcanvas (`config/metric_help.php` + `templates/dash/help/metric/`) anonymously, with no JS, `noindex`, `public, max-age=3600`, and `frame-ancestors *` (the only route besides `/e/` that may be framed). It is embedded by `jmonitor/easyadmin-bundle` in a sandboxed iframe; `?theme=light|dark` follows the host back-office.
+
 ## Key Directories
 
 ```

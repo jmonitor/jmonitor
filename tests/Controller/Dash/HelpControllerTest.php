@@ -7,8 +7,10 @@ namespace App\Tests\Controller\Dash;
 use App\Metrics\Help\HelpProvider;
 use App\Metrics\Metric;
 use PHPUnit\Framework\Attributes\DataProvider;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpKernel\KernelEvents;
 use Twig\Environment;
 
 class HelpControllerTest extends WebTestCase
@@ -162,6 +164,20 @@ class HelpControllerTest extends WebTestCase
         $this->assertResponseHeaderSame('Content-Security-Policy', 'frame-ancestors *');
         $this->assertFalse($client->getResponse()->headers->has('Set-Cookie'));
         $this->assertSelectorExists('meta[name="robots"][content="noindex"]');
+    }
+
+    public function testThePageStaysCacheableWhenSomethingIsLoggedDuringTheRequest(): void
+    {
+        $client = $this->client();
+        $logger = static::getContainer()->get(LoggerInterface::class);
+        static::getContainer()->get('event_dispatcher')->addListener(
+            KernelEvents::CONTROLLER,
+            static fn() => $logger->warning('Logged while rendering the help'),
+        );
+
+        $client->request('GET', '/help/metric/system.ram_usage');
+
+        $this->assertStringContainsString('public', (string) $client->getResponse()->headers->get('Cache-Control'));
     }
 
     /**

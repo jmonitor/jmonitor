@@ -7,8 +7,9 @@ namespace App\Log\Monolog;
 use Monolog\Attribute\AsMonologProcessor;
 use Monolog\LogRecord;
 use Monolog\Processor\ProcessorInterface;
-use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\SwitchUserToken;
 
 #[AsMonologProcessor(handler: 'main')]
@@ -16,16 +17,19 @@ readonly class AppDatasProcessor implements ProcessorInterface
 {
     public function __construct(
         private RequestStack $requestStack,
-        private Security $security,
+        /** Reading the token through the tracked storage would mark the session as used and the response private. */
+        #[Autowire(service: 'security.untracked_token_storage')]
+        private TokenStorageInterface $tokenStorage,
     ) {}
 
     public function __invoke(LogRecord $record): LogRecord
     {
-        if ($this->security->getUser()) {
-            $record->extra['logged_user'] = $this->security->getUser()->getUserIdentifier();
+        $token = $this->tokenStorage->getToken();
+
+        if ($user = $token?->getUser()) {
+            $record->extra['logged_user'] = $user->getUserIdentifier();
         }
 
-        $token = $this->security->getToken();
         if ($token instanceof SwitchUserToken) {
             $impersonatorUser = $token->getOriginalToken()->getUser();
             $record->extra['impersonator_user'] = $impersonatorUser->getUserIdentifier();

@@ -30,15 +30,22 @@ class NginxConfigBagTest extends TestCase
 
     public function testMaxConnectionsUsesCpuCountWhenWorkerProcessesIsAuto(): void
     {
-        $bag = $this->makeBag(['worker_processes' => 'auto', 'worker_connections' => '1024']);
+        $bag = $this->makeBag(['worker_processes' => 'auto', 'worker_connections' => 1024]);
 
         $this->assertSame('auto', $bag->config->workerProcesses);
         $this->assertSame(4096, $bag->config->maxConnections);
     }
 
+    public function testMaxConnectionsIsNullWhenWorkerProcessesIsAutoAndCpuCountIsUnknown(): void
+    {
+        $bag = $this->makeBag(['worker_processes' => 'auto', 'worker_connections' => 1024], cpuCount: null);
+
+        $this->assertNull($bag->config->maxConnections);
+    }
+
     public function testMaxConnectionsWithExplicitWorkerProcesses(): void
     {
-        $bag = $this->makeBag(['worker_processes' => '2', 'worker_connections' => '768']);
+        $bag = $this->makeBag(['worker_processes' => '2', 'worker_connections' => 768]);
 
         $this->assertSame(2, $bag->config->workerProcesses);
         $this->assertSame(1536, $bag->config->maxConnections);

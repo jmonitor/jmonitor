@@ -17,7 +17,7 @@ readonly class LastConnectedAtListener
 
     public function __invoke(ResponseEvent $event): void
     {
-        if (!$event->isMainRequest()) {
+        if (!$event->isMainRequest() || !$event->getRequest()->hasPreviousSession()) {
             return;
         }
 

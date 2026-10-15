@@ -41,6 +41,14 @@ class DashboardController extends AbstractDashboardController
     }
 
     #[\Override]
+    public function configureCrud(): Crud
+    {
+        return parent::configureCrud()
+            ->setDefaultRowAction([Action::DETAIL, Action::EDIT])
+        ;
+    }
+
+    #[\Override]
     public function configureActions(): Actions
     {
         $actions = parent::configureActions();

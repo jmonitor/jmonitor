@@ -41,7 +41,7 @@ jobs:
                 run: php bin/console lint:twig templates
 
             -   name: Lint YAML config
-                run: php bin/console lint:yaml config
+                run: php bin/console lint:yaml config --parse-tags
 
             -   name: Lint service container
                 run: php bin/console lint:container

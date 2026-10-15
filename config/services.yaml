@@ -55,6 +55,15 @@ services:
         arguments:
             - '@http_client'
 
+    # Bounds metric writes so an unresponsive InfluxDB cannot stall the messenger worker.
+    app.influxdb_write_http_client:
+        class: Symfony\Component\HttpClient\Psr18Client
+        arguments:
+            - !service
+                class: Symfony\Contracts\HttpClient\HttpClientInterface
+                factory: ['@http_client', 'withOptions']
+                arguments: [{ max_duration: 10 }]
+
     # Monolog handler for prod error emails (referenced by config/packages/monolog.yaml).
     # The factory returns a NullHandler when ERROR_MAIL_TO is empty or absent (a self-hoster
     # who does not want error emails); errors then stay in error_log.

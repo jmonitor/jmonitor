@@ -42,20 +42,22 @@ class InfluxDb
         private readonly LoggerInterface $logger,
         private readonly ClientInterface $httpClient,
         private readonly PlanResolver $planResolver,
+        #[Autowire(service: 'app.influxdb_write_http_client')]
+        ClientInterface $writeHttpClient,
     ) {
-        $this->influxClient = new Client([
+        $options = [
             'url' => $url,
             'token' => $token,
             'debug' => false,
             'org' => $orgName,
             'httpClient' => $httpClient,
-            'timeout' => 5,
             'precision' => WritePrecision::S,
-        ]);
+        ];
+        $this->influxClient = new Client($options);
         $this->bucketSevice = $this->influxClient->createService(BucketsService::class);
-        $this->writeApi = $this->influxClient->createWriteApi([
+        $this->writeApi = new WriteApi(['httpClient' => $writeHttpClient] + $options, [
             'writeType' => WriteType::SYNCHRONOUS,
-            // 'batchSize'=> ''
+            'maxRetries' => 0,
         ]);
         $this->queryApi = $this->influxClient->createQueryApi();
     }

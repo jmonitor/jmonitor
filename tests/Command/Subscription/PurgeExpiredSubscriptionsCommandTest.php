@@ -36,6 +36,7 @@ class PurgeExpiredSubscriptionsCommandTest extends TestCase
             new NullLogger(),
             $this->createMock(ClientInterface::class),
             new PlanResolver(Edition::SELF_HOSTED),
+            $this->createMock(ClientInterface::class),
         );
 
         $command = new PurgeExpiredSubscriptionsCommand(

@@ -23,6 +23,10 @@ when@prod:
         # https://docs.sentry.io/platforms/php/guides/symfony/integrations/monolog/
         register_error_listener: true
         register_error_handler: true
+
+        # A message that will be retried is not an error yet: only report the final failure.
+        messenger:
+            capture_soft_fails: false
 #
     monolog:
         handlers:

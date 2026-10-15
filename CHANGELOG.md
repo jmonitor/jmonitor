@@ -18,6 +18,7 @@ to that edition only, everything else applies to both.
 
 - Metric cards no longer show a help icon that opens an empty panel.
 - The APCu Config card shows the number of memory segments APCu actually allocated.
+- Nginx metrics are no longer lost when the agent cannot read the Nginx configuration.
 
 ## [1.0.1] - 2026-08-18
 

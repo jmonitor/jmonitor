@@ -17,7 +17,6 @@ readonly class AppDatasProcessor implements ProcessorInterface
 {
     public function __construct(
         private RequestStack $requestStack,
-        /** Reading the token through the tracked storage would mark the session as used and the response private. */
         #[Autowire(service: 'security.untracked_token_storage')]
         private TokenStorageInterface $tokenStorage,
     ) {}

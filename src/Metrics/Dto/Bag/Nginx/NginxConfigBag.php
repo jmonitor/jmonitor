@@ -28,7 +28,7 @@ class NginxConfigBag extends Bag
     /**
      * In nginx.conf, `worker_processes` can be `auto` or an integer.
      */
-    public string|int $workerProcesses {
+    public string|int|null $workerProcesses {
         get => $this->get('worker_processes') === 'auto' ? 'auto' : $this->getInt('worker_processes');
     }
 
@@ -87,10 +87,8 @@ class NginxConfigBag extends Bag
 
     /**
      * Typically: "TLSv1.2 TLSv1.3" → list.
-     *
-     * @return string
      */
-    public string $sslProtocols {
+    public ?string $sslProtocols {
         get => $this->get('ssl_protocols');
     }
 

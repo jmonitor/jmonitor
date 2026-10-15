@@ -20,6 +20,12 @@ It comes in two editions: a self-hostable version, and a hosted service at [jmon
   </tr>
   <tr>
     <td colspan="3" align="center">
+      <a href="https://github.com/jmonitor/easyadmin-bundle">jmonitor/easyadmin-bundle</a><br>
+      Live monitoring pages inside EasyAdmin — no backend, no worker
+    </td>
+  </tr>
+  <tr>
+    <td colspan="3" align="center">
       <a href="https://jmonitor.io">Website and cloud edition</a> ·
       <a href="https://hub.docker.com/r/jmonitor/jmonitor">Docker Hub image for self-hosting</a>
     </td>

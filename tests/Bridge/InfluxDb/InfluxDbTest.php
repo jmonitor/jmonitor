@@ -8,6 +8,7 @@ use App\Bridge\InfluxDb\InfluxDb;
 use App\Plan\Edition;
 use App\Plan\PlanResolver;
 use GuzzleHttp\Psr7\Response;
+use InfluxDB2\ApiException;
 use InfluxDB2\Point;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Client\ClientInterface;
@@ -74,6 +75,20 @@ class InfluxDbTest extends TestCase
         $this->assertSame('POST', $request->getMethod());
         $this->assertStringStartsWith('http://influxdb:8086/api/v2/write?', (string) $request->getUri());
         $this->assertStringContainsString('bucket=bucket-id', (string) $request->getUri());
+    }
+
+    public function testWritePointsDoesNotRetryAFailedWrite(): void
+    {
+        $writeHttp = new RecordingHttpClient(new Response(503));
+        $influxDb = $this->createInfluxDb(orgId: 'abc123', httpClient: $writeHttp);
+
+        try {
+            $influxDb->writePoints([Point::measurement('cpu')->addField('load', 1)->time(1700000000)], 'bucket-id');
+            $this->fail('A failed write must throw.');
+        } catch (ApiException) {
+        }
+
+        $this->assertCount(1, $writeHttp->requests);
     }
 
     private function createInfluxDb(string $orgId, ClientInterface $httpClient, ?ClientInterface $writeHttpClient = null): InfluxDb

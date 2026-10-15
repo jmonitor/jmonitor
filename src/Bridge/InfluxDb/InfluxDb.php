@@ -57,6 +57,7 @@ class InfluxDb
         $this->bucketSevice = $this->influxClient->createService(BucketsService::class);
         $this->writeApi = new WriteApi(['httpClient' => $writeHttpClient] + $options, [
             'writeType' => WriteType::SYNCHRONOUS,
+            'maxRetries' => 0,
         ]);
         $this->queryApi = $this->influxClient->createQueryApi();
     }

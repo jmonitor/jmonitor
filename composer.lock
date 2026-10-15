@@ -1961,16 +1961,16 @@
         },
         {
             "name": "jmonitor/collector",
-            "version": "v2.2.0",
+            "version": "v2.2.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/jmonitor/collector.git",
-                "reference": "6044314c4d2be15785f60a27bd4e5d7ffb34e565"
+                "reference": "b3d4628454045dd445fff0e445533eb1d052dcf2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jmonitor/collector/zipball/6044314c4d2be15785f60a27bd4e5d7ffb34e565",
-                "reference": "6044314c4d2be15785f60a27bd4e5d7ffb34e565",
+                "url": "https://api.github.com/repos/jmonitor/collector/zipball/b3d4628454045dd445fff0e445533eb1d052dcf2",
+                "reference": "b3d4628454045dd445fff0e445533eb1d052dcf2",
                 "shasum": ""
             },
             "require": {
@@ -2038,9 +2038,9 @@
             ],
             "support": {
                 "issues": "https://github.com/jmonitor/collector/issues",
-                "source": "https://github.com/jmonitor/collector/tree/v2.2.0"
+                "source": "https://github.com/jmonitor/collector/tree/v2.2.3"
             },
-            "time": "2026-08-14T11:03:33+00:00"
+            "time": "2026-10-15T12:24:19+00:00"
         },
         {
             "name": "jmonitor/jmonitor-bundle",

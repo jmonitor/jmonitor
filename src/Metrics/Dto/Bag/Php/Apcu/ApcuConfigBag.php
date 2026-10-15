@@ -16,10 +16,6 @@ class ApcuConfigBag extends Bag
         get => $this->getIniParsedInt('apc.shm_size');
     }
 
-    public ?int $shmSegments {
-        get => $this->get('apc.shm_segments');
-    }
-
     public ?int $ttl {
         get => $this->get('apc.ttl');
     }

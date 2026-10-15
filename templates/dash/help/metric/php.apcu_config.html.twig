@@ -15,8 +15,8 @@
             <p>Total shared memory available for APCu. More memory allows storing more cached data.</p>
         </li>
         <li>
-            <twig:Html:Badge:Neutral class="fs-6">shm_segments</twig:Html:Badge:Neutral>
-            <p>Number of shared memory segments. Usually kept low; increasing it can help in some system setups.</p>
+            <twig:Html:Badge:Neutral class="fs-6">segments</twig:Html:Badge:Neutral>
+            <p>Number of shared memory segments APCu actually allocated. In practice always 1: it is not a setting to tune.</p>
         </li>
         <li>
             <twig:Html:Badge:Neutral class="fs-6">ttl</twig:Html:Badge:Neutral>

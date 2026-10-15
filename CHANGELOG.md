@@ -17,6 +17,7 @@ to that edition only, everything else applies to both.
 ### Fixed
 
 - Metric cards no longer show a help icon that opens an empty panel.
+- The APCu Config card shows the number of memory segments APCu actually allocated.
 
 ## [1.0.1] - 2026-08-18
 

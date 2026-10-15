@@ -168,7 +168,6 @@ class PhpGenerator implements DemoMetricGeneratorInterface
                 'apc.enabled' => true,
                 'apc.enable_cli' => false,
                 'apc.shm_size' => '32M',
-                'apc.shm_segments' => 1,
                 'apc.ttl' => 0,
             ],
             'cache_info' => [

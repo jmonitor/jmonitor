@@ -14,6 +14,10 @@ to that edition only, everything else applies to both.
 
 - Metric help pages can be opened without an account at `/help/metric/{metric}`.
 
+### Changed
+
+- Clicking a row in the admin panel lists opens its detail page instead of the edit form (self-hosted).
+
 ### Fixed
 
 - Metric cards no longer show a help icon that opens an empty panel.

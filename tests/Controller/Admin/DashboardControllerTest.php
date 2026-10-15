@@ -6,6 +6,7 @@ namespace App\Tests\Controller\Admin;
 
 use App\Controller\Admin\DashboardController;
 use App\Plan\Edition;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use PHPUnit\Framework\TestCase;
 
 class DashboardControllerTest extends TestCase
@@ -37,5 +38,12 @@ class DashboardControllerTest extends TestCase
         $this->assertNotContains('Subscriptions', $labels);
         $this->assertContains('Users', $labels);
         $this->assertContains('Projects', $labels);
+    }
+
+    public function testClickingARowOpensTheDetailPage(): void
+    {
+        $crud = new DashboardController('jmonitor.io', Edition::CLOUD)->configureCrud();
+
+        $this->assertSame([Action::DETAIL, Action::EDIT], $crud->getAsDto()->getDefaultRowAction());
     }
 }

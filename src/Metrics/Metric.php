@@ -317,7 +317,7 @@ enum Metric: string
             self::SymfonyFlex => 'Flex recipes',
             self::SymfonySchedulerNextTask => 'Next task',
             self::SymfonySchedulerTasks => 'Upcoming tasks',
-            self::RedisVersion => 'version',
+            self::RedisVersion => 'Version',
             self::RedisMode => 'Execution mode',
             self::RedisInformations => 'Redis informations',
             self::RedisRequestsPerSecond => 'Operations per second',

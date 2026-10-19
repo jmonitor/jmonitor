@@ -25,11 +25,10 @@ class MysqlInnoDbBufferPoolUsage implements GaugeMetricInterface
         $statusBag = $this->getMysqlStatusBag();
         $variablesBag = $this->getMysqlVariablesBag();
         $poolSize = $variablesBag?->innodbBufferPoolSize;
-        $bytesFree = $statusBag?->innodbBufferPoolBytesFree;
         $gauge
             ->setValue($statusBag?->getInnoDbBufferPoolUsage($poolSize), 0)
             ->setContext([
-                'innodbBufferPoolBytesUsed' => $poolSize !== null && $bytesFree !== null ? $poolSize - $bytesFree : null,
+                'innoDbBufferPoolBytesUsed' => $statusBag?->getInnoDbBufferPoolBytesUsed($poolSize),
                 'innoDbBufferPoolSize' => $poolSize,
                 'innoDbPagesUsedBytes' => $statusBag?->innoDbPagesUsedBytes,
                 'innoDbPagesTotalBytes' => $statusBag?->innoDbPagesTotalBytes,

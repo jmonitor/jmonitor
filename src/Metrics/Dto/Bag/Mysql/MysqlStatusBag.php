@@ -238,8 +238,9 @@ class MysqlStatusBag extends MetricBagDto
      */
     public function getInnoDbBufferPoolUsage(?int $innoDbBufferPoolSize = null): ?float
     {
-        if ($this->innodbBufferPoolBytesFree !== null && $innoDbBufferPoolSize > 0) {
-            return round(($innoDbBufferPoolSize - $this->innodbBufferPoolBytesFree) / $innoDbBufferPoolSize * 100, 2);
+        $bytesUsed = $this->getInnoDbBufferPoolBytesUsed($innoDbBufferPoolSize);
+        if ($bytesUsed !== null && $innoDbBufferPoolSize > 0) {
+            return round($bytesUsed / $innoDbBufferPoolSize * 100, 2);
         }
 
         if ($this->innoDbPagesUsedBytes !== null && $this->innoDbPagesTotalBytes > 0) {
@@ -247,5 +248,12 @@ class MysqlStatusBag extends MetricBagDto
         }
 
         return null;
+    }
+
+    public function getInnoDbBufferPoolBytesUsed(?int $innoDbBufferPoolSize): ?int
+    {
+        return $this->innodbBufferPoolBytesFree !== null && $innoDbBufferPoolSize !== null
+            ? $innoDbBufferPoolSize - $this->innodbBufferPoolBytesFree
+            : null;
     }
 }

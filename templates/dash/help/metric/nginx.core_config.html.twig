@@ -32,3 +32,7 @@
         </li>
     </ul>
 {% endblock %}
+
+{% block good_to_know %}
+    <p>These values come from <code>nginx -T</code>, run by the PHP user (often <code>www-data</code>). When the Nginx master process runs as root, this command usually fails on a permission error (on <code>/run/nginx.pid</code>, for instance), and the card shows "Configuration unavailable" instead.</p>
+{% endblock %}

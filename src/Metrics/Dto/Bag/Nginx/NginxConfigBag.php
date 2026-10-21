@@ -17,6 +17,17 @@ class NginxConfigBag extends Bag
         $this->nginxBag = $nginxBag;
     }
 
+    /**
+     * False when `nginx -T` gave nothing to parse, usually because the PHP user may not run it.
+     */
+    public bool $collected {
+        get => array_any($this->parameters, static fn(mixed $value): bool => $value !== null && $value !== []);
+    }
+
+    public ?string $unavailableReason {
+        get => $this->collected ? null : 'Configuration unavailable: nginx -T returned nothing to the PHP user.';
+    }
+
     public ?string $configPath {
         get => $this->get('config_path');
     }
@@ -36,7 +47,7 @@ class NginxConfigBag extends Bag
      * @return string[]
      */
     public array $include {
-        get => $this->all('include');
+        get => array_values(array_unique($this->all('include')));
     }
 
     public ?int $workerConnections {

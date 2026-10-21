@@ -18,15 +18,7 @@
 
     <hr>
     <twig:InfoLine label="ssl_protocols " value="{{ bag.config.sslProtocols }}" />
-    <twig:InfoLine label="ssl_prefer_server_ciphers">
-        {% if bag.config.sslPreferServerCiphers !== null %}
-            {% if bag.config.sslPreferServerCiphers === 'on' %}
-                <twig:Html:Badge:Green>on</twig:Html:Badge:Green>
-            {% else %}
-                <twig:Html:Badge:Red>off</twig:Html:Badge:Red>
-            {% endif %}
-        {% endif %}
-    </twig:InfoLine>
+    <twig:InfoLine label="ssl_prefer_server_ciphers" value="{{ bag.config.sslPreferServerCiphers }}" />
     <twig:InfoLine label="server_tokens">
         {% if bag.config.serverTokens !== null %}
             {% if bag.config.serverTokenEnabled %}

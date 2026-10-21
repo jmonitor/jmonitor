@@ -36,4 +36,17 @@ class NginxConsumerTest extends TestCase
     {
         return MetricBagDto::create($project, Consumer::NGINX, 1, ['status' => ['requests' => $requests]], $receivedAt, false);
     }
+
+    public function testInfluxPointCarriesRefusedConnections(): void
+    {
+        $consumer = new NginxConsumer(new DeltaCalculator(new ArrayAdapter()));
+        $bag = MetricBagDto::create($this->createMock(Project::class), Consumer::NGINX, 1, ['status' => ['accepts' => 1000, 'handled' => 993]], new \DateTimeImmutable(), false);
+
+        $this->assertInstanceOf(NginxBag::class, $bag);
+
+        $points = $consumer->getInfluxPoints($bag);
+
+        $this->assertCount(1, $points);
+        $this->assertStringContainsString('refused=7i', $points[0]->toLineProtocol());
+    }
 }

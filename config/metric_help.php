@@ -473,11 +473,12 @@ return [
             'Every refused connection is a lost customer or a failed service. This value should ideally always be zero. If it grows, your server is officially saturated and failing to fulfill its role.',
         ],
         'how_to_read' => [
-            'Any value above zero is an emergency. It means your current traffic exceeds your server\'s configured capacity.',
+            'The count runs since Nginx started. The badge turns red only when it grew over the selected period, which means your current traffic exceeds your server\'s configured capacity.',
+            'A count that did not move over the period comes from an older peak: it stays in the total until Nginx restarts, without being an emergency.',
         ],
         'actions' => [
             [
-                'case' => 'If refused connections are > 0',
+                'case' => 'If refused connections grew over the period',
                 'actions' => [
                     'Immediately increase "worker_connections" in your Nginx config. Also, check the Linux "backlog" settings (net.core.somaxconn) and "ulimit" to ensure the OS isn\'t the one blocking Nginx.',
                 ],

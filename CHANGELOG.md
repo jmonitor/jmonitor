@@ -18,6 +18,8 @@ to that edition only, everything else applies to both.
 ### Changed
 
 - The Apache "Busy process" gauge is now called "Busy slots".
+- Nginx cards say when the Nginx configuration could not be read.
+- Nginx refused connections turn red only when they grew over the selected period.
 
 ### Fixed
 
@@ -29,6 +31,8 @@ to that edition only, everything else applies to both.
 - The InnoDB buffer pool usage card shows used memory on MariaDB.
 - The Redis version card title is capitalized.
 - Nginx "Requests per second" and Redis "Operations per second" alerts now trigger.
+- Nginx "ssl_prefer_server_ciphers off" is no longer shown as an error.
+- The Nginx include list shows each file once.
 
 ## [1.0.1] - 2026-08-18
 

@@ -22,7 +22,11 @@ class NginxProcessesConfig implements BasicMetricInterface
 
     public function configureBasicDto(BasicDto $dto, array $options = []): void
     {
+        $config = $this->getNginxBag()?->config;
+
         $dto
+            ->setValueAvailable($config->collected ?? false)
+            ->setEmptyDataReason($config?->unavailableReason)
             ->setValue($this->getNginxBag())
         ;
     }

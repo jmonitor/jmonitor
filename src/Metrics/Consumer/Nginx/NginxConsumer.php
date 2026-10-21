@@ -62,6 +62,7 @@ class NginxConsumer implements ConsumerInterface
             'requests' => $status->httpRequests,
             'waiting' => $status->waitingConnections,
             'active_rate' => $status->activeConnectionsPercent,
+            'refused' => $status->refusedRequests,
         ], fn($v): bool => $v !== null);
 
         if (!$datas) {

@@ -26,6 +26,16 @@ class NginxActiveConnections implements GaugeMetricInterface, TimeSeriesMetricIn
 
     public function configureGauge(GaugeDto $gauge, array $options = []): void
     {
+        $config = $this->getNginxBag()?->config;
+
+        if ($config?->unavailableReason !== null) {
+            $gauge
+                ->setValueAvailable(false)
+                ->setEmptyDataReason($config->unavailableReason);
+
+            return;
+        }
+
         $gauge
             ->setValue($this->getNginxBag()?->status->activeConnectionsPercent, 1)
         ;

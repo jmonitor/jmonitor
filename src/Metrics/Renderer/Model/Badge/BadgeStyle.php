@@ -18,7 +18,7 @@ enum BadgeStyle: string
     {
         return match ($this) {
             self::SUCCESS => 'material-symbols:check-circle-outline',
-            self::WARNING => 'flowbite:exclamation-circle-outline', //'bi:exclamation-circle',
+            self::WARNING => 'flowbite:exclamation-circle-outline',
             self::DANGER => 'material-symbols:x-circle-outline',
             self::INFO => null,
             default => null,

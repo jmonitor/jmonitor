@@ -35,9 +35,14 @@ class RedisConsumer implements ConsumerInterface
             return $bag;
         }
 
+        $opsPerSec = $delta->getPerSec('stats.total_commands_processed');
+
+        if ($opsPerSec === null) {
+            return $bag;
+        }
+
         $data = $bag->all();
-        $data['stats'] ??= [];
-        $data['stats']['ops_per_sec'] = $delta->getPerSec('stats.total_commands_processed');
+        $data['stats']['ops_per_sec'] = $opsPerSec;
 
         return $bag->withMetrics($data);
     }

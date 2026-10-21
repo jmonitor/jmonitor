@@ -33,9 +33,14 @@ class NginxConsumer implements ConsumerInterface
             return $bag;
         }
 
+        $requestsPerSecond = $delta->getPerSec('status.requests');
+
+        if ($requestsPerSecond === null) {
+            return $bag;
+        }
+
         $datas = $bag->all();
-        $datas['status'] ??= [];
-        $datas['status']['requests_per_second'] = $delta->getPerSec('status.requests');
+        $datas['status']['requests_per_second'] = $requestsPerSecond;
 
         return $bag->withMetrics($datas);
     }

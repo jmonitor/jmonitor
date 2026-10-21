@@ -22,7 +22,8 @@ class NginxConsumerTest extends TestCase
         $project->method('getId')->willReturn(1);
         $start = new \DateTimeImmutable('2026-10-21 10:00:00');
 
-        $consumer->normalizeBag($this->bag(1000, $project, $start));
+        $first = $consumer->normalizeBag($this->bag(1000, $project, $start));
+        $this->assertArrayNotHasKey('requests_per_second', $first->all('status'));
         $deltaCalculator->reset();
 
         $bag = $consumer->normalizeBag($this->bag(1030, $project, $start->modify('+15 seconds')));

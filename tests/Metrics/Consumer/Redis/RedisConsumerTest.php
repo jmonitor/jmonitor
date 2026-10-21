@@ -23,7 +23,8 @@ class RedisConsumerTest extends TestCase
         $project->method('getId')->willReturn(1);
         $start = new \DateTimeImmutable('2026-10-21 10:00:00');
 
-        $consumer->normalizeBag($this->bag(5000, $project, $start));
+        $first = $consumer->normalizeBag($this->bag(5000, $project, $start));
+        $this->assertArrayNotHasKey('ops_per_sec', $first->all('stats'));
         $deltaCalculator->reset();
 
         $bag = $consumer->normalizeBag($this->bag(5300, $project, $start->modify('+15 seconds')));

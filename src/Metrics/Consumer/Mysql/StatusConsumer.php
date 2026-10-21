@@ -54,16 +54,9 @@ class StatusConsumer implements ConsumerInterface
         return $bag->withParameters($data);
     }
 
-    /**
-     * @param MysqlStatusBag $bag
-     */
     public function getMetricsToCache(MetricBagDto $bag): array
     {
-        $data = $bag->all();
-
-        $data['questions_per_second'] = $this->deltaCalculator->getDelta($bag)?->getPerSec('Questions');
-
-        return $data;
+        return $bag->all();
     }
 
     /**

@@ -27,18 +27,22 @@ class NginxConsumer implements ConsumerInterface
 
     public function normalizeBag(MetricBagDto $bag): MetricBagDto
     {
-        return $bag;
+        $delta = $this->deltaCalculator->getDelta($bag);
+
+        if (!$delta) {
+            return $bag;
+        }
+
+        $datas = $bag->all();
+        $datas['status'] ??= [];
+        $datas['status']['requests_per_second'] = $delta->getPerSec('status.requests');
+
+        return $bag->withMetrics($datas);
     }
 
     public function getMetricsToCache(MetricBagDto $bag): array
     {
-        $delta = $this->deltaCalculator->getDelta($bag);
-
-        $datas = $bag->all();
-        $datas['status'] ??= [];
-        $datas['status']['requests_per_second'] = $delta?->getPerSec('status.requests');
-
-        return $datas;
+        return $bag->all();
     }
 
     /**

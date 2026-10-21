@@ -29,18 +29,22 @@ class RedisConsumer implements ConsumerInterface
 
     public function normalizeBag(MetricBagDto $bag): MetricBagDto
     {
-        return $bag;
+        $delta = $this->deltaCalculator->getDelta($bag);
+
+        if (!$delta) {
+            return $bag;
+        }
+
+        $data = $bag->all();
+        $data['stats'] ??= [];
+        $data['stats']['ops_per_sec'] = $delta->getPerSec('stats.total_commands_processed');
+
+        return $bag->withMetrics($data);
     }
 
     public function getMetricsToCache(MetricBagDto $bag): array
     {
-        $delta = $this->deltaCalculator->getDelta($bag);
-
-        $data = $bag->all();
-        $data['stats'] ??= [];
-        $data['stats']['ops_per_sec'] = $delta?->getPerSec('stats.total_commands_processed');
-
-        return $data;
+        return $bag->all();
     }
 
     /**

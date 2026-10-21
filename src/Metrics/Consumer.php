@@ -74,6 +74,16 @@ readonly class Consumer
             /** @var ConsumerInterface $consumer */
             $consumer = $this->consumers->get($consumerEnum->value);
 
+            if ($input['version'] > $consumerEnum->latestVersion()) {
+                $this->logger->error('Unsupported consumer version', [
+                    'consumer' => $consumerEnum->value,
+                    'version' => $input['version'],
+                    'project' => $project->getId(),
+                ]);
+
+                continue;
+            }
+
             // metrics disabled in the project's settings
             if (!$project->hasComponent($consumerEnum->getComponent())) {
                 continue;
@@ -148,8 +158,10 @@ readonly class Consumer
         return new Assert\Collection(
             fields: [
                 'version' => new Assert\Required(
-                    // all collectors are at version 1 for now
-                    constraints: new Assert\IdenticalTo(1),
+                    constraints: [
+                        new Assert\Type('int'),
+                        new Assert\Positive(),
+                    ],
                 ),
                 'metrics' => new Assert\Optional(
                     constraints: new Assert\Type('array'),

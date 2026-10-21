@@ -105,24 +105,24 @@ return [
                 60,
                 BadgeStyle::SUCCESS,
                 'Stable',
-                'Apache is using a normal number of processes. The server has enough capacity to handle incoming requests.',
+                'Apache has plenty of free slots. The server has enough capacity to handle incoming requests.',
             ],
             [
                 60,
                 85,
                 BadgeStyle::WARNING,
                 'Under Pressure',
-                'A high number of Apache processes are active. Resource usage is increasing and should be monitored.',
+                'Most of Apache\'s capacity is in use. Resource usage is increasing and should be monitored.',
             ],
             [
                 85,
                 100,
                 BadgeStyle::DANGER,
                 'Overloaded',
-                'Most Apache processes are busy. The server may struggle to accept new connections.',
+                'Apache is close to its MaxRequestWorkers limit. The server may struggle to accept new connections.',
             ],
         ],
-        'note' => 'High process usage often correlates with high traffic or slow request processing.',
+        'note' => 'High slot usage often correlates with high traffic or slow request processing.',
     ],
     Metric::PhpOpcacheMemory->value => [
         'ranges' => [

@@ -50,6 +50,11 @@ class ApacheBag extends MetricBagDto
         get => $this->getFloat('real_bytes_per_second');
     }
 
+    // ms, computed from the "total_duration" and "total_accesses" deltas
+    public ?float $realDurationPerRequest {
+        get => $this->getFloat('real_duration_per_request');
+    }
+
     // raw mod_status counter since the last restart, not displayed: the delta-based real* values above are used instead
     public ?int $totalAccesses {
         get => $this->get('total_accesses');
@@ -61,8 +66,8 @@ class ApacheBag extends MetricBagDto
     }
 
     // since restart, not displayed
-    public ?int $requestsPerSecond {
-        get => $this->get('requests_per_second');
+    public ?float $requestsPerSecond {
+        get => $this->getFloat('requests_per_second');
     }
 
     // since restart, not displayed
@@ -75,9 +80,14 @@ class ApacheBag extends MetricBagDto
         get => $this->get('bytes_per_request');
     }
 
-    // since restart, not displayed
-    public ?int $durationPerRequest {
-        get => $this->get('duration_per_request');
+    // ms, since restart, not displayed
+    public ?float $durationPerRequest {
+        get => $this->getFloat('duration_per_request');
+    }
+
+    // ms, since restart, not displayed
+    public ?int $totalDuration {
+        get => $this->get('total_duration');
     }
 
     public private(set) WorkersBag $workers {

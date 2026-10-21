@@ -51,6 +51,34 @@ class ConsumerTest extends TestCase
         yield 'no version' => [['name' => 'php', 'metrics' => [], 'duration' => 0.1]];
         yield 'unknown name' => [['name' => 'nope', 'version' => 1, 'metrics' => []]];
         yield 'unknown field' => [['name' => 'php', 'version' => 1, 'nope' => true]];
+        yield 'version zero' => [['name' => 'php', 'version' => 0, 'metrics' => []]];
+        yield 'version as string' => [['name' => 'php', 'version' => '1', 'metrics' => []]];
+    }
+
+    public function testVersionNewerThanTheConsumerIsSkipped(): void
+    {
+        $logger = $this->createMock(LoggerInterface::class);
+        $logger->expects($this->once())->method('error')->with('Unsupported consumer version');
+
+        $dispatchedEvent = null;
+        $consumer = $this->createConsumer($logger, $dispatchedEvent);
+
+        $consumer->consume([['name' => 'php', 'version' => 2, 'metrics' => []]], $this->createProject(), new \DateTimeImmutable(), '2.2.0');
+
+        $this->assertSame([], $dispatchedEvent?->metricBags);
+    }
+
+    public function testLatestConsumerVersionIsConsumed(): void
+    {
+        $logger = $this->createMock(LoggerInterface::class);
+        $logger->expects($this->never())->method('error');
+
+        $dispatchedEvent = null;
+        $consumer = $this->createConsumer($logger, $dispatchedEvent);
+
+        $consumer->consume([['name' => 'apache', 'version' => 2, 'metrics' => []]], $this->createProject(), new \DateTimeImmutable(), '2.2.0');
+
+        $this->assertSame(2, $dispatchedEvent?->metricBags[ConsumerEnum::APACHE->value]->getVersion());
     }
 
     /**
@@ -81,6 +109,7 @@ class ConsumerTest extends TestCase
     {
         $project = new Project();
         $project->addComponent(Component::PHP);
+        $project->addComponent(Component::Apache);
 
         return $project;
     }
@@ -95,7 +124,10 @@ class ConsumerTest extends TestCase
         });
 
         return new Consumer(
-            new ServiceLocator([ConsumerEnum::PHP->value => fn(): ConsumerInterface => $this->createPhpConsumer()]),
+            new ServiceLocator([
+                ConsumerEnum::PHP->value => fn(): ConsumerInterface => $this->createNoopConsumer(),
+                ConsumerEnum::APACHE->value => fn(): ConsumerInterface => $this->createNoopConsumer(),
+            ]),
             $logger,
             $this->createMock(InfluxDb::class),
             $this->createMock(MetricsBagProvider::class),
@@ -107,7 +139,7 @@ class ConsumerTest extends TestCase
         );
     }
 
-    private function createPhpConsumer(): ConsumerInterface
+    private function createNoopConsumer(): ConsumerInterface
     {
         return new class implements ConsumerInterface {
             public function normalizeBag(MetricBagDto $bag): MetricBagDto

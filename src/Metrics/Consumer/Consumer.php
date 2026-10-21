@@ -54,6 +54,17 @@ enum Consumer: string
         return array_map(fn(self $consumer) => $consumer->value, self::cases());
     }
 
+    /**
+     * Newest payload version the consumer validates, a newer one would be checked against older constraints.
+     */
+    public function latestVersion(): int
+    {
+        return match ($this) {
+            self::APACHE => 2,
+            default => 1,
+        };
+    }
+
     public function getCacheKey(Project $project): string
     {
         // the bucketId is used in the cache key rather than e.g. the project id:

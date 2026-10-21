@@ -130,7 +130,7 @@ enum AlertMetric: string
             # Apache
             self::ApacheVersion => 'Version',
             self::ApacheBusyWorkers => 'Busy workers',
-            self::ApacheBusyProcess => 'Busy process',
+            self::ApacheBusyProcess => 'Busy slots',
             self::ApacheReqPerSec => 'Requests per second',
             self::ApacheOutgoingBytes => 'Outgoing traffic',
 

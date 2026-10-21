@@ -119,6 +119,7 @@ automatically. A pre-commit hook running these checks is installed automatically
 - Constructor-based dependency injection; `readonly` classes for immutable services
 - PHP attributes for routes, entities and handlers (no YAML/XML annotations)
 - Enums for fixed value sets; strategy pattern via autowired iterators
+- Icons are committed in `assets/icons/` and never fetched at runtime: add a new one with `php bin/console ux:icons:import prefix:name`
 - Code and comments in English
 
 ## Pull requests

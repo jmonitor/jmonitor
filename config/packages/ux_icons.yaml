@@ -11,6 +11,9 @@ ux_icons:
         height: '1em'
         width: '1em'
 
+    iconify:
+        on_demand: false
+
     # Throw an exception if an icon is not
     ignore_not_found: false
 

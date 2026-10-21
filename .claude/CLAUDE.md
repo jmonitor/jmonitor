@@ -142,6 +142,9 @@ A public, read-only demo account (`demo@jmonitor.io` / `demo`, project `"Demo pr
 - **Fonts are served locally, never from a CDN** — woff2 files in `assets/fonts/` (+ their OFL
   licences), `@font-face` in `assets/css/_fonts.css`. Self-hosted instances on a private network
   must not depend on Google Fonts. `_fonts.css` documents how to refresh the files.
+- **Icons are local too** — Symfony UX Icons with `iconify.on_demand: false`: every icon lives in
+  `assets/icons/`, a new one is added with `ux:icons:import prefix:name` (names built in PHP, e.g.
+  `Component::icon()`, are not picked up by `ux:icons:lock`).
 
 **JavaScript:**
 - **Stimulus 3.2.2**

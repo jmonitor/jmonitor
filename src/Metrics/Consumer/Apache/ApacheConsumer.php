@@ -33,23 +33,31 @@ class ApacheConsumer implements ConsumerInterface
 
     public function normalizeBag(MetricBagDto $bag): MetricBagDto
     {
-        return $bag;
-    }
-
-    /**
-     * @param ApacheBag $bag
-     */
-    public function getMetricsToCache(MetricBagDto $bag): array
-    {
-        // add some per-second metrics computed by ourselves,
+        // add some per-interval metrics computed by ourselves,
         // because the ones provided by Apache are averages since its last restart, which makes them useless
         $deltas = $this->deltaCalculator->getDelta($bag);
 
-        $data = $bag->all();
-        $data['real_requests_per_second'] = $deltas?->getPerSec('total_accesses');
-        $data['real_bytes_per_second'] = $deltas?->getPerSec('total_bytes');
+        if (!$deltas) {
+            return $bag;
+        }
 
-        return $data;
+        $data = $bag->all();
+        $data['real_requests_per_second'] = $deltas->getPerSec('total_accesses');
+        $data['real_bytes_per_second'] = $deltas->getPerSec('total_bytes');
+
+        $accessesDelta = $deltas->getValue('total_accesses');
+        $durationDelta = $deltas->getValue('total_duration');
+
+        if ($accessesDelta > 0 && $durationDelta !== null) {
+            $data['real_duration_per_request'] = round($durationDelta / $accessesDelta, 2);
+        }
+
+        return $bag->withMetrics($data);
+    }
+
+    public function getMetricsToCache(MetricBagDto $bag): array
+    {
+        return $bag->all();
     }
 
     /**
@@ -65,6 +73,7 @@ class ApacheConsumer implements ConsumerInterface
             'workers_total' => $bag->workers->total,
             'total_accesses' => $bag->totalAccesses,
             'total_bytes' => $bag->totalBytes,
+            'real_duration_per_request' => $bag->realDurationPerRequest,
         ], fn($v): bool => $v !== null);
 
         if (!$datas) {
@@ -85,49 +94,56 @@ class ApacheConsumer implements ConsumerInterface
      */
     public function getConstraints(int $version): Constraint|array
     {
-        return new Collection(
-            fields: [
-                'server_version' => [new Type('string'), new Length(max: 100)],
-                'server_mpm' => [new Type('string'), new Length(max: 32)],
-                'uptime' => [new Type('int'), new GreaterThanOrEqual(0)],
-                'load1' => new Type(type: ['float', 'int']),
-                'load5' => new Type(type: ['float', 'int']),
-                'load15' => new Type(type: ['float', 'int']),
-                'total_accesses' => [new Type('int'), new GreaterThanOrEqual(0)],
-                'total_bytes' => [new Type('int'), new GreaterThanOrEqual(0)],
-                'requests_per_second' => [new Type('int'), new GreaterThanOrEqual(0)],
-                'bytes_per_second' => [new Type('int'), new GreaterThanOrEqual(0)],
-                'bytes_per_request' => [new Type('int'), new GreaterThanOrEqual(0)],
-                'duration_per_request' => [new Type('int'), new GreaterThanOrEqual(0)],
-                'workers' => new Collection(
-                    fields: [
-                        'busy' => [new Type('int'), new GreaterThanOrEqual(0)],
-                        'idle' => [new Type('int'), new GreaterThanOrEqual(0)],
-                    ],
-                ),
-                'scoreboard' => new Collection(
-                    fields: [
-                        '_' => [new Type('int'), new GreaterThanOrEqual(0)],
-                        'W' => [new Type('int'), new GreaterThanOrEqual(0)],
-                        'S' => [new Type('int'), new GreaterThanOrEqual(0)],
-                        'R' => [new Type('int'), new GreaterThanOrEqual(0)],
-                        'K' => [new Type('int'), new GreaterThanOrEqual(0)],
-                        'D' => [new Type('int'), new GreaterThanOrEqual(0)],
-                        'C' => [new Type('int'), new GreaterThanOrEqual(0)],
-                        'L' => [new Type('int'), new GreaterThanOrEqual(0)],
-                        'G' => [new Type('int'), new GreaterThanOrEqual(0)],
-                        'I' => [new Type('int'), new GreaterThanOrEqual(0)],
-                        '.' => [new Type('int'), new GreaterThanOrEqual(0)],
-                    ],
-                    allowMissingFields: true,
-                ),
-                // list of enabled modules
-                'modules' => [
-                    new Type('array'),
-                    new Assert\All([new Type('string'), new Length(max: 128)]),
+        // v2 sends the mod_status averages unrounded
+        $averageType = $version >= 2 ? ['int', 'float'] : 'int';
+
+        $fields = [
+            'server_version' => [new Type('string'), new Length(max: 100)],
+            'server_mpm' => [new Type('string'), new Length(max: 32)],
+            'uptime' => [new Type('int'), new GreaterThanOrEqual(0)],
+            'load1' => new Type(type: ['float', 'int']),
+            'load5' => new Type(type: ['float', 'int']),
+            'load15' => new Type(type: ['float', 'int']),
+            'total_accesses' => [new Type('int'), new GreaterThanOrEqual(0)],
+            'total_bytes' => [new Type('int'), new GreaterThanOrEqual(0)],
+            'requests_per_second' => [new Type($averageType), new GreaterThanOrEqual(0)],
+            'bytes_per_second' => [new Type('int'), new GreaterThanOrEqual(0)],
+            'bytes_per_request' => [new Type('int'), new GreaterThanOrEqual(0)],
+            'duration_per_request' => [new Type($averageType), new GreaterThanOrEqual(0)],
+            'workers' => new Collection(
+                fields: [
+                    'busy' => [new Type('int'), new GreaterThanOrEqual(0)],
+                    'idle' => [new Type('int'), new GreaterThanOrEqual(0)],
                 ],
+            ),
+            'scoreboard' => new Collection(
+                fields: [
+                    '_' => [new Type('int'), new GreaterThanOrEqual(0)],
+                    'W' => [new Type('int'), new GreaterThanOrEqual(0)],
+                    'S' => [new Type('int'), new GreaterThanOrEqual(0)],
+                    'R' => [new Type('int'), new GreaterThanOrEqual(0)],
+                    'K' => [new Type('int'), new GreaterThanOrEqual(0)],
+                    'D' => [new Type('int'), new GreaterThanOrEqual(0)],
+                    'C' => [new Type('int'), new GreaterThanOrEqual(0)],
+                    'L' => [new Type('int'), new GreaterThanOrEqual(0)],
+                    'G' => [new Type('int'), new GreaterThanOrEqual(0)],
+                    'I' => [new Type('int'), new GreaterThanOrEqual(0)],
+                    '.' => [new Type('int'), new GreaterThanOrEqual(0)],
+                ],
+                allowMissingFields: true,
+            ),
+            // list of enabled modules
+            'modules' => [
+                new Type('array'),
+                new Assert\All([new Type('string'), new Length(max: 128)]),
             ],
-            allowMissingFields: true,
-        );
+        ];
+
+        if ($version >= 2) {
+            // ms, missing on Apache versions that do not print "Total Duration"
+            $fields['total_duration'] = [new Type('int'), new GreaterThanOrEqual(0)];
+        }
+
+        return new Collection(fields: $fields, allowMissingFields: true);
     }
 }

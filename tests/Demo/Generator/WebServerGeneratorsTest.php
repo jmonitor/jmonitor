@@ -11,6 +11,7 @@ use App\Demo\Generator\NginxGenerator;
 use App\Demo\State\DemoState;
 use App\Metrics\Consumer\Apache\ApacheConsumer;
 use App\Metrics\Consumer\Caddy\CaddyConsumer;
+use App\Metrics\Consumer\Consumer;
 use App\Metrics\Consumer\FrankenPhp\FrankenPhpConsumer;
 use App\Metrics\Consumer\Nginx\NginxConsumer;
 use App\Metrics\DeltaCalculator;
@@ -33,15 +34,27 @@ class WebServerGeneratorsTest extends TestCase
     {
         $this->assertValid(
             (new ApacheGenerator())->generate($this->state),
-            (new ApacheConsumer($this->createMock(DeltaCalculator::class)))->getConstraints(1),
+            (new ApacheConsumer($this->createMock(DeltaCalculator::class)))->getConstraints(Consumer::APACHE->latestVersion()),
         );
+    }
+
+    public function testApacheDurationFollowsAccesses(): void
+    {
+        $generator = new ApacheGenerator();
+        $first = $generator->generate($this->state);
+        $second = $generator->generate($this->state);
+
+        $averageMs = ($second['total_duration'] - $first['total_duration']) / ($second['total_accesses'] - $first['total_accesses']);
+
+        $this->assertGreaterThanOrEqual(20, $averageMs);
+        $this->assertLessThanOrEqual(400, $averageMs);
     }
 
     public function testNginx(): void
     {
         $this->assertValid(
             (new NginxGenerator())->generate($this->state),
-            (new NginxConsumer($this->createMock(DeltaCalculator::class)))->getConstraints(1),
+            (new NginxConsumer($this->createMock(DeltaCalculator::class)))->getConstraints(Consumer::NGINX->latestVersion()),
         );
     }
 
@@ -49,7 +62,7 @@ class WebServerGeneratorsTest extends TestCase
     {
         $this->assertValid(
             (new CaddyGenerator())->generate($this->state),
-            (new CaddyConsumer($this->createMock(DeltaCalculator::class)))->getConstraints(1),
+            (new CaddyConsumer($this->createMock(DeltaCalculator::class)))->getConstraints(Consumer::CADDY->latestVersion()),
         );
     }
 
@@ -60,7 +73,7 @@ class WebServerGeneratorsTest extends TestCase
             (new FrankenPhpConsumer(
                 $this->createMock(DeltaCalculator::class),
                 new PlanResolver(Edition::CLOUD),
-            ))->getConstraints(1),
+            ))->getConstraints(Consumer::FRANKENPHP->latestVersion()),
         );
     }
 

@@ -36,6 +36,17 @@ class DemoBatchBuilderTest extends TestCase
         $this->assertGreaterThan(0.0, $batch[0]['duration']);
     }
 
+    public function testSendsTheLatestPayloadVersionOfEachConsumer(): void
+    {
+        $project = $this->createMock(Project::class);
+        $project->method('hasComponent')->willReturn(true);
+
+        $builder = new DemoBatchBuilder([$this->makeGenerator(Consumer::SYSTEM, []), $this->makeGenerator(Consumer::APACHE, [])]);
+        $batch = $builder->build($project, new DemoState(new ArrayAdapter()));
+
+        $this->assertSame([1, 2], array_column($batch, 'version'));
+    }
+
     private function makeGenerator(Consumer $consumer, array $metrics): DemoMetricGeneratorInterface
     {
         $gen = $this->createMock(DemoMetricGeneratorInterface::class);

@@ -20,6 +20,7 @@ enum Metric: string
     case ApacheBusyProcess = 'apache.busy_process';
     case ApacheReqPerSec = 'apache.req_per_sec';
     case ApacheBytesPerSec = 'apache.bytes_per_sec';
+    case ApacheRequestDuration = 'apache.request_duration';
     case ApacheInformations = 'apache.informations';
     case PostgresVersion = 'postgres.version';
     case PostgresCapacity = 'postgres.capacity';
@@ -147,6 +148,7 @@ enum Metric: string
             self::ApacheBusyProcess => Renderer::Gauge,
             self::ApacheReqPerSec => Renderer::Line,
             self::ApacheBytesPerSec => Renderer::Line,
+            self::ApacheRequestDuration => Renderer::Line,
             self::MysqlConnectionsUsage => Renderer::Gauge,
             self::MysqlQueriesPerSecond => Renderer::Line,
             self::MysqlThreadsConnected => Renderer::Line,
@@ -243,9 +245,10 @@ enum Metric: string
             self::ApacheUptime => 'Uptime',
             self::ApacheLoadAverage => 'Load average',
             self::ApacheBusyWorkers => 'Busy workers',
-            self::ApacheBusyProcess => 'Busy process',
+            self::ApacheBusyProcess => 'Busy slots',
             self::ApacheReqPerSec => 'Requests per second',
             self::ApacheBytesPerSec => 'Outgoing traffic',
+            self::ApacheRequestDuration => 'Avg request duration',
             self::ApacheInformations => 'Apache informations',
             self::PostgresVersion => 'Version',
             self::PostgresCapacity => 'Shared buffers',

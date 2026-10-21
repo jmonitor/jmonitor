@@ -137,7 +137,7 @@ return [
     ],
     Metric::ApacheBusyWorkers->value => [
         'definitions' => [
-            'Busy workers represent the specific execution slots (threads) that are actively processing a request at this exact moment.',
+            'Busy workers represent the specific execution slots (processes in prefork, threads in event and worker) that are actively processing a request at this exact moment.',
             'Difference between worker and process: A worker is an individual execution unit (thread) that handles a request, while a process is the memory-allocated container that can host multiple workers.',
         ],
         'why_it_matters' => [
@@ -145,6 +145,7 @@ return [
         ],
         'how_to_read' => [
             'A high number is normal during traffic peaks. However, if it stays flat at your maximum configured limit, you have a bottleneck.',
+            'The percentage is measured against the workers Apache has already started, not against its maximum: Apache starts more of them as traffic grows. A high value means the spare workers are used up; "Busy slots" shows how close Apache is to its MaxRequestWorkers limit.',
         ],
         'actions' => [
             [
@@ -162,35 +163,38 @@ return [
         ],
         'good_to_know' => [
             'Think of workers as checkout lanes in a supermarket: if all lanes are busy, a queue forms outside. Adding more lanes (workers) helps, but only if the "cashiers" (CPU/RAM) can keep up.',
+            'The request reading the status page counts as one busy worker. On a quiet prefork server with few spare processes, it alone is a visible share of the gauge.',
         ],
     ],
     Metric::ApacheBusyProcess->value => [
         'definitions' => [
-            'Busy processes represent the number of Apache instances currently processing requests.',
-            'Difference between worker and process: A worker is an individual execution unit (thread) that handles a request, while a process is the memory-allocated container that can host multiple workers.',
+            'Busy slots measures the share of Apache\'s request capacity (MaxRequestWorkers) currently in use: every slot serving a request or holding a connection.',
+            'A slot is a process in the prefork MPM and a thread in the event and worker MPMs. Open slots are capacity Apache has not started yet: they count as free.',
         ],
         'why_it_matters' => [
-            'If this number reaches your "ServerLimit" setting, Apache will reject or queue new incoming connections, making your site appear down.',
+            'When every slot is busy, Apache stops accepting new connections: visitors wait until a slot frees up, or time out, making your site appear down.',
         ],
         'how_to_read' => [
-            'Compare this to your ServerLimit. It helps monitor the balance between capacity and memory usage.',
+            'This is the gauge to watch for saturation: it shows how much capacity is left before MaxRequestWorkers is reached.',
+            'At full saturation, the status page itself can no longer be served: a gap in the data may mean the server is saturated.',
         ],
         'actions' => [
             [
-                'case' => 'If the number of busy processes hits the maximum limit',
+                'case' => 'If busy slots stay close to the maximum',
                 'actions' => [
-                    'Increase the "MaxRequestWorkers" in Apache configuration if RAM allows, or optimize code execution time.',
+                    'Increase "MaxRequestWorkers" in your Apache configuration if RAM allows (raising "ServerLimit" too if Apache asks for it), or optimize code execution time.',
                 ],
             ],
             [
-                'case' => 'If processes stay busy even with very few visitors',
+                'case' => 'If slots stay busy even with very few visitors',
                 'actions' => [
-                    'Check for "zombie" processes or long-running scripts (like slow file downloads or heavy database queries) that keep slots occupied.',
+                    'Check for long-running scripts (like slow file downloads or heavy database queries) that keep slots occupied.',
                 ],
             ],
         ],
         'good_to_know' => [
-            'A process is "busy" as long as the connection is open. Slow client internet connections can keep a process busy even if your PHP code has finished its work.',
+            'In the prefork MPM, a slot stays busy as long as its connection is open: slow clients and keep-alive connections hold it even after PHP has finished its work.',
+            'The request reading the status page counts as one busy slot.',
         ],
     ],
     Metric::ApacheMpm->value => [
@@ -298,6 +302,37 @@ return [
         ],
         'good_to_know' => [
             'Text (HTML/JS) is usually light, but one unoptimized image can consume as much bandwidth as 1,000 text requests. Always optimize your media first.',
+        ],
+    ],
+    Metric::ApacheRequestDuration->value => [
+        'definitions' => [
+            'The average time, in milliseconds, Apache took to serve a request since the previous measure: from reading the request to finishing the response.',
+            'It includes everything Apache waits on: PHP, the database, a proxied backend, and sending the response to slow clients.',
+        ],
+        'why_it_matters' => [
+            'It is the response time your visitors feel. Apache\'s own figure is an average since its last restart, which hides a slowdown happening now: this one follows it within minutes.',
+        ],
+        'how_to_read' => [
+            'Compare it with your usual baseline and with "Requests per second". A longer duration with stable traffic points to slower code or dependencies; both rising together suggests the server is reaching its capacity.',
+        ],
+        'actions' => [
+            [
+                'case' => 'If the duration rises after a deployment',
+                'actions' => [
+                    'Profile the slowest pages: a missing database index or a new call to an external API is the usual cause.',
+                ],
+            ],
+            [
+                'case' => 'If the duration rises with traffic',
+                'actions' => [
+                    'Check "Busy slots": requests may be waiting for a free slot or for the CPU. Add capacity, or cache the heaviest pages.',
+                ],
+            ],
+        ],
+        'good_to_know' => [
+            'It averages every request, static files included: fast assets pull it down and can hide a few slow pages.',
+            'The request reading the status page is included too: on a server with very little traffic, it pulls the average down.',
+            'It needs an Apache version that reports "Total Duration" in its status page, and an up-to-date collector.',
         ],
     ],
     Metric::NginxVersion->value => [

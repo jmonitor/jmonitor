@@ -35,7 +35,7 @@ readonly class DemoBatchBuilder
 
             $batch[] = [
                 'name' => $consumer->value,
-                'version' => 1,
+                'version' => $consumer->latestVersion(),
                 'metrics' => $generator->generate($state),
                 'threw' => false,
                 'duration' => round(mt_rand(1, 120) / 1000, 3),

@@ -20,11 +20,14 @@ class ApacheGenerator implements DemoMetricGeneratorInterface
         $busy = (int) round($state->walk('apache.busy', 1, 50, 0.1) * $season);
         $idle = max(1, 64 - $busy);
         $load1 = round($state->walk('apache.load1', 0.1, 3.0, 0.1) * $season, 2);
+        $accesses = (int) round(rand(50, 1000) * $season);
+        $durationMs = $state->walk('apache.duration', 30, 150, 0.1);
 
         return [
             'server_version' => 'Apache/2.4.62 (Debian)',
             'server_mpm' => 'prefork',
-            'total_accesses' => (int) $state->counter('apache.accesses', (int) round(rand(50, 1000) * $season)),
+            'total_accesses' => (int) $state->counter('apache.accesses', $accesses),
+            'total_duration' => (int) $state->counter('apache.duration_total', (int) round($accesses * $durationMs)),
             'total_bytes' => (int) $state->counter('apache.bytes', (int) round(rand(500, 20000) * $season)),
             'uptime' => 3600 * 24 * 12,
             'scoreboard' => [

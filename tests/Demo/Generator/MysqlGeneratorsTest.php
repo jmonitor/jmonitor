@@ -34,23 +34,23 @@ class MysqlGeneratorsTest extends TestCase
     {
         $this->assertValid(
             (new StatusGenerator())->generate($this->state),
-            (new StatusConsumer($this->createMock(DeltaCalculator::class)))->getConstraints(1),
+            (new StatusConsumer($this->createMock(DeltaCalculator::class)))->getConstraints(Consumer::MYSQL_STATUS->latestVersion()),
         );
     }
 
     public function testVariables(): void
     {
-        $this->assertValid((new VariablesGenerator())->generate($this->state), (new VariablesConsumer())->getConstraints(1));
+        $this->assertValid((new VariablesGenerator())->generate($this->state), (new VariablesConsumer())->getConstraints(Consumer::MYSQL_VARIABLES->latestVersion()));
     }
 
     public function testQueriesCount(): void
     {
-        $this->assertValid((new QueriesCountGenerator())->generate($this->state), (new QueriesCountConsumer())->getConstraints(1));
+        $this->assertValid((new QueriesCountGenerator())->generate($this->state), (new QueriesCountConsumer())->getConstraints(Consumer::MYSQL_QUERY_COUNT->latestVersion()));
     }
 
     public function testSlowQueries(): void
     {
-        $this->assertValid((new SlowQueriesGenerator())->generate($this->state), (new SlowQueriesConsumer())->getConstraints(1));
+        $this->assertValid((new SlowQueriesGenerator())->generate($this->state), (new SlowQueriesConsumer())->getConstraints(Consumer::MYSQL_SLOW_QUERIES->latestVersion()));
     }
 
     public function testInfoSchema(): void
@@ -59,7 +59,7 @@ class MysqlGeneratorsTest extends TestCase
         $this->assertSame(Consumer::MYSQL_INFO_SCHEMA, $generator->getConsumer());
         $this->assertValid(
             $generator->generate($this->state),
-            (new MysqlInformationSchemaConsumer())->getConstraints(1),
+            (new MysqlInformationSchemaConsumer())->getConstraints(Consumer::MYSQL_INFO_SCHEMA->latestVersion()),
         );
     }
 

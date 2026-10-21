@@ -13,9 +13,15 @@ to that edition only, everything else applies to both.
 ### Added
 
 - Metric help pages can be opened without an account at `/help/metric/{metric}`.
+- The Apache page charts the average request duration.
+
+### Changed
+
+- The Apache "Busy process" gauge is now called "Busy slots".
 
 ### Fixed
 
+- Apache "Requests per second" and "Outgoing traffic" alerts now trigger.
 - Metric cards no longer show a help icon that opens an empty panel.
 - The APCu Config card shows the number of memory segments APCu actually allocated.
 - Nginx metrics and config cards no longer fail on an incomplete Nginx configuration.

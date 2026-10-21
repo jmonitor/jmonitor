@@ -24,7 +24,7 @@ class SymfonyGeneratorTest extends TestCase
 
         $violations = Validation::createValidator()->validate(
             $metrics,
-            (new SymfonyConsumer())->getConstraints(1),
+            (new SymfonyConsumer())->getConstraints(Consumer::SYMFONY->latestVersion()),
         );
 
         $this->assertCount(0, $violations, (string) $violations);

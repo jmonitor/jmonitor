@@ -71,13 +71,24 @@ readonly class Consumer
             $input['duration'] ??= $input['time'] ?? 0; // older collectors sent 'time' instead of 'duration'
 
             $consumerEnum = ConsumerEnum::from($input['name']);
-            /** @var ConsumerInterface $consumer */
-            $consumer = $this->consumers->get($consumerEnum->value);
 
             // metrics disabled in the project's settings
             if (!$project->hasComponent($consumerEnum->getComponent())) {
                 continue;
             }
+
+            if ($input['version'] > $consumerEnum->latestVersion()) {
+                $this->logger->error('Unsupported consumer version', [
+                    'consumer' => $consumerEnum->value,
+                    'version' => $input['version'],
+                    'project' => $project->getId(),
+                ]);
+
+                continue;
+            }
+
+            /** @var ConsumerInterface $consumer */
+            $consumer = $this->consumers->get($consumerEnum->value);
 
             // validation
             $errors = $this->validator->validate($input['metrics'], $consumer->getConstraints($input['version']));
@@ -148,8 +159,10 @@ readonly class Consumer
         return new Assert\Collection(
             fields: [
                 'version' => new Assert\Required(
-                    // all collectors are at version 1 for now
-                    constraints: new Assert\IdenticalTo(1),
+                    constraints: [
+                        new Assert\Type('int'),
+                        new Assert\Positive(),
+                    ],
                 ),
                 'metrics' => new Assert\Optional(
                     constraints: new Assert\Type('array'),

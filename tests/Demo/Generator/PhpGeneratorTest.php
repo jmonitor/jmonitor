@@ -24,7 +24,7 @@ class PhpGeneratorTest extends TestCase
 
         $violations = Validation::createValidator()->validate(
             $metrics,
-            (new PhpConsumer($this->createMock(DeltaCalculator::class)))->getConstraints(1),
+            (new PhpConsumer($this->createMock(DeltaCalculator::class)))->getConstraints(Consumer::PHP->latestVersion()),
         );
 
         $this->assertCount(0, $violations, (string) $violations);

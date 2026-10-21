@@ -28,6 +28,7 @@ to that edition only, everything else applies to both.
 - The APCu memory usage card shows used memory out of total memory.
 - The InnoDB buffer pool usage card shows used memory on MariaDB.
 - The Redis version card title is capitalized.
+- Nginx "Requests per second" and Redis "Operations per second" alerts now trigger.
 
 ## [1.0.1] - 2026-08-18
 

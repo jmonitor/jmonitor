@@ -22,6 +22,10 @@ to that edition only, everything else applies to both.
 - Nginx refused connections turn red only when they grew over the selected period.
 - The Nginx refused connections alert triggers only on newly refused connections.
 
+### Changed
+
+- Clicking a row in the admin panel lists opens its detail page instead of the edit form (self-hosted).
+
 ### Fixed
 
 - Apache "Requests per second" and "Outgoing traffic" alerts now trigger.

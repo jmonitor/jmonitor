@@ -49,4 +49,26 @@ class NginxConsumerTest extends TestCase
         $this->assertCount(1, $points);
         $this->assertStringContainsString('refused=7i', $points[0]->toLineProtocol());
     }
+
+    public function testNormalizedBagCarriesConnectionsRefusedSinceThePreviousPush(): void
+    {
+        $consumer = new NginxConsumer($deltaCalculator = new DeltaCalculator(new ArrayAdapter()));
+        $project = $this->createMock(Project::class);
+        $project->method('getId')->willReturn(1);
+        $start = new \DateTimeImmutable('2026-10-21 10:00:00');
+
+        $consumer->normalizeBag($this->statusBag(['accepts' => 1000, 'handled' => 993], $project, $start));
+        $deltaCalculator->reset();
+
+        $bag = $consumer->normalizeBag($this->statusBag(['accepts' => 1100, 'handled' => 1090], $project, $start->modify('+15 seconds')));
+
+        $this->assertInstanceOf(NginxBag::class, $bag);
+        $this->assertSame(10, $bag->status->refusedRequests);
+        $this->assertSame(3, $bag->status->newlyRefusedRequests);
+    }
+
+    private function statusBag(array $status, Project $project, \DateTimeImmutable $receivedAt): MetricBagDto
+    {
+        return MetricBagDto::create($project, Consumer::NGINX, 1, ['status' => $status], $receivedAt, false);
+    }
 }

@@ -202,4 +202,11 @@ class QueryBuilderTest extends TestCase
         $this->assertStringNotContainsString('first_measurement', $query);
         $this->assertSame(1, substr_count($query, 'r["_measurement"]'));
     }
+
+    public function testTotalIncreaseReducesTheSeriesLast(): void
+    {
+        $qb = new QueryBuilder('test')->measurement('nginx')->field('refused')->totalIncrease();
+
+        $this->assertStringEndsWith('|> difference(nonNegative: true) |> sum()', $qb->getQuery());
+    }
 }

@@ -36,7 +36,7 @@ class RangeContext implements ResetInterface
             return $this->rangeDto;
         }
 
-        // an anonymous embed has no range of its own to remember: don't open a session for it
+        // without a session cookie, the default range rather than a new session
         $range = $this->requestStack->getCurrentRequest()?->hasPreviousSession() ? $this->getSession()->get('range') : null;
 
         return $this->rangeDto = new RangeDto($range ? TimeRange::tryFrom($range) : null);

@@ -50,7 +50,7 @@ readonly class GaugeRenderer implements MetricRendererInterface
         $dto = new GaugeDto($metric->getMetric());
         $metric->configureGauge($dto, $dtoOptions);
 
-        if ($dto->value === null && $dto->valueAvailable) {
+        if ($dto->value === null && $dto->emptyDataReason === null) {
             return null;
         }
 

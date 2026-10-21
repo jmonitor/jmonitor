@@ -140,7 +140,7 @@ enum AlertMetric: string
             self::NginxActiveConnections => 'Active connections',
             self::NginxRequestsPerSec => 'Requests per second',
             self::NginxWaitingConnections => 'Waiting connections',
-            self::NginxRefusedConnections => 'Refused connections',
+            self::NginxRefusedConnections => 'Newly refused connections',
 
             # Caddy
             self::CaddyVersion => 'Version',

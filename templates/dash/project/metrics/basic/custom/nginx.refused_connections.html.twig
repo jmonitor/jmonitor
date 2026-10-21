@@ -1,14 +1,15 @@
 {# @var dto \App\Metrics\Renderer\Dto\BasicDto #}
 {% set increase = dto.context.increase %}
+{% set period = dto.context.range.label %}
 <div class="text-end">
     {% if dto.value === 0 %}
         <twig:Html:Badge:Badge style="success" class="fs-6">0</twig:Html:Badge:Badge>
     {% elseif increase > 0 %}
         <twig:Html:Badge:Badge style="danger" class="fs-6">{{ dto.value }}</twig:Html:Badge:Badge>
-        <div class="text-muted text-sm mt-1">since Nginx started, +{{ increase }} over the selected period</div>
+        <div class="text-muted text-sm mt-1">since Nginx started · {{ period }}: +{{ increase }}</div>
     {% elseif increase === 0 %}
         <twig:Html:Badge:Badge style="neutral" class="fs-6">{{ dto.value }}</twig:Html:Badge:Badge>
-        <div class="text-muted text-sm mt-1">since Nginx started, none over the selected period</div>
+        <div class="text-muted text-sm mt-1">since Nginx started · {{ period }}: none</div>
     {% else %}
         <twig:Html:Badge:Badge style="warning" class="fs-6">{{ dto.value }}</twig:Html:Badge:Badge>
         <div class="text-muted text-sm mt-1">since Nginx started</div>

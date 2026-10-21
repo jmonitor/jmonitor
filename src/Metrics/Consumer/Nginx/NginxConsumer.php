@@ -33,14 +33,18 @@ class NginxConsumer implements ConsumerInterface
             return $bag;
         }
 
+        $datas = $bag->all();
         $requestsPerSecond = $delta->getPerSec('status.requests');
+        $newlyAccepted = $delta->getValue('status.accepts');
+        $newlyHandled = $delta->getValue('status.handled');
 
-        if ($requestsPerSecond === null) {
-            return $bag;
+        if ($requestsPerSecond !== null) {
+            $datas['status']['requests_per_second'] = $requestsPerSecond;
         }
 
-        $datas = $bag->all();
-        $datas['status']['requests_per_second'] = $requestsPerSecond;
+        if ($newlyAccepted !== null && $newlyHandled !== null) {
+            $datas['status']['newly_refused'] = max(0, $newlyAccepted - $newlyHandled);
+        }
 
         return $bag->withMetrics($datas);
     }

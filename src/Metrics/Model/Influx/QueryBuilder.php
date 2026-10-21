@@ -11,6 +11,7 @@ use App\Metrics\Model\Influx\Functions\Filter;
 use App\Metrics\Model\Influx\Functions\FilterFields;
 use App\Metrics\Model\Influx\Functions\From;
 use App\Metrics\Model\Influx\Functions\Range;
+use App\Metrics\Model\Influx\Functions\TotalIncrease;
 
 class QueryBuilder implements \Stringable
 {
@@ -22,6 +23,7 @@ class QueryBuilder implements \Stringable
     private array $tags = [];
     private ?Derivative $derivative = null;
     private ?AggregateWindow $aggregateWindow = null;
+    private ?TotalIncrease $totalIncrease = null;
 
     public function __construct(string $bucketName)
     {
@@ -84,6 +86,13 @@ class QueryBuilder implements \Stringable
         return $this;
     }
 
+    public function totalIncrease(): self
+    {
+        $this->totalIncrease = new TotalIncrease();
+
+        return $this;
+    }
+
     public function getQuery(): string
     {
         return (string) $this;
@@ -115,6 +124,10 @@ class QueryBuilder implements \Stringable
 
         if ($this->aggregateWindow !== null) {
             $parts[] = $this->aggregateWindow;
+        }
+
+        if ($this->totalIncrease !== null) {
+            $parts[] = $this->totalIncrease;
         }
 
         return \implode(' |> ', $parts);

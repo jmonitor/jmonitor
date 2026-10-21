@@ -83,4 +83,12 @@ class NginxConfigBagTest extends TestCase
 
         $this->assertSame(['mime.types', 'fastcgi_params'], $bag->config->include);
     }
+
+    public function testNoReasonIsGivenWhenNoConfigWasSent(): void
+    {
+        $bag = $this->makeBag([]);
+
+        $this->assertFalse($bag->config->collected);
+        $this->assertNull($bag->config->unavailableReason);
+    }
 }

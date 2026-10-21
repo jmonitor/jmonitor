@@ -3,7 +3,9 @@
         <span class="fw-light text-uppercase">No data</span>
         <twig:HelpIcon item="no_data"></twig:HelpIcon>
     </div>
-    {% if mode.value === 'extended' %}
+    {% if reason|default %}
+        <p class="text-start mt-2 mb-0">{{ reason }}</p>
+    {% elseif mode.value === 'extended' %}
         <p class="text-center">
             Maybe...<br>
             - It's not ready yet,<br>

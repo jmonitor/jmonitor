@@ -28,6 +28,7 @@ class NginxActiveConnectionsRate implements TimeSeriesMetricInterface
             ->setCurrentValue($this->getNginxBag()?->status->activeConnectionsPercent, '%')
             ->setMeasurement('nginx')
             ->setFields(['active_rate' => ''])
+            ->setEmptyDataReason($this->getNginxBag()?->config->unavailableReason)
         ;
     }
 

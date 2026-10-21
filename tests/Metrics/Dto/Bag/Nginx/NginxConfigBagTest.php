@@ -60,4 +60,27 @@ class NginxConfigBagTest extends TestCase
         $this->assertNull($bag->config->maxConnections);
         $this->assertNull($bag->status->activeConnectionsPercent);
     }
+
+    public function testConfigIsNotCollectedWhenNginxTGaveNothing(): void
+    {
+        $bag = $this->makeBag(['config_path' => null, 'user' => null, 'include' => [], 'worker_connections' => null]);
+
+        $this->assertFalse($bag->config->collected);
+        $this->assertNotNull($bag->config->unavailableReason);
+    }
+
+    public function testConfigIsCollectedAsSoonAsOneDirectiveIsRead(): void
+    {
+        $bag = $this->makeBag(['config_path' => '/etc/nginx/nginx.conf', 'user' => null]);
+
+        $this->assertTrue($bag->config->collected);
+        $this->assertNull($bag->config->unavailableReason);
+    }
+
+    public function testIncludesAreListedOnce(): void
+    {
+        $bag = $this->makeBag(['include' => ['mime.types', 'fastcgi_params', 'fastcgi_params', 'mime.types']]);
+
+        $this->assertSame(['mime.types', 'fastcgi_params'], $bag->config->include);
+    }
 }

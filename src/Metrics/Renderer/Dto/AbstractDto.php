@@ -10,6 +10,8 @@ abstract class AbstractDto implements MetricDtoInterface
 {
     public private(set) bool $valueAvailable = true;
     public private(set) ?EmptyDataMode $emptyDataMode = null;
+    /** Shown instead of the generic no-data hints when the card has nothing to display */
+    public private(set) ?string $emptyDataReason = null;
     public private(set) Metric $metric;
     public private(set) ?string $cardTemplate = null;
     public private(set) ?string $cardTitle = null;
@@ -55,6 +57,13 @@ abstract class AbstractDto implements MetricDtoInterface
     {
         $this->valueAvailable = $valueAvailable;
         $this->emptyDataMode = $mode;
+
+        return $this;
+    }
+
+    public function setEmptyDataReason(?string $emptyDataReason): static
+    {
+        $this->emptyDataReason = $emptyDataReason;
 
         return $this;
     }

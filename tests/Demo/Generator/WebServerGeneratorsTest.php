@@ -54,7 +54,7 @@ class WebServerGeneratorsTest extends TestCase
     {
         $this->assertValid(
             (new NginxGenerator())->generate($this->state),
-            (new NginxConsumer($this->createMock(DeltaCalculator::class)))->getConstraints(1),
+            (new NginxConsumer($this->createMock(DeltaCalculator::class)))->getConstraints(Consumer::NGINX->latestVersion()),
         );
     }
 
@@ -62,7 +62,7 @@ class WebServerGeneratorsTest extends TestCase
     {
         $this->assertValid(
             (new CaddyGenerator())->generate($this->state),
-            (new CaddyConsumer($this->createMock(DeltaCalculator::class)))->getConstraints(1),
+            (new CaddyConsumer($this->createMock(DeltaCalculator::class)))->getConstraints(Consumer::CADDY->latestVersion()),
         );
     }
 
@@ -73,7 +73,7 @@ class WebServerGeneratorsTest extends TestCase
             (new FrankenPhpConsumer(
                 $this->createMock(DeltaCalculator::class),
                 new PlanResolver(Edition::CLOUD),
-            ))->getConstraints(1),
+            ))->getConstraints(Consumer::FRANKENPHP->latestVersion()),
         );
     }
 

@@ -29,7 +29,7 @@ class RedisGeneratorTest extends TestCase
             (new RedisConsumer(
                 $this->createMock(DeltaCalculator::class),
                 new PlanResolver(Edition::CLOUD),
-            ))->getConstraints(1),
+            ))->getConstraints(Consumer::REDIS->latestVersion()),
         );
 
         $this->assertCount(0, $violations, (string) $violations);

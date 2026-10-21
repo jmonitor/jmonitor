@@ -71,8 +71,11 @@ readonly class Consumer
             $input['duration'] ??= $input['time'] ?? 0; // older collectors sent 'time' instead of 'duration'
 
             $consumerEnum = ConsumerEnum::from($input['name']);
-            /** @var ConsumerInterface $consumer */
-            $consumer = $this->consumers->get($consumerEnum->value);
+
+            // metrics disabled in the project's settings
+            if (!$project->hasComponent($consumerEnum->getComponent())) {
+                continue;
+            }
 
             if ($input['version'] > $consumerEnum->latestVersion()) {
                 $this->logger->error('Unsupported consumer version', [
@@ -84,10 +87,8 @@ readonly class Consumer
                 continue;
             }
 
-            // metrics disabled in the project's settings
-            if (!$project->hasComponent($consumerEnum->getComponent())) {
-                continue;
-            }
+            /** @var ConsumerInterface $consumer */
+            $consumer = $this->consumers->get($consumerEnum->value);
 
             // validation
             $errors = $this->validator->validate($input['metrics'], $consumer->getConstraints($input['version']));

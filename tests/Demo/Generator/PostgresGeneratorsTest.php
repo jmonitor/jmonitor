@@ -9,6 +9,7 @@ use App\Demo\Generator\Postgres\DatabaseGenerator;
 use App\Demo\Generator\Postgres\SettingsGenerator;
 use App\Demo\Generator\Postgres\SlowQueriesGenerator;
 use App\Demo\State\DemoState;
+use App\Metrics\Consumer\Consumer;
 use App\Metrics\Consumer\Postgres\PostgresActivityConsumer;
 use App\Metrics\Consumer\Postgres\PostgresDatabaseConsumer;
 use App\Metrics\Consumer\Postgres\PostgresSettingsConsumer;
@@ -29,23 +30,23 @@ class PostgresGeneratorsTest extends TestCase
 
     public function testSettings(): void
     {
-        $this->assertValid((new SettingsGenerator())->generate($this->state), (new PostgresSettingsConsumer())->getConstraints(1));
+        $this->assertValid((new SettingsGenerator())->generate($this->state), (new PostgresSettingsConsumer())->getConstraints(Consumer::POSTGRES_SETTINGS->latestVersion()));
     }
 
     public function testActivity(): void
     {
         $consumer = new PostgresActivityConsumer($this->createMock(DeltaCalculator::class));
-        $this->assertValid((new ActivityGenerator())->generate($this->state), $consumer->getConstraints(1));
+        $this->assertValid((new ActivityGenerator())->generate($this->state), $consumer->getConstraints(Consumer::POSTGRES_ACTIVITY->latestVersion()));
     }
 
     public function testDatabase(): void
     {
-        $this->assertValid((new DatabaseGenerator())->generate($this->state), (new PostgresDatabaseConsumer())->getConstraints(1));
+        $this->assertValid((new DatabaseGenerator())->generate($this->state), (new PostgresDatabaseConsumer())->getConstraints(Consumer::POSTGRES_DATABASE->latestVersion()));
     }
 
     public function testSlowQueries(): void
     {
-        $this->assertValid((new SlowQueriesGenerator())->generate($this->state), (new PostgresSlowQueriesConsumer())->getConstraints(1));
+        $this->assertValid((new SlowQueriesGenerator())->generate($this->state), (new PostgresSlowQueriesConsumer())->getConstraints(Consumer::POSTGRES_SLOW_QUERIES->latestVersion()));
     }
 
     private function assertValid(array $metrics, $constraints): void

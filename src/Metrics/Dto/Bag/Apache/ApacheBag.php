@@ -50,7 +50,7 @@ class ApacheBag extends MetricBagDto
         get => $this->getFloat('real_bytes_per_second');
     }
 
-    // ms, computed from the "total_duration" and "total_accesses" deltas
+    // ms per request, averaged since the previous push
     public ?float $realDurationPerRequest {
         get => $this->getFloat('real_duration_per_request');
     }

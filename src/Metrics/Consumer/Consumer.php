@@ -54,9 +54,6 @@ enum Consumer: string
         return array_map(fn(self $consumer) => $consumer->value, self::cases());
     }
 
-    /**
-     * Newest payload version the consumer validates, a newer one would be checked against older constraints.
-     */
     public function latestVersion(): int
     {
         return match ($this) {

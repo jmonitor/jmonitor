@@ -23,7 +23,7 @@ class SystemGeneratorTest extends TestCase
 
         $violations = Validation::createValidator()->validate(
             $metrics,
-            (new SystemConsumer())->getConstraints(1),
+            (new SystemConsumer())->getConstraints(Consumer::SYSTEM->latestVersion()),
         );
 
         $this->assertCount(0, $violations, (string) $violations);

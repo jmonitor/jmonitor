@@ -21,7 +21,7 @@ In dev, `make demo` runs both commands in a dedicated container (compose profile
 ## Generation pipeline (`src/Demo/`)
 
 - `Generator\DemoMetricGeneratorInterface` — tagged `app.demo_generator` (autoconfigured); each generator maps to one `Consumer` and returns a metrics array. One generator per component (System, Apache, Nginx, Caddy, FrankenPHP, PHP, Redis, Symfony, MySQL\*, Postgres\*).
-- `DemoBatchBuilder` — iterates the tagged generators, **skips components not enabled** on the project, assembles the batch (name, version, metrics, threw, duration).
+- `DemoBatchBuilder` — iterates the tagged generators, **skips components not enabled** on the project, assembles the batch (name, the consumer's latest payload version, metrics, threw, duration).
 - `State\DemoState` — cache-backed (Redis in prod, key `demo.state`, 30-day TTL); keeps values coherent across worker restarts. Three primitives: `counter()` (monotonic cumulative counters), `walk()` (bounded mean-reverting random walk for instantaneous gauges), `seasonality()` (shared daily traffic curve, ~0.30 at 04:00 / ~1.00 at 16:00, so components "breathe" together).
 
 ## Notes

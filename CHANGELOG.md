@@ -20,6 +20,7 @@ to that edition only, everything else applies to both.
 - The Apache "Busy process" gauge is now called "Busy slots".
 - Nginx cards say when the Nginx configuration could not be read.
 - Nginx refused connections turn red only when they grew over the selected period.
+- The Nginx refused connections alert triggers only on newly refused connections.
 
 ### Fixed
 

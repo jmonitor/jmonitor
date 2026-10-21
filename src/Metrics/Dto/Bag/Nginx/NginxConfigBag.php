@@ -25,7 +25,7 @@ class NginxConfigBag extends Bag
     }
 
     public ?string $unavailableReason {
-        get => $this->collected ? null : 'Configuration unavailable: nginx -T returned nothing to the PHP user.';
+        get => $this->collected || $this->parameters === [] ? null : 'Configuration unavailable: nginx -T returned nothing to the PHP user.';
     }
 
     public ?string $configPath {

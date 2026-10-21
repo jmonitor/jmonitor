@@ -108,7 +108,7 @@ class ThresholdAlertChecker implements AlertCheckerInterface
             AlertMetric::NginxActiveConnections => $bag->status->activeConnections,
             AlertMetric::NginxRequestsPerSec => $bag->status->requestsPerSecond,
             AlertMetric::NginxWaitingConnections => $bag->status->waitingConnections,
-            AlertMetric::NginxRefusedConnections => $bag->status->refusedRequests,
+            AlertMetric::NginxRefusedConnections => $bag->status->newlyRefusedRequests,
             default => null,
         };
     }

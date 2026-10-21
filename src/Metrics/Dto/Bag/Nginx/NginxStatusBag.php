@@ -52,6 +52,13 @@ class NginxStatusBag extends Bag
     }
 
     /**
+     * Refused since the previous push, null without a comparable previous push
+     */
+    public ?int $newlyRefusedRequests {
+        get => $this->getInt('newly_refused');
+    }
+
+    /**
      * Cumulative since Nginx started
      * Total number of HTTP requests handled
      */

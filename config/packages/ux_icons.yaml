@@ -11,6 +11,10 @@ ux_icons:
         height: '1em'
         width: '1em'
 
+    # Icons are served from assets/icons/ only: import new ones with `ux:icons:import`
+    iconify:
+        on_demand: false
+
     # Throw an exception if an icon is not
     ignore_not_found: false
 

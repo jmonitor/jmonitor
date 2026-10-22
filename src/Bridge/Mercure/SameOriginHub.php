@@ -8,6 +8,7 @@ use Symfony\Component\DependencyInjection\Attribute\AsDecorator;
 use Symfony\Component\DependencyInjection\Attribute\AutowireDecorated;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Mercure\Jwt\TokenFactoryInterface;
+use Symfony\Component\Mercure\ProtocolVersion;
 use Symfony\Component\Mercure\RemoteHubInterface;
 use Symfony\Component\Mercure\Update;
 
@@ -18,7 +19,7 @@ use Symfony\Component\Mercure\Update;
  * the browser sees (plain HTTP on a published port, TLS terminated by a reverse proxy,
  * or native HTTPS).
  *
- * Symfony derives the mercureAuthorization cookie from this URL, including its Secure
+ * Symfony derives the subscriber authorization cookie from this URL, including its Secure
  * flag: a static https:// URL sets it even over plain HTTP, and the browser then drops
  * the cookie, leaving the subscription anonymous.
  */
@@ -61,5 +62,15 @@ readonly class SameOriginHub implements RemoteHubInterface
     public function publish(Update $update): string
     {
         return $this->hub->publish($update);
+    }
+
+    public function getProtocolVersion(): ProtocolVersion
+    {
+        return $this->hub->getProtocolVersion();
+    }
+
+    public function getCookieName(): string
+    {
+        return $this->hub->getCookieName();
     }
 }

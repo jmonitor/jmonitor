@@ -10,7 +10,6 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Mercure\Authorization;
-use Symfony\Component\Mercure\HubInterface;
 use Twig\Attribute\AsTwigFunction;
 
 readonly class MercureTopicProvider
@@ -19,7 +18,6 @@ readonly class MercureTopicProvider
         #[Autowire(env: 'APP_DOMAIN')]
         private string $domain,
         private ProjectContext $projectContext,
-        private HubInterface $hub,
         private Authorization $authorization,
         private RequestStack $requestStack,
         private LoggerInterface $logger,
@@ -64,32 +62,16 @@ readonly class MercureTopicProvider
     }
 
     /**
-     * EventSource subscription URL for public embed pages (no session): the subscriber
-     * JWT rides in the `authorization` query parameter instead of a cookie, because
-     * cookies are not sent from cross-site iframes. Scoped to the embedded metric's
-     * component sub-topic only, so the token cannot read the project-wide stream.
+     * EventSource subscription URL for public embed pages: anonymous, as cookies are not
+     * sent from cross-site iframes. Their component sub-topic is published as a public
+     * update, unlike the project-wide topic.
      */
     #[AsTwigFunction('consumed_metric_public_subscribe_url')]
     public function getPublicConsumedMetricSubscribeUrl(string $component, ?Project $project = null): string
     {
         $project ??= $this->projectContext->getCurrentProject();
-        $topic = $this->getConsumedMetricComponentUrl($project, $component);
 
-        $url = $this->subscribeUrl($topic);
-
-        // Subscribe-only, single-topic, expiring token. The page re-mints one on each
-        // (auto-)refresh, so a short lifetime does not break long-running widgets.
-        $jwt = $this->hub->getFactory()?->create(
-            subscribe: [$topic],
-            publish: [],
-            additionalClaims: ['exp' => new \DateTimeImmutable('+1 day')],
-        );
-
-        if ($jwt !== null) {
-            $url .= '&authorization=' . rawurlencode($jwt);
-        }
-
-        return $url;
+        return $this->subscribeUrl($this->getConsumedMetricComponentUrl($project, $component));
     }
 
     /**
@@ -99,7 +81,7 @@ readonly class MercureTopicProvider
      */
     private function subscribeUrl(string $topic): string
     {
-        return SameOriginHub::PATH . '?topic=' . rawurlencode($topic);
+        return SameOriginHub::PATH . '?match=' . rawurlencode($topic);
     }
 
     private function authorizeSubscription(string $topic): void

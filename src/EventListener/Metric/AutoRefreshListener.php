@@ -37,16 +37,18 @@ readonly class AutoRefreshListener
 
         try {
             // Project-wide topic for authenticated dashboards: one message listing every
-            // updated component, filtered client-side.
+            // updated component, filtered client-side. Private, as the hub accepts
+            // anonymous subscribers.
             $this->hub->publish(
                 new Update(
                     $this->mercureTopicProvider->getConsumedMetricUrl($event->project),
                     json_encode(['components' => $components]),
+                    private: true,
                 ),
             );
 
-            // Per-component sub-topics for public embeds: each carries only its own
-            // component, so a public subscriber never sees the rest of the project.
+            // Per-component sub-topics for public embeds, which subscribe anonymously: each
+            // carries only its own component, so they never see the rest of the project.
             foreach ($components as $component) {
                 $this->hub->publish(
                     new Update(

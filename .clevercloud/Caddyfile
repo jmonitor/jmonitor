@@ -25,19 +25,26 @@
 
 	mercure {
 		transport local
-		# 7: the only value both Mercure 0.x (production) and 1.0 accept.
-		protocol_version_compatibility 7
 
-		# Key injected through an env var ({$VAR} = substituted when the Caddyfile
-		# is parsed). Must match the app's MERCURE_JWT_SECRET.
-		publisher_jwt {$MERCURE_JWT_SECRET} HS256
-		subscriber_jwt {$MERCURE_JWT_SECRET} HS256
+		# Identifier, audience and cookie name: config/packages/mercure.yaml. Key
+		# injected through an env var ({$VAR} = substituted when the Caddyfile is
+		# parsed), the app's MERCURE_JWT_SECRET.
+		issuer jmonitor {
+			publisher {
+				jwt {$MERCURE_JWT_SECRET} HS256
+			}
+			subscriber {
+				jwt {$MERCURE_JWT_SECRET} HS256
+			}
+		}
+		resource_identifier https://jmonitor.io/.well-known/mercure
+		cookie_name mercure_access_token
+
+		# Public embeds subscribe without a token; dashboard updates are private.
+		anonymous
 
 		# No cors_origins/publish_origins: the browser subscribes same-origin (the
 		# hub is served by this site) and the app publishes with a bearer token.
-
-		# No `anonymous`: subscribing requires a valid subscriber JWT (the
-		# mercureAuthorization cookie set by the app, scoped to the project topic).
 
 		# Exposes the subscription web API and dispatches private updates when a
 		# subscription between the hub and a subscriber opens or closes. Not needed here.

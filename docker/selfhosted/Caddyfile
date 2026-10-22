@@ -40,12 +40,22 @@
 	mercure {
 		name jmonitor
 		transport local
-		# 7: the only value both Mercure 0.x (production) and 1.0 accept.
-		protocol_version_compatibility 7
 
-		# Same env var as the app (config/packages/mercure.yaml).
-		publisher_jwt {$MERCURE_JWT_SECRET} HS256
-		subscriber_jwt {$MERCURE_JWT_SECRET} HS256
+		# Identifier, audience, cookie name and secret env var: same as the app
+		# (config/packages/mercure.yaml).
+		issuer jmonitor {
+			publisher {
+				jwt {$MERCURE_JWT_SECRET} HS256
+			}
+			subscriber {
+				jwt {$MERCURE_JWT_SECRET} HS256
+			}
+		}
+		resource_identifier https://jmonitor.io/.well-known/mercure
+		cookie_name mercure_access_token
+
+		# Public embeds subscribe without a token; dashboard updates are private.
+		anonymous
 
 		# No cors_origins/publish_origins: browsers subscribe same-origin (the hub is
 		# served by this very site, whatever scheme and port the user publishes it on)
@@ -83,9 +93,15 @@ http://app:2021 {
 	mercure {
 		name jmonitor
 		transport local
-		protocol_version_compatibility 7
-		publisher_jwt {$MERCURE_JWT_SECRET} HS256
-		subscriber_jwt {$MERCURE_JWT_SECRET} HS256
+		issuer jmonitor {
+			publisher {
+				jwt {$MERCURE_JWT_SECRET} HS256
+			}
+			subscriber {
+				jwt {$MERCURE_JWT_SECRET} HS256
+			}
+		}
+		resource_identifier https://jmonitor.io/.well-known/mercure
 	}
 
 	php_server

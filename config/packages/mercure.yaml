@@ -2,14 +2,16 @@ mercure:
     hubs:
         default:
             url: '%env(default::MERCURE_URL)%'
-            # App\Bridge\Mercure\SameOriginHub derives the public URL from the current
-            # request, so the browser subscribes on the origin it is already browsing —
-            # http or https, any port, no configuration. Hence null here (Hub then falls
-            # back to `url`). The key must be spelled out rather than omitted: under
-            # FrankenPHP, mercure_publish() exists, and mercure-bundle then leaves
-            # public_url without a default — omitting it makes any container compiled by
-            # an HTTP request fatal on an undefined array key.
-            public_url: ~
+            # Prefix-less: browsers drop `__Secure-` cookies over plain HTTP, which
+            # self-hosted instances may be served on. Same name in every Caddyfile.
+            cookie_name: mercure_access_token
             jwt:
                 secret: '%env(MERCURE_JWT_SECRET)%'
                 publish: '*'
+                # `iss` and `aud` must match the `issuer` block and the
+                # `resource_identifier` of every Caddyfile's `mercure` directive.
+                claims:
+                    iss: jmonitor
+                    sub: jmonitor
+                    client_id: jmonitor
+                    aud: https://jmonitor.io/.well-known/mercure

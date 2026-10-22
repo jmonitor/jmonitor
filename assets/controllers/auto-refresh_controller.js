@@ -28,7 +28,7 @@ export default class extends Controller {
         this.#clearReconnectTimer();
 
         // withCredentials sends the Mercure authorization cookie (dashboard pages).
-        // Public embeds pass the JWT in the URL instead and disable credentials.
+        // Public embeds subscribe anonymously and disable credentials.
         this.eventSource = new EventSource(this.topicValue, { withCredentials: this.withCredentialsValue });
         this.eventSource.onmessage = this.#onMessage.bind(this);
         this.eventSource.onerror  = this.#onError.bind(this);
@@ -73,10 +73,9 @@ export default class extends Controller {
     #scheduleReconnect() {
         this.#clearReconnectTimer();
 
-        // Sustained failure: the subscribe token may have expired (public embeds carry a
-        // short-lived JWT). Reopening with the same stale URL would be rejected forever, so
-        // once the backoff hits its ceiling we reload the page to mint a fresh subscribe URL.
-        // A frame refresh would not do: the token lives in this element's markup.
+        // Sustained failure: the authorization cookie may have expired. Reopening would be
+        // rejected forever, so once the backoff hits its ceiling we reload the page, which
+        // mints a fresh one. A frame refresh would not do: the page sets the cookie.
         if (this.reconnectDelayMs >= this.maxReconnectDelayMs) {
             this.reloadPage();
             return;

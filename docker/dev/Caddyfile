@@ -33,18 +33,25 @@
 	mercure {
 		name jmonitor
 		transport local
-		# 7: the only value both Mercure 0.x (production) and 1.0 accept.
-		protocol_version_compatibility 7
 
+		# Identifier, audience and cookie name: config/packages/mercure.yaml.
 		# Dev secret — must match MERCURE_JWT_SECRET in .env.dev.
-		publisher_jwt "!ChangeThisDevMercureSecret-min-32-bytes!" HS256
-		subscriber_jwt "!ChangeThisDevMercureSecret-min-32-bytes!" HS256
+		issuer jmonitor {
+			publisher {
+				jwt "!ChangeThisDevMercureSecret-min-32-bytes!" HS256
+			}
+			subscriber {
+				jwt "!ChangeThisDevMercureSecret-min-32-bytes!" HS256
+			}
+		}
+		resource_identifier https://jmonitor.io/.well-known/mercure
+		cookie_name mercure_access_token
+
+		# Public embeds subscribe without a token; dashboard updates are private.
+		anonymous
 
 		# No cors_origins/publish_origins: browsers subscribe same-origin (the hub is
 		# served by this very site) and the app publishes with a bearer token.
-
-		# No `anonymous`: a valid subscriber JWT (cookie set by the app, scoped to the
-		# project topic) is required to subscribe, just like prod.
 	}
 
 	php_server {
@@ -89,9 +96,15 @@
 	mercure {
 		name jmonitor
 		transport local
-		protocol_version_compatibility 7
-		publisher_jwt "!ChangeThisDevMercureSecret-min-32-bytes!" HS256
-		subscriber_jwt "!ChangeThisDevMercureSecret-min-32-bytes!" HS256
+		issuer jmonitor {
+			publisher {
+				jwt "!ChangeThisDevMercureSecret-min-32-bytes!" HS256
+			}
+			subscriber {
+				jwt "!ChangeThisDevMercureSecret-min-32-bytes!" HS256
+			}
+		}
+		resource_identifier https://jmonitor.io/.well-known/mercure
 	}
 
 	php_server

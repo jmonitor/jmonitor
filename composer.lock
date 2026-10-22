@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5ac9db2e7b5697d941b6864299615306",
+    "content-hash": "9dbe6ac861e186f4fb64c7c6021a1cf6",
     "packages": [
         {
             "name": "clue/stream-filter",
@@ -1961,16 +1961,16 @@
         },
         {
             "name": "jmonitor/collector",
-            "version": "v2.2.3",
+            "version": "v2.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/jmonitor/collector.git",
-                "reference": "b3d4628454045dd445fff0e445533eb1d052dcf2"
+                "reference": "a63d41a5e7556397af62bd3bb4f2c6bc94010274"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jmonitor/collector/zipball/b3d4628454045dd445fff0e445533eb1d052dcf2",
-                "reference": "b3d4628454045dd445fff0e445533eb1d052dcf2",
+                "url": "https://api.github.com/repos/jmonitor/collector/zipball/a63d41a5e7556397af62bd3bb4f2c6bc94010274",
+                "reference": "a63d41a5e7556397af62bd3bb4f2c6bc94010274",
                 "shasum": ""
             },
             "require": {
@@ -1978,18 +1978,19 @@
                 "ext-json": "*",
                 "ext-zlib": "*",
                 "php": "^8.1",
-                "php-http/discovery": "^1.17",
                 "psr/http-client": "^1.0",
-                "psr/http-client-implementation": "*",
-                "psr/http-factory-implementation": "*",
                 "psr/log": "^1 || ^2 || ^3",
                 "symfony/process": "^6.4|^7.0|^8.0"
+            },
+            "conflict": {
+                "php-http/discovery": "<1.17 || >=2.0"
             },
             "require-dev": {
                 "doctrine/dbal": "^3.0|^4.2",
                 "ext-pdo": "*",
                 "friendsofphp/php-cs-fixer": "^3.86",
                 "nyholm/psr7": "^1.8",
+                "php-http/discovery": "^1.17",
                 "php-http/message": "^1.0",
                 "phpstan/phpstan": "^2.1",
                 "phpunit/phpunit": "^10.0|^11.5",
@@ -1998,7 +1999,10 @@
             },
             "suggest": {
                 "doctrine/dbal": "If you want to collect mysql datas with Doctrine DBAL as driver.",
-                "ext-pdo": "If you want to collect mysql datas with Pdo as driver."
+                "ext-pdo": "If you want to collect mysql datas with Pdo as driver.",
+                "php-http/discovery": "To send the metrics to jmonitor.io with whatever PSR-18 client and PSR-17 factories are installed.",
+                "psr/http-client-implementation": "To send the metrics to jmonitor.io, e.g. symfony/http-client.",
+                "psr/http-factory-implementation": "To send the metrics to jmonitor.io, e.g. nyholm/psr7."
             },
             "type": "library",
             "extra": {
@@ -2038,22 +2042,22 @@
             ],
             "support": {
                 "issues": "https://github.com/jmonitor/collector/issues",
-                "source": "https://github.com/jmonitor/collector/tree/v2.2.3"
+                "source": "https://github.com/jmonitor/collector/tree/v2.4.0"
             },
-            "time": "2026-10-15T12:24:19+00:00"
+            "time": "2026-10-21T14:02:03+00:00"
         },
         {
             "name": "jmonitor/jmonitor-bundle",
-            "version": "v2.1.0",
+            "version": "v2.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/jmonitor/jmonitor-bundle.git",
-                "reference": "1011da4613502e256564d6d63351758923213f17"
+                "reference": "a393fa94e68d945056dff49e853ff07d5d9bf70d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jmonitor/jmonitor-bundle/zipball/1011da4613502e256564d6d63351758923213f17",
-                "reference": "1011da4613502e256564d6d63351758923213f17",
+                "url": "https://api.github.com/repos/jmonitor/jmonitor-bundle/zipball/a393fa94e68d945056dff49e853ff07d5d9bf70d",
+                "reference": "a393fa94e68d945056dff49e853ff07d5d9bf70d",
                 "shasum": ""
             },
             "require": {
@@ -2113,9 +2117,9 @@
             ],
             "support": {
                 "issues": "https://github.com/jmonitor/jmonitor-bundle/issues",
-                "source": "https://github.com/jmonitor/jmonitor-bundle/tree/v2.1.0"
+                "source": "https://github.com/jmonitor/jmonitor-bundle/tree/v2.2.1"
             },
-            "time": "2026-08-14T12:45:48+00:00"
+            "time": "2026-10-22T13:12:35+00:00"
         },
         {
             "name": "knpuniversity/oauth2-client-bundle",

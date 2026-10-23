@@ -8,6 +8,7 @@ on:
             - 'docker/selfhosted/**'
             - '.dockerignore'
             - '.github/workflows/docker-publish.yml'
+            - '.github/scripts/**'
             - 'src/**'
             - 'config/**'
             - 'templates/**'

@@ -12,22 +12,24 @@ SUBSCRIBE_CURL_OPTS="${SUBSCRIBE_CURL_OPTS:-}"
 
 b64url() { openssl base64 -A | tr '+/' '-_' | tr -d '='; }
 
-# Mercure 0.x token (claim "mercure"), the shape the app still mints.
+# Mercure 1.0 access token, the shape the app mints (config/packages/mercure.yaml).
+# Usage: jwt <action> <topic>
 jwt() {
     local header payload signature
-    header=$(printf '{"alg":"HS256","typ":"JWT"}' | b64url)
-    payload=$(printf '%s' "$1" | b64url)
+    header=$(printf '{"typ":"at+jwt","alg":"HS256"}' | b64url)
+    payload=$(printf '{"iss":"jmonitor","sub":"jmonitor","client_id":"jmonitor","aud":"https://jmonitor.io/.well-known/mercure","exp":%d,"authorization_details":[{"type":"https://mercure.rocks/authorization-detail","actions":["%s"],"topics":[{"match":"%s"}]}]}' \
+        "$(($(date +%s) + 300))" "$1" "$2" | b64url)
     signature=$(printf '%s.%s' "$header" "$payload" | openssl dgst -sha256 -hmac "$MERCURE_JWT_SECRET" -binary | b64url)
     printf '%s.%s.%s' "$header" "$payload" "$signature"
 }
 
 topic="https://example.com/smoke/$(date +%s)"
-subscriber=$(jwt "{\"mercure\":{\"subscribe\":[\"$topic\"]}}")
-publisher=$(jwt '{"mercure":{"publish":["*"]}}')
+subscriber=$(jwt subscribe "$topic")
+publisher=$(jwt publish '*')
 received=$(mktemp)
 
 # shellcheck disable=SC2086
-curl -sN $SUBSCRIBE_CURL_OPTS -H "Authorization: Bearer $subscriber" "$PUBLIC_HUB_URL?topic=$topic" > "$received" 2>/dev/null &
+curl -sN $SUBSCRIBE_CURL_OPTS -H "Authorization: Bearer $subscriber" "$PUBLIC_HUB_URL?match=$topic" > "$received" 2>/dev/null &
 subscriber_pid=$!
 trap 'kill $subscriber_pid 2>/dev/null || true' EXIT
 sleep 2

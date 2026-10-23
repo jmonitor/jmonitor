@@ -23,5 +23,4 @@ return [
     Zenstruck\Messenger\Monitor\ZenstruckMessengerMonitorBundle::class => ['all' => true],
     Jmonitor\JmonitorBundle\JmonitorBundle::class => ['dev' => true, 'prod' => true],
     Sentry\SentryBundle\SentryBundle::class => ['prod' => true],
-    IgorPhp\IgorBundle\IgorPhpBundle::class => ['dev' => true, 'test' => true],
 ];

@@ -105,10 +105,7 @@ composer run lint:check   # PHP-CS-Fixer check (@PER-CS style)
 composer run lint:fix     # PHP-CS-Fixer fix
 composer run rector:check # Rector check (PHP 8.4 migrations)
 composer run rector:fix   # Rector apply fixes
-./vendor/bin/igor-php .   # FrankenPHP worker-safety linter (config igor.json, baseline igor-baseline.json)
 ```
-
-`igor-php` audits shared services for state leaking between requests under FrankenPHP worker mode (mutated properties without reset, superglobals, `exit()`...). New findings vs the baseline should be fixed, not baselined.
 
 ## Demo Account
 
@@ -125,7 +122,7 @@ A public, read-only demo account (`demo@jmonitor.io` / `demo`, project `"Demo pr
 - PHP 8 attributes for routes, entities, handlers (no YAML/XML annotations)
 - Strategy pattern via autowired iterators (AlertCheckerInterface, ConsumerInterface)
 - Enums for fixed value sets (Plan, Component, AlertMetric, ProjectRole, UserStatus)
-- **Worker-safe services:** the app runs under FrankenPHP worker mode — shared services must not accumulate per-request state (reset mutated properties or make them readonly); `igor-php` enforces this
+- **Worker-safe services:** the app runs under FrankenPHP worker mode — shared services must not accumulate per-request state (reset mutated properties or make them readonly)
 - Comments and docs: short and factual (1-3 sentences), no hosting-provider details in public-facing code/docs
 - Never use Yoda conditions (`$var === 'x'`, not `'x' === $var`)
 - **Keep docs in sync with code:** whenever a change modifies, contradicts, or leaves incomplete anything documented in this `CLAUDE.md`, the root `README.md`, `docker/selfhosted/README.md`, or `CONTRIBUTING.md`, update that doc in the same change — stale or contradictory docs are treated as part of the diff, not a follow-up

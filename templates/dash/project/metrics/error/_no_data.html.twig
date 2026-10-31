@@ -5,6 +5,9 @@
     </div>
     {% if reason|default %}
         <p class="text-start mt-2 mb-0">{{ reason }}</p>
+        {% if link|default %}
+            <p class="text-start mt-1 mb-0"><a href="{{ link }}" target="_blank" rel="noopener">Documentation <twig:ux:icon name="material-symbols:open-in-new" /></a></p>
+        {% endif %}
     {% elseif mode.value === 'extended' %}
         <p class="text-center">
             Maybe...<br>

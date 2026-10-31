@@ -1,6 +1,6 @@
 ## Context
 JMonitor is a web monitoring application for PHP web stacks.
-It collects metrics from servers (MySQL, Redis, Apache, Nginx, Caddy, PHP, Symfony, FrankenPHP) and provides dashboards, alerts, and notifications.
+It collects metrics from servers (MySQL, Redis, Apache, Nginx, Caddy, PHP, Symfony, FrankenPHP) and from Cloudflare, and provides dashboards, alerts, and notifications.
 It's designed to simplify the visualization of server and stack metrics (PHP, MySQL, Redis, Nginx, etc.). It provides clear dashboards with gauges and charts, making metrics easy to understand for both developers and non-experts. Its goal is to make performance analysis and issue detection fast and accessible.
 
 This project is the SaaS and main application. It contains the endpoint for collecting metrics, and consumes them to generate dashboards and alerts.

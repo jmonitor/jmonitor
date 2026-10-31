@@ -30,6 +30,10 @@ when@dev:
             redis:
                 dsn: '%env(REDIS_CACHE_DSN)%'
             symfony: ~
+            # Remote: skipped by the agent (one boot error logged) while the two variables are empty.
+            cloudflare:
+                api_token: '%env(CLOUDFLARE_API_TOKEN)%'
+                zone: '%env(CLOUDFLARE_ZONE)%'
             # Optional test instance of PostgreSQL:
             #   docker compose -f docker/pg-demo/compose.yaml up -d
             # then uncomment to collect it.
@@ -67,3 +71,6 @@ when@prod:
                     command: "php bin/console messenger:stats --format=json"
                 flex:
                     timeout: 10
+            cloudflare:
+                api_token: '%env(CLOUDFLARE_API_TOKEN)%'
+                zone: '%env(CLOUDFLARE_ZONE)%'

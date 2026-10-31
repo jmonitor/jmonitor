@@ -11,5 +11,5 @@ echo "📦 Running Doctrine migrations..."
 frankenphp php-cli bin/console doctrine:migrations:migrate --no-interaction
 
 # Idempotent, so it is safe to run on every deployment.
-# echo "🎭 Provisioning the demo project..."
-# frankenphp php-cli bin/console app:demo:provision || echo "⚠️  Demo provisioning failed (non-blocking)"
+echo "🎭 Provisioning the demo project..."
+frankenphp php-cli bin/console app:demo:provision || echo "⚠️  Demo provisioning failed (non-blocking)"

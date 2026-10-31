@@ -1,0 +1,10 @@
+{# quota: \App\Metrics\Metric\Cloudflare\Quota #}
+<div>
+    <div class="dldt">
+        <div class="dl">{{ quota.label }}</div>
+        <div class="dt text-end text-nowrap">{{ quota.used }} <span class="text-muted">/ {{ quota.allowed }}</span></div>
+    </div>
+    <div class="progress mt-1" role="progressbar" aria-label="{{ quota.label }}" aria-valuenow="{{ quota.percent|round }}" aria-valuemin="0" aria-valuemax="100" style="height: 6px">
+        <div class="progress-bar {{ quota.barClass() }}" style="width: {{ min(100, quota.percent)|round }}%"></div>
+    </div>
+</div>

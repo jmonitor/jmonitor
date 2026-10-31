@@ -1,0 +1,27 @@
+{# @var analytics \App\Metrics\Dto\Bag\Cloudflare\WebAnalyticsBag #}
+{% set analytics = dto.value %}
+<div class="row g-3">
+    {% for vital in enum('App\\Metrics\\Dto\\Bag\\Cloudflare\\WebVital').cases %}
+        {% set value = analytics.vital(vital) %}
+        {% set rating = analytics.rating(vital) %}
+        <div class="col-6 col-xl-3" data-vital="{{ vital.value }}">
+            <div class="text-muted small text-uppercase">{{ vital.label }} <span class="fw-light">P75</span></div>
+            <div class="consumer_value-value vital-value {{ rating ? rating.cssClass : 'text-muted' }}">
+                {%- if value is null -%}
+                    –
+                {%- elseif vital.unit == '' -%}
+                    {{ value|number_format(2) }}
+                {%- elseif value >= 1000 -%}
+                    {{ (value / 1000)|number_format(1) }} s
+                {%- else -%}
+                    {{ value|round }} ms
+                {%- endif -%}
+            </div>
+            {% if rating %}<div class="small {{ rating.cssClass }}">{{ rating.label }}</div>{% endif %}
+        </div>
+    {% endfor %}
+</div>
+<twig:Metric:Metric:List class="mt-3">
+    <twig:InfoLine label="FCP P75">{% if analytics.fcpP75Ms is not null %}{{ analytics.fcpP75Ms|format_ms }}{% endif %}</twig:InfoLine>
+    <twig:InfoLine label="Page loads, last 24 h" value="{{ analytics.pageViews|number_format(0, '.', ' ') }}" />
+</twig:Metric:Metric:List>

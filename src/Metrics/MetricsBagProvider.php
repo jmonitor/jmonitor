@@ -32,6 +32,7 @@ class MetricsBagProvider implements ResetInterface
             'version' => $bag->getVersion(),
             'received_at' => $bag->getReceivedAt(),
             'threw' => $bag->hasThrew(),
+            'skipped' => $bag->hasSkipped(),
         ])->expiresAfter($expireAfter);
 
         if ($deferred) {
@@ -95,6 +96,6 @@ class MetricsBagProvider implements ResetInterface
      */
     private function createBag(array $datas): MetricBagDto
     {
-        return MetricBagDto::create($this->projectContext->getCurrentProject(), Consumer::from($datas['consumer']), $datas['version'], $datas['metrics'], $datas['received_at'], $datas['threw'] ?? false);
+        return MetricBagDto::create($this->projectContext->getCurrentProject(), Consumer::from($datas['consumer']), $datas['version'], $datas['metrics'], $datas['received_at'], $datas['threw'] ?? false, $datas['skipped'] ?? false);
     }
 }

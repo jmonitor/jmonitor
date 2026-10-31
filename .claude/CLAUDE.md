@@ -52,7 +52,7 @@ Public metric help: `dash.{domain}/help/metric/{metric}` renders the same help a
 src/
   Admin/           EasyAdmin CRUD
   Alerting/        Alert checking strategies + notifications
-  Bridge/          External integrations (InfluxDB, Stripe, Mercure, EOL API)
+  Bridge/          External integrations (InfluxDB, Stripe, Mercure, EOL API); InfluxDb/TimestampedPoint for consumers whose data carries its own time (Cloudflare)
   Changelog/       Release notes read from CHANGELOG.md, filtered by edition
   Chart/           Chart config and unit conversion
   Collector/       Rate limiting for metric pushes
@@ -62,7 +62,7 @@ src/
   Dev/             Self-monitoring collectors (JMonitor monitoring itself)
   Entity/          Doctrine entities + Enums/
   Install/         Self-hosted install: env checks + admin/self-monitoring provisioning
-  Metrics/         Consumer parsers, InfluxDB queries, rendering
+  Metrics/         Consumer parsers, InfluxDB queries, rendering (a sparse series sets TimeSerieDto::setMinimumWindow())
   MessageHandler/  Async handlers (MetricsReceived, CheckAlert)
   Notifier/        Notification channels
   Plan/            Edition + PlanResolver (cloud/self-hosted seam), Stripe sessions

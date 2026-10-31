@@ -38,6 +38,15 @@ final class CloudflareBagTest extends TestCase
         $this->assertFalse($bag->isCollectorDown());
     }
 
+    public function testANullBlockIsAbsent(): void
+    {
+        $bag = $this->bag(['r2' => null, 'zone' => null, 'unavailable' => ['r2' => 'forbidden', 'zone' => 'forbidden']]);
+
+        $this->assertNull($bag->r2);
+        $this->assertNull($bag->zone);
+        $this->assertFalse($bag->isCollectorDown());
+    }
+
     public function testUnavailableDefaultsToEmptyAndNoZoneMeansDown(): void
     {
         $bag = $this->bag([]);

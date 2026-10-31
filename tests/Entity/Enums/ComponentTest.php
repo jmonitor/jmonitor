@@ -31,6 +31,7 @@ final class ComponentTest extends TestCase
     {
         $this->assertNotContains(Component::Cloudflare, Component::demoCases());
         $this->assertCount(count(Component::cases()) - 1, Component::demoCases());
+        $this->assertTrue(array_is_list(Component::demoCases()));
     }
 
     public function testCloudflareConsumerMapsBackToTheComponent(): void

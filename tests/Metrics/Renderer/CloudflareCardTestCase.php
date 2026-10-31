@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Metrics\Renderer;
 
 use App\Entity\Project;
+use App\Metrics\Consumer\Cloudflare\CloudflareConsumer;
 use App\Metrics\Consumer\Consumer;
 use App\Metrics\Dto\MetricBagDto;
 use App\Metrics\Metric;
@@ -22,7 +23,8 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 
 /**
- * Renders one Cloudflare card against a payload, through the real metric pipeline.
+ * Renders one Cloudflare card against a payload, through the real metric pipeline: the bag the card
+ * reads is the one the consumer would have cached, not the raw payload.
  */
 abstract class CloudflareCardTestCase extends KernelTestCase
 {
@@ -77,7 +79,9 @@ abstract class CloudflareCardTestCase extends KernelTestCase
         $project = new Project();
         self::getContainer()->get(ProjectContext::class)->setCurrentProject($project);
 
-        $bag = MetricBagDto::create($project, Consumer::CLOUDFLARE, 1, $payload, new \DateTimeImmutable(), false, $skipped);
+        $received = MetricBagDto::create($project, Consumer::CLOUDFLARE, 1, $payload, new \DateTimeImmutable(), false, $skipped);
+        $cached = array_filter(new CloudflareConsumer()->getMetricsToCache($received), fn($value): bool => $value !== null);
+        $bag = $received->withMetrics($cached);
 
         $bagProvider = $this->createMock(MetricsBagProvider::class);
         $bagProvider->method('getLastBag')->willReturn($bag);

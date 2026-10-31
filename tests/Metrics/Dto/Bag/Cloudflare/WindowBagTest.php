@@ -44,6 +44,7 @@ final class WindowBagTest extends TestCase
         $this->assertSame(['FR' => 100, 'DE' => 50, 'US' => 40, 'BE' => 30, 'CN' => 20, 'other' => 15], WindowBag::top($counts));
         $this->assertSame(['FR' => 100, 'DE' => 50, 'US' => 40], WindowBag::top(['US' => 40, 'FR' => 100, 'DE' => 50]));
         $this->assertSame([], WindowBag::top([]));
+        $this->assertSame(['a' => 9, 'b' => 8, 'c' => 7, 'd' => 6, 'other' => 5 + 4 + 3], WindowBag::top(['a' => 9, 'b' => 8, 'c' => 7, 'd' => 6, 'other' => 5, 'e' => 4, 'f' => 3]));
     }
 
     public function testRequestsPerMinuteUsesTheWindowLength(): void

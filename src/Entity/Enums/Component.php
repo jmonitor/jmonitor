@@ -82,7 +82,14 @@ enum Component: string implements TranslatableInterface
      */
     public static function demoCases(): array
     {
-        return array_filter(self::cases(), fn(self $component): bool => $component !== self::Cloudflare);
+        $cases = [];
+        foreach (self::cases() as $component) {
+            if ($component !== self::Cloudflare) {
+                $cases[] = $component;
+            }
+        }
+
+        return $cases;
     }
 
     public function label(): string

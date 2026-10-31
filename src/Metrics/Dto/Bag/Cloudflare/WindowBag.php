@@ -132,7 +132,7 @@ class WindowBag extends Bag
         $other = array_sum($counts) - array_sum($top);
 
         if ($other > 0) {
-            $top['other'] = $other;
+            $top['other'] = ($top['other'] ?? 0) + $other;
         }
 
         return $top;

@@ -30,7 +30,7 @@ when@dev:
             redis:
                 dsn: '%env(REDIS_CACHE_DSN)%'
             symfony: ~
-            # Remote: skipped by the agent (one boot error logged) while the two variables are empty.
+            # Optional, see .env.
             cloudflare:
                 api_token: '%env(CLOUDFLARE_API_TOKEN)%'
                 zone: '%env(CLOUDFLARE_ZONE)%'

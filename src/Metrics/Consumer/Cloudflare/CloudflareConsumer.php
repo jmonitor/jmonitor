@@ -31,17 +31,11 @@ class CloudflareConsumer implements ConsumerInterface
     }
 
     /**
-     * The per-minute series only live in InfluxDB.
+     * The minutes stay in the cache too: the quick view reads its origin latency and byte ratio from them.
      */
     public function getMetricsToCache(MetricBagDto $bag): array
     {
-        $metrics = $bag->all();
-
-        if (is_array($metrics['traffic'] ?? null)) {
-            unset($metrics['traffic']['minutes']);
-        }
-
-        return $metrics;
+        return $bag->all();
     }
 
     /**

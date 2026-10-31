@@ -58,11 +58,11 @@ final class CloudflareConsumerTest extends TestCase
         $this->assertSame($first, $second);
     }
 
-    public function testMinutesAreNotCached(): void
+    public function testTheWholePayloadIsCachedMinutesIncluded(): void
     {
         $cached = new CloudflareConsumer()->getMetricsToCache($this->bag(self::fixture()));
 
-        $this->assertArrayNotHasKey('minutes', $cached['traffic']);
+        $this->assertCount(1, $cached['traffic']['minutes']);
         $this->assertSame(238, $cached['traffic']['window']['requests']);
         $this->assertSame('jmonitor.io', $cached['zone']['name']);
         $this->assertSame([], $cached['unavailable']);
@@ -75,6 +75,7 @@ final class CloudflareConsumerTest extends TestCase
 
         $this->assertCount(0, $validator->validate([], $constraints));
         $this->assertCount(0, $validator->validate(['unavailable' => []], $constraints));
+        $this->assertCount(0, $validator->validate(['zone' => null, 'unavailable' => ['zone' => 'forbidden']], $constraints));
         $this->assertCount(0, $validator->validate(self::fixture(), $constraints));
         $this->assertCount(1, $validator->validate(['zone' => 'x'], $constraints));
     }

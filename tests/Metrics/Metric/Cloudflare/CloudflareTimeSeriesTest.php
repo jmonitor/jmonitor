@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Metrics\Metric\Cloudflare;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use App\Metrics\Metric;
 use App\Metrics\Renderer;
 use App\Metrics\Renderer\Dto\TimeSerieDto;
@@ -24,7 +25,7 @@ final class CloudflareTimeSeriesTest extends CloudflareCardTestCase
     /**
      * @param string[] $fields
      */
-    #[\PHPUnit\Framework\Attributes\DataProvider('series')]
+    #[DataProvider('series')]
     public function testTheSeriesReadTheCloudflareMeasurement(Metric $metric, array $fields, mixed $currentValue): void
     {
         $dto = $this->dto($metric, Renderer::Line, self::fixture());
@@ -43,7 +44,7 @@ final class CloudflareTimeSeriesTest extends CloudflareCardTestCase
     /**
      * @param string[] $fields
      */
-    #[\PHPUnit\Framework\Attributes\DataProvider('series')]
+    #[DataProvider('series')]
     public function testAMissingTrafficBlockCarriesItsReason(Metric $metric, array $fields): void
     {
         $payload = self::fixture();

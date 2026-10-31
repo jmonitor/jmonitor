@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Metrics\Renderer;
 
+use App\Metrics\Renderer\Dto\TimeSerieDto;
 use App\Metrics\Metric;
 use App\Metrics\Renderer;
 use App\Metrics\Renderer\Dto\GaugeDto;
@@ -105,17 +106,17 @@ final class CloudflareWindowCardsTest extends CloudflareCardTestCase
     public function testTheLineVariantsDeclareTheirSeries(): void
     {
         $dto = $this->dto(Metric::CloudflareRequests, Renderer::Line, self::fixture());
-        $this->assertInstanceOf(Renderer\Dto\TimeSerieDto::class, $dto);
+        $this->assertInstanceOf(TimeSerieDto::class, $dto);
         $this->assertSame('cloudflare', $dto->measurement);
         $this->assertSame(['cached_requests', 'uncached_requests', 'page_views'], array_keys($dto->fields));
         $this->assertSame(60, $dto->minimumWindow);
 
         $dto = $this->dto(Metric::CloudflareCacheHitRatio, Renderer::Line, self::fixture());
-        $this->assertInstanceOf(Renderer\Dto\TimeSerieDto::class, $dto);
+        $this->assertInstanceOf(TimeSerieDto::class, $dto);
         $this->assertSame(['cache_hit_percent'], array_keys($dto->fields));
 
         $dto = $this->dto(Metric::CloudflareOriginResponseTime, Renderer::Line, self::fixture());
-        $this->assertInstanceOf(Renderer\Dto\TimeSerieDto::class, $dto);
+        $this->assertInstanceOf(TimeSerieDto::class, $dto);
         $this->assertSame(['origin_response_ms_p50', 'origin_response_ms_p95'], array_keys($dto->fields));
     }
 }

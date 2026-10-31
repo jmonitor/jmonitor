@@ -1,0 +1,5 @@
+<twig:Metric:Metric:Gauge dto="{{ dto }}" chart="{{ chart }}" options="{{ options }}">
+    {% if dto.context.bytesPercent is defined and dto.context.bytesPercent is not null %}
+        {{ dto.context.bytesPercent }} % of bytes served from cache
+    {% endif %}
+</twig:Metric:Metric:Gauge>

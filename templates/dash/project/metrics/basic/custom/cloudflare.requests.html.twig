@@ -1,0 +1,15 @@
+{# @var traffic \App\Metrics\Dto\Bag\Cloudflare\TrafficBag #}
+{% set window = dto.value.window %}
+<div class="d-flex align-items-baseline gap-2">
+    <div class="consumer_value-value">{{ window.requests|number_format(0, '.', ' ') }}</div>
+    <span class="text-muted">over 15 min</span>
+</div>
+<twig:Metric:Metric:List class="mt-3">
+    <twig:InfoLine label="Per minute">
+        {% if window.requestsPerMinute is not null %}{{ window.requestsPerMinute|number_format(1) }}{% endif %}
+    </twig:InfoLine>
+    <twig:InfoLine label="Page views">{{ dto.value.minutes|reduce((sum, m) => sum + m.pageViews, 0)|number_format(0, '.', ' ') }}</twig:InfoLine>
+    {% if window.sampled %}
+        <twig:InfoLine label="Accuracy"><twig:Html:Badge:Neutral>sampled by Cloudflare</twig:Html:Badge:Neutral></twig:InfoLine>
+    {% endif %}
+</twig:Metric:Metric:List>

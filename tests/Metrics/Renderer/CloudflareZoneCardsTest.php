@@ -4,20 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\Metrics\Renderer;
 
-use App\Entity\Project;
-use App\Metrics\Consumer\Consumer;
-use App\Metrics\Dto\MetricBagDto;
 use App\Metrics\Metric;
-use App\Metrics\MetricRenderer;
-use App\Metrics\MetricsBagProvider;
-use App\Project\ProjectContext;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 
-final class CloudflareZoneCardsTest extends KernelTestCase
+final class CloudflareZoneCardsTest extends CloudflareCardTestCase
 {
     public function testCertificateDaysLeftAndBadge(): void
     {
@@ -76,37 +65,5 @@ final class CloudflareZoneCardsTest extends KernelTestCase
         $html = $this->render(Metric::CloudflareZone, ['unavailable' => ['zone' => 'rate_limited']]);
 
         $this->assertStringContainsString('rate limit reached', $html);
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    private static function fixture(): array
-    {
-        return json_decode((string) file_get_contents(__DIR__ . '/../Consumer/Cloudflare/fixtures/payload_v1.json'), true, flags: JSON_THROW_ON_ERROR);
-    }
-
-    /**
-     * @param array<string, mixed> $payload
-     */
-    private function render(Metric $metric, array $payload, bool $skipped = false): string
-    {
-        self::bootKernel();
-
-        $project = new Project();
-        self::getContainer()->get(ProjectContext::class)->setCurrentProject($project);
-
-        $bag = MetricBagDto::create($project, Consumer::CLOUDFLARE, 1, $payload, new \DateTimeImmutable(), false, $skipped);
-
-        $bagProvider = $this->createMock(MetricsBagProvider::class);
-        $bagProvider->method('getLastBag')->willReturn($bag);
-        $bagProvider->method('getComponentBags')->willReturn(['cloudflare' => $bag]);
-        self::getContainer()->set(MetricsBagProvider::class, $bagProvider);
-
-        $request = new Request();
-        $request->setSession(new Session(new MockArraySessionStorage()));
-        self::getContainer()->get(RequestStack::class)->push($request);
-
-        return self::getContainer()->get(MetricRenderer::class)->render($metric);
     }
 }

@@ -1,0 +1,86 @@
+{
+  "zone": {
+    "fetched_at": 1761917940,
+    "id": "70262cb0f66f27063f827218bfff44dc",
+    "name": "jmonitor.io",
+    "account_id": "0b064c654406ece8f233181736f105fb",
+    "plan": "free",
+    "status": "active",
+    "paused": false,
+    "development_mode": 0,
+    "settings": {
+      "security_level": "medium", "ssl": "full", "min_tls_version": "1.2", "tls_1_3": "zrt",
+      "cache_level": "aggressive", "browser_cache_ttl": 0, "always_online": "off",
+      "http3": "on", "early_hints": "on", "brotli": "on", "0rtt": "on", "ipv6": "on", "websockets": "on",
+      "always_use_https": "on", "automatic_https_rewrites": "on"
+    },
+    "certificate": { "status": "active", "issuer": "GoogleTrustServices", "expires_at": 1767542446, "hosts": ["jmonitor.io", "*.jmonitor.io"] },
+    "dns_records": { "used": 24, "quota": 200 }
+  },
+  "traffic": {
+    "fetched_at": 1761917940,
+    "from": 1761917460,
+    "to": 1761917760,
+    "minutes": [
+      { "time": 1761917460, "requests": 13, "cached_requests": 0, "bytes": 25778, "cached_bytes": 0,
+        "page_views": 1, "visits": 0, "status_4xx_ratio": 0.0, "status_5xx_ratio": 0.0,
+        "origin_requests": 13, "origin_response_ms_avg": 34.2, "origin_response_ms_p50": 30, "origin_response_ms_p95": 56 }
+    ],
+    "window": {
+      "from": 1761916860,
+      "to": 1761917760,
+      "requests": 238,
+      "sampled": false,
+      "by_cache_status": { "hit": 19, "miss": 9, "dynamic": 207, "revalidated": 3 },
+      "by_status": { "200": 52, "202": 171, "302": 15 },
+      "by_content_type": { "json": 171, "html": 36, "avif": 15 },
+      "by_country": { "FR": 192, "DE": 20, "US": 16 },
+      "by_host": { "collector.jmonitor.io": 171, "jmonitor.io": 37, "dash.jmonitor.io": 30 },
+      "by_protocol": { "HTTP/2": 172, "HTTP/1.1": 45, "HTTP/3": 21 },
+      "security": {
+        "by_action": { "skip": 171, "unknown": 67 },
+        "by_source": { "firewallCustom": 171, "unknown": 67 }
+      }
+    }
+  },
+  "today": {
+    "fetched_at": 1761917940,
+    "date": "2026-10-31",
+    "requests": 12994, "cached_requests": 193, "bytes": 33295308, "cached_bytes": 2965096,
+    "page_views": 932, "uniques": 197, "threats": 17
+  },
+  "web_analytics": {
+    "fetched_at": 1761917940,
+    "site_tag": "fc92037b26d04910a8a043c0a2f29609",
+    "from": 1761831360,
+    "to": 1761917760,
+    "page_views": 11,
+    "visits": 11,
+    "by_host": { "dash.jmonitor.io": 7, "jmonitor.io": 4 },
+    "vitals": { "lcp_p75_ms": 2624, "inp_p75_ms": 48, "cls_p75": 0.09, "ttfb_p75_ms": 898, "fcp_p75_ms": 2592 },
+    "timings": { "page_load_p50_ms": 827, "page_load_p75_ms": 2884, "dns_p75_ms": 33, "connection_p75_ms": 35,
+                 "request_p75_ms": 111, "response_p75_ms": 182, "page_render_p75_ms": 624 }
+  },
+  "r2": {
+    "fetched_at": 1761917940,
+    "month": "2026-10",
+    "class_a_operations": 1,
+    "class_b_operations": 1,
+    "upload_bytes": 0,
+    "download_bytes": 0,
+    "buckets": [
+      { "name": "public", "storage_class": "Standard", "created_at": 1757665296,
+        "object_count": 0, "payload_bytes": 0, "metadata_bytes": 0,
+        "class_a_operations": 0, "class_b_operations": 1, "upload_bytes": 0, "download_bytes": 0 }
+    ]
+  },
+  "images": {
+    "fetched_at": 1761917940,
+    "stored": 591,
+    "stored_quota": 100000,
+    "month": "2026-10",
+    "unique_transformations": 136,
+    "requests_last_24h": 162
+  },
+  "unavailable": {}
+}

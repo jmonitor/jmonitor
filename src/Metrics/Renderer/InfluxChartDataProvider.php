@@ -78,7 +78,7 @@ class InfluxChartDataProvider implements ResetInterface
             ($dto->queryBuilder)($queryBuilder, $range);
         }
 
-        $queryBuilder->aggregateWindow($range);
+        $queryBuilder->aggregateWindow($range, minimumSeconds: $dto->minimumWindow);
 
         return $this->query($queryBuilder);
     }

@@ -92,7 +92,8 @@ final class DevProvisionCommandTest extends TestCase
         self::assertNotContains(Component::Apache, $components);
         self::assertNotContains(Component::Nginx, $components);
         self::assertNotContains(Component::Postgres, $components);
-        self::assertCount(count(Component::cases()) - 3, $components);
+        self::assertNotContains(Component::Cloudflare, $components);
+        self::assertCount(count(Component::cases()) - 4, $components);
 
         // PRO subscription so the TIME_SERIES_CHART right allows InfluxDB writes.
         $subscription = $project->getSubscription();

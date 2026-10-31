@@ -50,7 +50,7 @@ class DemoProvisionCommand
         // 2. Demo project (idempotent: the project named PROJECT_NAME linked to the demo user)
         $project = $this->findDemoProject($user) ?? new Project();
         $project->setName(self::PROJECT_NAME);
-        $project->setComponents(Component::cases());
+        $project->setComponents(Component::demoCases());
 
         // 3. Active PRO subscription so time-series writes are allowed
         $subscription = $project->getSubscription() ?? new Subscription();

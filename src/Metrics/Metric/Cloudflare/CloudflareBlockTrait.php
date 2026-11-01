@@ -12,9 +12,11 @@ use App\Metrics\Dto\Bag\Cloudflare\TrafficBag;
 use App\Metrics\Dto\Bag\Cloudflare\WebAnalyticsBag;
 use App\Metrics\Dto\Bag\Cloudflare\ZoneBag;
 use App\Metrics\Renderer\Dto\AbstractDto;
+use App\Metrics\Renderer\Dto\TimeSerieDto;
 
 /**
  * A Cloudflare card reads one block of the payload; when the block is missing the card says why instead of rendering.
+ * A time series still draws the history it has, and only gives the reason when it has none.
  */
 trait CloudflareBlockTrait
 {
@@ -25,7 +27,9 @@ trait CloudflareBlockTrait
         $bag = $this->getCloudflareBag();
 
         if ($bag === null) {
-            $dto->setValueAvailable(false);
+            if (!$dto instanceof TimeSerieDto) {
+                $dto->setValueAvailable(false);
+            }
 
             return null;
         }
@@ -60,10 +64,10 @@ trait CloudflareBlockTrait
      * @param T $value
      * @return T
      */
-    protected function subBlock(AbstractDto $dto, mixed $value): mixed
+    protected function subBlock(AbstractDto $dto, mixed $value, UnavailableReason $reason = UnavailableReason::Forbidden): mixed
     {
         if ($value === null || $value === false) {
-            $this->unavailable($dto, UnavailableReason::Forbidden);
+            $this->unavailable($dto, $reason);
         }
 
         return $value;
@@ -72,9 +76,12 @@ trait CloudflareBlockTrait
     private function unavailable(AbstractDto $dto, UnavailableReason $reason): void
     {
         $dto
-            ->setValueAvailable(false)
             ->setEmptyDataReason($reason->message())
             ->setEmptyDataLink($reason->link())
         ;
+
+        if (!$dto instanceof TimeSerieDto) {
+            $dto->setValueAvailable(false);
+        }
     }
 }

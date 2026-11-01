@@ -23,14 +23,15 @@ final class CloudflareZoneCardsTest extends CloudflareCardTestCase
         $this->assertStringContainsString('badge-danger', $this->render(Metric::CloudflareCertificate, $payload));
     }
 
-    public function testAMissingCertificateKeyShowsTheForbiddenCopy(): void
+    public function testAMissingCertificateKeyNamesBothCauses(): void
     {
         $payload = self::fixture();
         unset($payload['zone']['certificate']);
 
         $html = $this->render(Metric::CloudflareCertificate, $payload);
 
-        $this->assertStringContainsString('lacks the permission', $html);
+        $this->assertStringContainsString('No active edge certificate', $html);
+        $this->assertStringContainsString('SSL and Certificates permission', $html);
         $this->assertStringContainsString('https://github.com/jmonitor/collector?tab=readme-ov-file#cloudflare', $html);
     }
 

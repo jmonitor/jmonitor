@@ -27,7 +27,7 @@ class CloudflareOriginRequests implements TimeSeriesMetricInterface
         $traffic = $this->block($lineDto, 'traffic');
 
         $lineDto
-            ->setCurrentValue($traffic instanceof TrafficBag ? $traffic->originRequests() : null, 'requests over the last minutes')
+            ->setCurrentValue($traffic instanceof TrafficBag ? $traffic->originRequests() : null, $traffic instanceof TrafficBag ? sprintf('requests over the last %d min', $traffic->spanMinutes) : null)
             ->setMeasurement(CloudflareConsumer::MEASUREMENT)
             ->setFields(['origin_requests' => 'Origin requests'])
             ->setMinimumWindow(60)

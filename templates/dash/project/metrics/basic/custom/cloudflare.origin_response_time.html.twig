@@ -12,5 +12,5 @@
     <twig:InfoLine label="P95">
         {% if latest and latest.originResponseMsP95 is not null %}{{ latest.originResponseMsP95|round }} ms{% endif %}
     </twig:InfoLine>
-    <twig:InfoLine label="Origin requests" value="{{ dto.value.originRequests|number_format(0, '.', ' ') }}" />
+    <twig:InfoLine label="Origin requests, last {{ dto.value.spanMinutes }} min" value="{{ dto.value.originRequests|number_format(0, '.', ' ') }}" />
 </twig:Metric:Metric:List>

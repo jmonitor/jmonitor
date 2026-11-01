@@ -14,6 +14,7 @@ enum UnavailableReason: string
     case RateLimited = 'rate_limited';
     case Error = 'error';
     case CollectorDown = 'collector_down';
+    case NoCertificate = 'no_certificate';
 
     public const string TOKEN_DOC_URL = 'https://github.com/jmonitor/collector?tab=readme-ov-file#cloudflare';
 
@@ -30,11 +31,12 @@ enum UnavailableReason: string
             self::RateLimited => 'Cloudflare rate limit reached, retrying.',
             self::Error => 'Cloudflare did not answer, retrying.',
             self::CollectorDown => 'The agent could not start the Cloudflare collector: the token was rejected or the zone was not found. Check the agent logs.',
+            self::NoCertificate => 'No active edge certificate on the zone, or the API token lacks the SSL and Certificates permission.',
         };
     }
 
     public function link(): ?string
     {
-        return $this === self::Forbidden ? self::TOKEN_DOC_URL : null;
+        return $this === self::Forbidden || $this === self::NoCertificate ? self::TOKEN_DOC_URL : null;
     }
 }

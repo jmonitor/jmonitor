@@ -16,6 +16,10 @@ class TrafficBag extends Bag
         get => $this->getInt('to', 0) ?? 0;
     }
 
+    public int $spanMinutes {
+        get => intdiv(max(0, $this->to - $this->from), 60);
+    }
+
     /**
      * @var TrafficMinute[]
      */

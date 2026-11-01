@@ -21,6 +21,6 @@ export default class extends Controller {
     }
 
     remember = (event) => {
-        history.replaceState(null, '', '#' + event.target.dataset.tabsMemoryKeyParam);
+        history.replaceState(history.state, '', '#' + event.target.dataset.tabsMemoryKeyParam);
     };
 }

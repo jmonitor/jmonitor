@@ -30,9 +30,6 @@ class CloudflareConsumer implements ConsumerInterface
         return $bag;
     }
 
-    /**
-     * The minutes stay in the cache too: the quick view reads its origin latency and byte ratio from them.
-     */
     public function getMetricsToCache(MetricBagDto $bag): array
     {
         return $bag->all();
@@ -56,6 +53,7 @@ class CloudflareConsumer implements ConsumerInterface
     {
         return new Collection(
             fields: array_fill_keys(self::BLOCKS, new Assert\Type('array')),
+            allowExtraFields: true,
             allowMissingFields: true,
         );
     }
@@ -66,6 +64,7 @@ class CloudflareConsumer implements ConsumerInterface
     private function fields(TrafficMinute $minute): array
     {
         $ratio = $minute->cacheHitRatio();
+        $served = $minute->requests > 0;
 
         return array_filter([
             'requests' => $minute->requests,
@@ -76,8 +75,8 @@ class CloudflareConsumer implements ConsumerInterface
             'cached_bytes' => $minute->cachedBytes,
             'page_views' => $minute->pageViews,
             'visits' => $minute->visits,
-            'status_4xx_percent' => $minute->status4xxRatio * 100,
-            'status_5xx_percent' => $minute->status5xxRatio * 100,
+            'status_4xx_percent' => $served ? $minute->status4xxRatio * 100 : null,
+            'status_5xx_percent' => $served ? $minute->status5xxRatio * 100 : null,
             'origin_requests' => $minute->originRequests,
             'origin_response_ms_avg' => $minute->originResponseMsAvg,
             'origin_response_ms_p50' => $minute->originResponseMsP50,

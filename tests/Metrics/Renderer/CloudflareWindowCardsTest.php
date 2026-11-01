@@ -20,6 +20,8 @@ final class CloudflareWindowCardsTest extends CloudflareCardTestCase
         $this->assertStringContainsString('238', $requests);
         $this->assertStringContainsString('15.9', $requests);
         $this->assertStringNotContainsString('sampled', $requests);
+        $this->assertStringContainsString('over 15 min', $requests);
+        $this->assertStringContainsString('Page views, last 5 min', $requests);
 
         $gauge = $this->dto(Metric::CloudflareCacheHitRatio, Renderer::Gauge, $payload);
         $this->assertInstanceOf(GaugeDto::class, $gauge);
@@ -27,7 +29,7 @@ final class CloudflareWindowCardsTest extends CloudflareCardTestCase
 
         $origin = self::lines($this->render(Metric::CloudflareOriginResponseTime, $payload));
         $this->assertSame('56 ms', $origin['P95']);
-        $this->assertSame('13', $origin['Origin requests']);
+        $this->assertSame('13', $origin['Origin requests, last 5 min']);
         $this->assertStringContainsString('>30<', preg_replace('/\s+/', '', $this->render(Metric::CloudflareOriginResponseTime, $payload)) ?? '');
 
         $security = $this->render(Metric::CloudflareSecurity, $payload);

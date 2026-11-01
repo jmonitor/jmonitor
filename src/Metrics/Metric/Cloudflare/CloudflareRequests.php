@@ -34,7 +34,7 @@ class CloudflareRequests implements BasicMetricInterface, TimeSeriesMetricInterf
         $traffic = $this->block($lineDto, 'traffic');
 
         $lineDto
-            ->setCurrentValue($traffic instanceof TrafficBag ? $traffic->window->requests : null, 'requests over 15 min')
+            ->setCurrentValue($traffic instanceof TrafficBag ? $traffic->window->requests : null, $traffic instanceof TrafficBag ? sprintf('requests over %d min', $traffic->window->spanMinutes) : null)
             ->setMeasurement(CloudflareConsumer::MEASUREMENT)
             ->setFields(['cached_requests' => 'Cached', 'uncached_requests' => 'Uncached', 'page_views' => 'Page views'])
             ->setMinimumWindow(60)

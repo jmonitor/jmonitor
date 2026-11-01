@@ -33,19 +33,29 @@ final class CloudflareConsumerTest extends TestCase
 
     public function testNullOriginValuesAreNotWritten(): void
     {
-        $payload = self::fixture();
-        $payload['traffic']['minutes'] = [[
-            'time' => 1761917520, 'requests' => 0, 'cached_requests' => 0, 'bytes' => 0, 'cached_bytes' => 0,
-            'page_views' => 0, 'visits' => 0, 'status_4xx_ratio' => 0.25, 'status_5xx_ratio' => 0.0,
-            'origin_requests' => null, 'origin_response_ms_avg' => null, 'origin_response_ms_p50' => null, 'origin_response_ms_p95' => null,
-        ]];
-
-        $line = new CloudflareConsumer()->getInfluxPoints($this->bag($payload))[0]->toLineProtocol();
+        $line = new CloudflareConsumer()->getInfluxPoints($this->bag($this->withMinute(4, 0.25)))[0]->toLineProtocol();
 
         $this->assertStringNotContainsString('origin_response_ms_p50', $line);
         $this->assertStringNotContainsString('origin_requests', $line);
-        $this->assertStringNotContainsString('cache_hit_percent', $line);
         $this->assertStringContainsString('status_4xx_percent=25', $line);
+    }
+
+    public function testAMinuteWithoutRequestsWritesNoRatio(): void
+    {
+        $line = new CloudflareConsumer()->getInfluxPoints($this->bag($this->withMinute(0, 0.0)))[0]->toLineProtocol();
+
+        $this->assertStringContainsString('requests=0i', $line);
+        $this->assertStringNotContainsString('cache_hit_percent', $line);
+        $this->assertStringNotContainsString('status_4xx_percent', $line);
+        $this->assertStringNotContainsString('status_5xx_percent', $line);
+    }
+
+    public function testExtraBlocksAreAccepted(): void
+    {
+        $payload = self::fixture();
+        $payload['workers'] = ['requests' => 3];
+
+        $this->assertCount(0, Validation::createValidator()->validate($payload, new CloudflareConsumer()->getConstraints(1)));
     }
 
     public function testTheSameMinuteTwiceGivesIdenticalPoints(): void
@@ -86,6 +96,21 @@ final class CloudflareConsumerTest extends TestCase
         $payload['traffic']['minutes'][] = ['requests' => 4];
 
         $this->assertCount(1, new CloudflareConsumer()->getInfluxPoints($this->bag($payload)));
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function withMinute(int $requests, float $status4xxRatio): array
+    {
+        $payload = self::fixture();
+        $payload['traffic']['minutes'] = [[
+            'time' => 1761917520, 'requests' => $requests, 'cached_requests' => 0, 'bytes' => 0, 'cached_bytes' => 0,
+            'page_views' => 0, 'visits' => 0, 'status_4xx_ratio' => $status4xxRatio, 'status_5xx_ratio' => 0.0,
+            'origin_requests' => null, 'origin_response_ms_avg' => null, 'origin_response_ms_p50' => null, 'origin_response_ms_p95' => null,
+        ]];
+
+        return $payload;
     }
 
     /**

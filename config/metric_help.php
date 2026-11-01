@@ -2867,7 +2867,7 @@ return [
 
     Metric::CloudflareRequests->value => [
         'definitions' => [
-            'The requests Cloudflare handled for the zone over the last 15 minutes, as a total, a per-minute rate and, on the chart, split between requests served from the edge cache and requests that reached your origin.',
+            'The requests Cloudflare handled for the zone over the recent window (15 minutes by default), as a total, a per-minute rate and, on the chart, split between requests served from the edge cache and requests that reached your origin.',
         ],
         'why_it_matters' => [
             'This is the traffic your visitors generate, not what your server sees: the difference between the two is what Cloudflare absorbs.',
@@ -2883,7 +2883,7 @@ return [
 
     Metric::CloudflareCacheHitRatio->value => [
         'definitions' => [
-            'The share of requests served by the Cloudflare cache over the last 15 minutes: hits, revalidated and stale answers, divided by all requests.',
+            'The share of requests served by the Cloudflare cache over the recent window (15 minutes by default): hits, revalidated and stale answers, divided by all requests.',
         ],
         'why_it_matters' => [
             'Every cached request is one your server never processed. The ratio is the simplest measure of how much Cloudflare helps.',
@@ -2953,7 +2953,7 @@ return [
 
     Metric::CloudflareSecurity->value => [
         'definitions' => [
-            'The requests Cloudflare mitigated over the last 15 minutes: blocked, or challenged before reaching your origin.',
+            'The requests Cloudflare mitigated over the recent window (15 minutes by default): blocked, or challenged before reaching your origin.',
         ],
         'why_it_matters' => [
             'These requests never reached your server. They are the attacks, scans and bots your logs do not show.',
@@ -2966,7 +2966,7 @@ return [
 
     Metric::CloudflareSecurityByAction->value => [
         'definitions' => [
-            'What Cloudflare did with the requests its security features matched, over the last 15 minutes.',
+            'What Cloudflare did with the requests its security features matched, over the recent window (15 minutes by default).',
         ],
         'why_it_matters' => [
             'A block stops the request; a challenge asks the visitor to prove it is a browser; skip and log only record it.',
@@ -2978,7 +2978,7 @@ return [
 
     Metric::CloudflareSecurityBySource->value => [
         'definitions' => [
-            'Which Cloudflare feature produced the security events of the last 15 minutes: WAF managed rules, custom firewall rules, rate limiting, bot fight mode and so on.',
+            'Which Cloudflare feature produced the security events of the recent window (15 minutes by default): WAF managed rules, custom firewall rules, rate limiting, bot fight mode and so on.',
         ],
         'why_it_matters' => [
             'It tells you which protection is doing the work, and which rule to look at when legitimate visitors get challenged.',
@@ -2990,7 +2990,7 @@ return [
 
     Metric::CloudflareByCacheStatus->value => [
         'definitions' => [
-            'The requests of the last 15 minutes by Cloudflare cache status: hit, miss, expired, revalidated, dynamic.',
+            'The requests of the recent window (15 minutes by default) by Cloudflare cache status: hit, miss, expired, revalidated, dynamic.',
         ],
         'why_it_matters' => [
             'It explains the cache hit ratio: <b>dynamic</b> requests are the ones Cloudflare decided not to cache, usually HTML and API responses.',
@@ -3002,7 +3002,7 @@ return [
 
     Metric::CloudflareByStatus->value => [
         'definitions' => [
-            'The requests of the last 15 minutes grouped by HTTP status class, as answered by the edge.',
+            'The requests of the recent window (15 minutes by default) grouped by HTTP status class, as answered by the edge.',
         ],
         'why_it_matters' => [
             'A quick check of the health of the site as visitors see it, cache included.',
@@ -3014,7 +3014,7 @@ return [
 
     Metric::CloudflareByCountry->value => [
         'definitions' => [
-            'Where the requests of the last 15 minutes came from, the five largest countries and the rest.',
+            'Where the requests of the recent window (15 minutes by default) came from, the five largest countries and the rest.',
         ],
         'why_it_matters' => [
             'An unexpected country at the top is the usual first sign of a scan or a scraper.',
@@ -3026,7 +3026,7 @@ return [
 
     Metric::CloudflareByContentType->value => [
         'definitions' => [
-            'The requests of the last 15 minutes by response content type.',
+            'The requests of the recent window (15 minutes by default) by response content type.',
         ],
         'why_it_matters' => [
             'It shows what the traffic is made of: pages, scripts, images, API calls.',
@@ -3038,7 +3038,7 @@ return [
 
     Metric::CloudflareByProtocol->value => [
         'definitions' => [
-            'The HTTP protocol version visitors used over the last 15 minutes.',
+            'The HTTP protocol version visitors used over the recent window (15 minutes by default).',
         ],
         'why_it_matters' => [
             'HTTP/2 and HTTP/3 load pages faster. A large HTTP/1.1 share usually comes from bots and old clients.',
@@ -3050,7 +3050,7 @@ return [
 
     Metric::CloudflareByHost->value => [
         'definitions' => [
-            'The hostnames of the zone that received requests over the last 15 minutes.',
+            'The hostnames of the zone that received requests over the recent window (15 minutes by default).',
         ],
         'why_it_matters' => [
             'A zone often serves several sites or services; this shows which one carries the traffic.',

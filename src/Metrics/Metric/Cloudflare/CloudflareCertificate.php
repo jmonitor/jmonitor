@@ -30,7 +30,7 @@ class CloudflareCertificate implements BasicMetricInterface
             return;
         }
 
-        $certificate = $this->subBlock($dto, $zone->certificate);
+        $certificate = $this->subBlock($dto, $zone->certificate, UnavailableReason::NoCertificate);
 
         if ($certificate === null) {
             return;

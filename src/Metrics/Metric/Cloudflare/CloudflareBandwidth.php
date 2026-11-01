@@ -29,7 +29,7 @@ class CloudflareBandwidth implements TimeSeriesMetricInterface
         $traffic = $this->block($lineDto, 'traffic');
 
         $lineDto
-            ->setCurrentValue($traffic instanceof TrafficBag ? array_sum(array_map(fn(TrafficMinute $m): int => $m->bytes, $traffic->minutes)) : null, 'B over the last minutes')
+            ->setCurrentValue($traffic instanceof TrafficBag ? array_sum(array_map(fn(TrafficMinute $m): int => $m->bytes, $traffic->minutes)) : null, $traffic instanceof TrafficBag ? sprintf('B over the last %d min', $traffic->spanMinutes) : null)
             ->setMeasurement(CloudflareConsumer::MEASUREMENT)
             ->setFields(['bytes' => 'Edge', 'cached_bytes' => 'From cache'])
             ->setMinimumWindow(60)

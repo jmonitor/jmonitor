@@ -45,7 +45,7 @@ final class CloudflareTimeSeriesTest extends CloudflareCardTestCase
      * @param string[] $fields
      */
     #[DataProvider('series')]
-    public function testAMissingTrafficBlockCarriesItsReason(Metric $metric, array $fields): void
+    public function testAMissingTrafficBlockKeepsTheHistoryAndCarriesItsReason(Metric $metric, array $fields): void
     {
         $payload = self::fixture();
         unset($payload['traffic']);
@@ -54,7 +54,8 @@ final class CloudflareTimeSeriesTest extends CloudflareCardTestCase
         $dto = $this->dto($metric, Renderer::Line, $payload);
 
         $this->assertInstanceOf(TimeSerieDto::class, $dto);
-        $this->assertFalse($dto->valueAvailable);
+        $this->assertTrue($dto->valueAvailable);
+        $this->assertSame($fields, array_keys($dto->fields));
         $this->assertSame('Cloudflare rate limit reached, retrying.', $dto->emptyDataReason);
     }
 }

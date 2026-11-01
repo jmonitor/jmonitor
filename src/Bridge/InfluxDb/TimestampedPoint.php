@@ -8,8 +8,7 @@ use InfluxDB2\Model\WritePrecision;
 use InfluxDB2\Point;
 
 /**
- * A point written at the time its source reports, not at the time the metrics were received;
- * the consumer pipeline leaves it alone.
+ * A point written at the time its source reports, not at the time the metrics were received.
  */
 final class TimestampedPoint extends Point
 {

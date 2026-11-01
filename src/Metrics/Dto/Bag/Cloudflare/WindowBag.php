@@ -23,6 +23,10 @@ class WindowBag extends Bag
         get => $this->getInt('to', 0) ?? 0;
     }
 
+    public int $spanMinutes {
+        get => intdiv(max(0, $this->to - $this->from), 60);
+    }
+
     public int $requests {
         get => $this->getInt('requests', 0) ?? 0;
     }

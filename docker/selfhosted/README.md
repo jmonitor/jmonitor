@@ -235,7 +235,7 @@ The same project can watch a Cloudflare zone: set `CLOUDFLARE_API_TOKEN` and
 [collector README](https://github.com/jmonitor/collector#cloudflare)), recreate
 the collector service (`docker compose up -d collector`) and enable the
 Cloudflare component in the project settings. Leave the variables empty to skip
-it: the collector logs one boot error for Cloudflare and carries on.
+it.
 
 Don't want it? Set `SELF_MONITORING=0` in `.env` **before the first start**:
 no project is created and the collector service stays idle. After the fact:

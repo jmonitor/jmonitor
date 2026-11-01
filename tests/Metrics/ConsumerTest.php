@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Metrics;
 
 use App\Bridge\InfluxDb\InfluxDb;
+use App\Bridge\InfluxDb\TimestampedPoint;
 use App\Console\CommandLauncher;
 use App\Entity\Enums\Component;
 use App\Entity\Project;
@@ -15,6 +16,7 @@ use App\Metrics\Consumer\ConsumerInterface;
 use App\Metrics\Dto\MetricBagDto;
 use App\Metrics\MetricsBagProvider;
 use Doctrine\ORM\EntityManagerInterface;
+use InfluxDB2\Point;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -105,6 +107,50 @@ class ConsumerTest extends TestCase
         $this->assertFalse($bag->hasThrew());
     }
 
+    public function testASkippedEntryIsCachedAsSkipped(): void
+    {
+        $saved = null;
+        $bagProvider = $this->createMock(MetricsBagProvider::class);
+        $bagProvider->method('saveMetricBag')->willReturnCallback(function (MetricBagDto $bag) use (&$saved): void {
+            $saved = $bag;
+        });
+
+        $dispatchedEvent = null;
+        $consumer = $this->createConsumer($this->createMock(LoggerInterface::class), $dispatchedEvent, bagProvider: $bagProvider);
+
+        $consumer->consume([['name' => 'php', 'version' => 1, 'skipped' => true, 'metrics' => []]], $this->createProject(), new \DateTimeImmutable(), '2.5.1');
+
+        $this->assertTrue($saved?->hasSkipped());
+        $this->assertTrue($dispatchedEvent?->metricBags['php']->hasSkipped());
+    }
+
+    public function testATimestampedPointKeepsItsTime(): void
+    {
+        $written = [];
+        $influxDb = $this->createMock(InfluxDb::class);
+        $influxDb->method('writePoints')->willReturnCallback(function (array $points) use (&$written): void {
+            $written = $points;
+        });
+        $security = $this->createMock(Security::class);
+        $security->method('isGranted')->willReturn(true);
+
+        $dispatchedEvent = null;
+        $consumer = $this->createConsumer($this->createMock(LoggerInterface::class), $dispatchedEvent, influxDb: $influxDb, security: $security, points: [
+            new TimestampedPoint('m', 1761917460, ['v' => 1]),
+            new Point('m', fields: ['v' => 2]),
+        ]);
+
+        $project = $this->createProject();
+        $project->setBucketId('bucket');
+        $receivedAt = new \DateTimeImmutable('2026-10-31 15:00:00');
+
+        $consumer->consume([['name' => 'php', 'version' => 1, 'metrics' => []]], $project, $receivedAt, '2.5.1');
+
+        $this->assertCount(2, $written);
+        $this->assertStringEndsWith(' 1761917460', $written[0]->toLineProtocol());
+        $this->assertStringEndsWith(' ' . $receivedAt->getTimestamp(), $written[1]->toLineProtocol());
+    }
+
     private function createProject(): Project
     {
         $project = new Project();
@@ -114,7 +160,10 @@ class ConsumerTest extends TestCase
         return $project;
     }
 
-    private function createConsumer(LoggerInterface $logger, ?PostConsumeEvent &$dispatchedEvent): Consumer
+    /**
+     * @param Point[] $points
+     */
+    private function createConsumer(LoggerInterface $logger, ?PostConsumeEvent &$dispatchedEvent, ?MetricsBagProvider $bagProvider = null, ?InfluxDb $influxDb = null, ?Security $security = null, array $points = []): Consumer
     {
         $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
         $eventDispatcher->method('dispatch')->willReturnCallback(function (object $event) use (&$dispatchedEvent): object {
@@ -125,23 +174,31 @@ class ConsumerTest extends TestCase
 
         return new Consumer(
             new ServiceLocator([
-                ConsumerEnum::PHP->value => fn(): ConsumerInterface => $this->createNoopConsumer(),
+                ConsumerEnum::PHP->value => fn(): ConsumerInterface => $this->createNoopConsumer($points),
                 ConsumerEnum::APACHE->value => fn(): ConsumerInterface => $this->createNoopConsumer(),
             ]),
             $logger,
-            $this->createMock(InfluxDb::class),
-            $this->createMock(MetricsBagProvider::class),
+            $influxDb ?? $this->createMock(InfluxDb::class),
+            $bagProvider ?? $this->createMock(MetricsBagProvider::class),
             $eventDispatcher,
             Validation::createValidator(),
-            $this->createMock(Security::class),
+            $security ?? $this->createMock(Security::class),
             $this->createMock(CommandLauncher::class),
             $this->createMock(EntityManagerInterface::class),
         );
     }
 
-    private function createNoopConsumer(): ConsumerInterface
+    /**
+     * @param Point[] $points
+     */
+    private function createNoopConsumer(array $points = []): ConsumerInterface
     {
-        return new class implements ConsumerInterface {
+        return new class ($points) implements ConsumerInterface {
+            /**
+             * @param Point[] $points
+             */
+            public function __construct(private readonly array $points) {}
+
             public function normalizeBag(MetricBagDto $bag): MetricBagDto
             {
                 return $bag;
@@ -154,7 +211,7 @@ class ConsumerTest extends TestCase
 
             public function getInfluxPoints(MetricBagDto $bag): array
             {
-                return [];
+                return $this->points;
             }
 
             public function getConstraints(int $version): array

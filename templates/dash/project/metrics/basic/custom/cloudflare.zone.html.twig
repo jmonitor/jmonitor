@@ -1,0 +1,28 @@
+{# @var zone \App\Metrics\Dto\Bag\Cloudflare\ZoneBag #}
+{% set zone = dto.value %}
+<div class="consumer_value-value">{{ zone.name }}</div>
+<twig:Metric:Metric:List class="mt-3">
+    <twig:InfoLine label="Status">
+        {% if zone.status === 'active' %}
+            <twig:Html:Badge:Green>active</twig:Html:Badge:Green>
+        {% elseif zone.status %}
+            <twig:Html:Badge:Red>{{ zone.status }}</twig:Html:Badge:Red>
+        {% endif %}
+        {% if zone.paused %}
+            <twig:Html:Badge:Red>paused</twig:Html:Badge:Red>
+        {% endif %}
+    </twig:InfoLine>
+    <twig:InfoLine label="Plan">
+        {% if zone.plan %}
+            <twig:Html:Badge:Neutral>{{ zone.plan|capitalize }}</twig:Html:Badge:Neutral>
+        {% endif %}
+    </twig:InfoLine>
+    <twig:InfoLine label="Development mode">
+        {% if zone.developmentMode > 0 %}
+            <twig:Html:Badge:Red>on</twig:Html:Badge:Red>
+            <span class="text-muted"><span {{ stimulus_controller('duration', {seconds: zone.developmentMode}) }}></span> left</span>
+        {% else %}
+            <twig:Html:Badge:Neutral>off</twig:Html:Badge:Neutral>
+        {% endif %}
+    </twig:InfoLine>
+</twig:Metric:Metric:List>

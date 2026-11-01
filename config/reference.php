@@ -1666,6 +1666,22 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *             endpoint?: scalar|Param|null, // Url of Caddy (or FrankenPHP) metrics endpoint. // Default: "http://localhost:2019/metrics"
  *             frankenphp?: bool|Param, // Enable FrankenPhp metrics collection // Default: false
  *         },
+ *         cloudflare?: bool|array{
+ *             enabled?: bool|Param, // Default: false
+ *             api_token?: scalar|Param|null, // Cloudflare API token. See the permissions it needs: https://github.com/jmonitor/collector?tab=readme-ov-file#cloudflare
+ *             zone?: scalar|Param|null, // Zone name (example.com) or zone id.
+ *             http_client?: scalar|Param|null, // Name of a Psr\Http\Client\ClientInterface service. Defaults to the bundle "http_client", then to Psr18ClientDiscovery. // Default: null
+ *             refresh?: array{ // Seconds between two refreshes of each block.
+ *                 traffic?: int|Param, // Default: 60
+ *                 today?: int|Param, // Default: 300
+ *                 web_analytics?: int|Param, // Default: 300
+ *                 storage?: int|Param, // R2 and Images. // Default: 900
+ *                 zone?: int|Param, // Default: 3600
+ *             },
+ *             lag?: int|Param, // Seconds: the data window ends at the start of the minute of now - lag. // Default: 180
+ *             lookback?: int|Param, // Minutes of per-minute traffic re-read on every refresh. // Default: 5
+ *             window?: int|Param, // Minutes covered by the traffic breakdowns. // Default: 15
+ *         },
  *         symfony?: bool|array{
  *             enabled?: bool|Param, // Default: false
  *             flex?: bool|array{

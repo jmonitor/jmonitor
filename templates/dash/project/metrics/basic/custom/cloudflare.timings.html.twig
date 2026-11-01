@@ -1,0 +1,14 @@
+{# @var analytics \App\Metrics\Dto\Bag\Cloudflare\WebAnalyticsBag #}
+{% set analytics = dto.value %}
+<twig:Metric:Metric:List>
+    {% for label, ms in {
+        'DNS': analytics.dnsP75Ms,
+        'Connection': analytics.connectionP75Ms,
+        'Request': analytics.requestP75Ms,
+        'Response': analytics.responseP75Ms,
+        'Page render': analytics.pageRenderP75Ms,
+    } %}
+        <twig:InfoLine label="{{ label }}">{% if ms is not null %}{{ ms|format_ms }}{% endif %}</twig:InfoLine>
+    {% endfor %}
+    <div class="text-muted small">P75 of real visitors, last 24 h</div>
+</twig:Metric:Metric:List>

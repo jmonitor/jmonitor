@@ -7,6 +7,7 @@ namespace App\Metrics;
 use App\Metrics\Consumer\Consumer;
 use App\Metrics\Dto\Bag\Apache\ApacheBag;
 use App\Metrics\Dto\Bag\Caddy\CaddyBag;
+use App\Metrics\Dto\Bag\Cloudflare\CloudflareBag;
 use App\Metrics\Dto\Bag\FrankenPhp\FrankenPhpBag;
 use App\Metrics\Dto\Bag\Mysql\MysqlInfoSchemaBag;
 use App\Metrics\Dto\Bag\Mysql\MysqlSlowQueriesBag;
@@ -44,6 +45,11 @@ trait BagAwareTrait
     public function getCaddyBag(): ?CaddyBag
     {
         return $this->bagProvider->getLastBag(Consumer::CADDY, CaddyBag::class);
+    }
+
+    public function getCloudflareBag(): ?CloudflareBag
+    {
+        return $this->bagProvider->getLastBag(Consumer::CLOUDFLARE, CloudflareBag::class);
     }
 
     public function getFrankenPhpBag(): ?FrankenPhpBag

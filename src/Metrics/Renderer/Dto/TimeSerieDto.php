@@ -9,6 +9,11 @@ class TimeSerieDto extends AbstractDto
     public private(set) ?string $unit = null;
 
     /**
+     * Seconds; the chart never aggregates on a window shorter than this.
+     */
+    public private(set) int $minimumWindow = 0;
+
+    /**
      * @var string[]
      */
     public private(set) array $fields;
@@ -41,6 +46,13 @@ class TimeSerieDto extends AbstractDto
     public function setFields(array $fields): self
     {
         $this->fields = $fields;
+
+        return $this;
+    }
+
+    public function setMinimumWindow(int $seconds): self
+    {
+        $this->minimumWindow = $seconds;
 
         return $this;
     }

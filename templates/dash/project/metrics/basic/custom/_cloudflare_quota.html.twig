@@ -1,0 +1,11 @@
+{# quota: \App\Metrics\Metric\Cloudflare\Quota #}
+{% macro amount(quota, value) %}{% if quota.inBytes %}{{ value|format_bytes(false) }}{% else %}{{ value|number_format(0, '.', ' ') }}{% endif %}{% endmacro %}
+<div>
+    <div class="dldt">
+        <div class="dl">{{ quota.label }}</div>
+        <div class="dt text-end text-nowrap">{{ _self.amount(quota, quota.used) }} <span class="text-muted">/ {{ _self.amount(quota, quota.allowed) }}</span></div>
+    </div>
+    <div class="progress mt-1" role="progressbar" aria-label="{{ quota.label }}" aria-valuenow="{{ quota.percent|round }}" aria-valuemin="0" aria-valuemax="100" style="height: 6px">
+        <div class="progress-bar {{ quota.barClass() }}" style="width: {{ min(100, quota.percent)|round }}%"></div>
+    </div>
+</div>

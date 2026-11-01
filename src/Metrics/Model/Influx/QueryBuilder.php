@@ -72,9 +72,9 @@ class QueryBuilder implements \Stringable
         return $this;
     }
 
-    public function aggregateWindow(ChartRange $range, string $fn = 'mean'): self
+    public function aggregateWindow(ChartRange $range, string $fn = 'mean', int $minimumSeconds = 0): self
     {
-        $this->aggregateWindow = AggregateWindow::fromRange($range, $fn);
+        $this->aggregateWindow = AggregateWindow::fromRange($range, $fn, minimumSeconds: $minimumSeconds);
 
         return $this;
     }

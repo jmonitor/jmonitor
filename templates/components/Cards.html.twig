@@ -1,8 +1,8 @@
-<div {{ attributes.defaults({class: 'd-flex flex-column'}) }}> {# flex-column keeps the tabs and the pane flush together, otherwise a stray 1px gap sometimes shows up #}
+<div {{ attributes.defaults({class: 'd-flex flex-column'}|merge(memory ? {'data-controller': 'tabs-memory'} : {})) }}> {# flex-column keeps the tabs and the pane flush together, otherwise a stray 1px gap sometimes shows up #}
     <ul class="nav nav-tabs nav-tabs-card flex-nowrap overflow-x-auto" role="tablist">
         {% for title in titles %}
             <li class="nav-item" role="presentation">
-                <button class="nav-link text-truncate {% if loop.index0 == 0 %}active{% endif %}" id="label-{{ loop.index }}" data-bs-toggle="tab" data-bs-target="#pane-{{ loop.index }}" type="button" role="tab" aria-controls="pane-{{ loop.index }}" aria-selected="{{ loop.index == 1 ? 'true' : 'false' }}">{{ title|raw }}</button>
+                <button class="nav-link text-truncate {% if loop.index0 == 0 %}active{% endif %}" id="label-{{ loop.index }}" data-bs-toggle="tab" data-bs-target="#pane-{{ loop.index }}" type="button" role="tab" aria-controls="pane-{{ loop.index }}" aria-selected="{{ loop.index == 1 ? 'true' : 'false' }}"{% if memory %} data-tabs-memory-target="tab" data-tabs-memory-key-param="{{ title|striptags|lower|replace({' ': '-'}) }}"{% endif %}>{{ title|raw }}</button>
             </li>
         {% endfor %}
     </ul>

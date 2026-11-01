@@ -230,6 +230,13 @@ MySQL, Redis, Symfony). Log in and you already have data.
 Note: system CPU/memory/load are the host machine's real values. Disk usage
 only covers the partition backing Docker's storage (`/var/lib/docker`).
 
+The same project can watch a Cloudflare zone: set `CLOUDFLARE_API_TOKEN` and
+`CLOUDFLARE_ZONE` in `.env` (the token permissions are listed in the
+[collector README](https://github.com/jmonitor/collector#cloudflare)), recreate
+the collector service (`docker compose up -d collector`) and enable the
+Cloudflare component in the project settings. Leave the variables empty to skip
+it.
+
 Don't want it? Set `SELF_MONITORING=0` in `.env` **before the first start**:
 no project is created and the collector service stays idle. After the fact:
 delete the project from the dashboard and stop the service

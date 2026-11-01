@@ -1,6 +1,6 @@
 # JMonitor
 
-JMonitor is an easy-to-use monitoring tool for PHP web stacks: it turns your server metrics (MySQL, Redis, Nginx, PHP…) into clear dashboards and alerts.
+JMonitor is an easy-to-use monitoring tool for PHP web stacks: it turns your server metrics (MySQL, Redis, Nginx, PHP, Cloudflare…) into clear dashboards and alerts.
 
 It comes in two editions: a self-hostable version, and a hosted service at [jmonitor.io](https://jmonitor.io).
 
@@ -58,6 +58,7 @@ JMonitor focuses on getting you readable dashboards fast, made for the PHP world
 | Web servers       | ![Apache](https://img.shields.io/badge/Apache-D22128?style=flat-square&logo=apache&logoColor=white) ![Nginx](https://img.shields.io/badge/Nginx-009639?style=flat-square&logo=nginx&logoColor=white) ![Caddy](https://img.shields.io/badge/Caddy-1F88C0?style=flat-square&logo=caddy&logoColor=white)        |
 | Databases & cache | ![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=flat-square&logo=mysql&logoColor=white) ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=flat-square&logo=postgresql&logoColor=white) ![Redis](https://img.shields.io/badge/Redis-FF4438?style=flat-square&logo=redis&logoColor=white) |
 | System            | ![Linux](https://img.shields.io/badge/CPU%20·%20RAM%20·%20Disk-FCC624?style=flat-square&logo=linux&logoColor=black)                                                                                                                                                                                        |
+| Edge              | ![Cloudflare](https://img.shields.io/badge/Cloudflare-F38020?style=flat-square&logo=cloudflare&logoColor=white)                                                                                                                                                                                            |
 
 ## How it works
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Metrics\Help;
 
+use App\Entity\Enums\Component;
 use App\Metrics\Help\HelpProvider;
 use App\Metrics\Metric;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -42,6 +43,17 @@ class HelpProviderTest extends KernelTestCase
         $this->assertTrue($provider->hasHelp(Metric::RedisDbKeys));
         $this->assertTrue($provider->hasHelp(Metric::RedisDbExpiringKeys));
         $this->assertTrue($provider->hasHelp(Metric::RedisDbAvgTtl));
+    }
+
+    public function testEveryCloudflareMetricIsDocumented(): void
+    {
+        $provider = $this->provider();
+
+        foreach (Metric::cases() as $metric) {
+            if ($metric->component() === Component::Cloudflare) {
+                $this->assertTrue($provider->hasHelp($metric), $metric->value);
+            }
+        }
     }
 
     /**

@@ -1,0 +1,24 @@
+{# @var certificate \App\Metrics\Dto\Bag\Cloudflare\CertificateBag #}
+{% set certificate = dto.value %}
+{% set daysLeft = dto.context.daysLeft %}
+{% set style = dto.context.style %}
+<div class="d-flex align-items-baseline gap-2">
+    {% if daysLeft is not null %}
+        <div class="consumer_value-value">{{ daysLeft }}</div>
+        <span class="text-muted">{{ daysLeft < 0 ? 'days ago' : 'days left' }}</span>
+    {% endif %}
+    {% if style === 'success' %}
+        <twig:Html:Badge:Green>{{ certificate.status }}</twig:Html:Badge:Green>
+    {% elseif style === 'warning' %}
+        <twig:Html:Badge:Yellow>expires soon</twig:Html:Badge:Yellow>
+    {% else %}
+        <twig:Html:Badge:Red>{{ daysLeft is not null and daysLeft < 0 ? 'expired' : (certificate.status ?? 'unknown') }}</twig:Html:Badge:Red>
+    {% endif %}
+</div>
+<twig:Metric:Metric:List class="mt-3">
+    <twig:InfoLine label="Issuer" value="{{ certificate.issuer }}" />
+    <twig:InfoLine label="Expires">
+        {% if certificate.expiresAt %}{{ certificate.expiresAt|date('Y-m-d') }}{% endif %}
+    </twig:InfoLine>
+    <twig:InfoLine label="Hosts" value="{{ certificate.hosts|join(', ') }}" truncate="true" />
+</twig:Metric:Metric:List>

@@ -12,6 +12,7 @@ to that edition only, everything else applies to both.
 
 ### Added
 
+- A Cloudflare dashboard: edge cache, origin latency, security, Web Vitals, R2 and Images usage.
 - Metric help pages can be opened without an account at `/help/metric/{metric}`.
 - The Apache page charts the average request duration.
 

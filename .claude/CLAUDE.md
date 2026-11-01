@@ -1,6 +1,6 @@
 ## Context
 JMonitor is a web monitoring application for PHP web stacks.
-It collects metrics from servers (MySQL, Redis, Apache, Nginx, Caddy, PHP, Symfony, FrankenPHP) and provides dashboards, alerts, and notifications.
+It collects metrics from servers (MySQL, Redis, Apache, Nginx, Caddy, PHP, Symfony, FrankenPHP) and from Cloudflare, and provides dashboards, alerts, and notifications.
 It's designed to simplify the visualization of server and stack metrics (PHP, MySQL, Redis, Nginx, etc.). It provides clear dashboards with gauges and charts, making metrics easy to understand for both developers and non-experts. Its goal is to make performance analysis and issue detection fast and accessible.
 
 This project is the SaaS and main application. It contains the endpoint for collecting metrics, and consumes them to generate dashboards and alerts.
@@ -52,7 +52,7 @@ Public metric help: `dash.{domain}/help/metric/{metric}` renders the same help a
 src/
   Admin/           EasyAdmin CRUD
   Alerting/        Alert checking strategies + notifications
-  Bridge/          External integrations (InfluxDB, Stripe, Mercure, EOL API)
+  Bridge/          External integrations (InfluxDB, Stripe, Mercure, EOL API); InfluxDb/TimestampedPoint for consumers whose data carries its own time (Cloudflare)
   Changelog/       Release notes read from CHANGELOG.md, filtered by edition
   Chart/           Chart config and unit conversion
   Collector/       Rate limiting for metric pushes
@@ -62,7 +62,7 @@ src/
   Dev/             Self-monitoring collectors (JMonitor monitoring itself)
   Entity/          Doctrine entities + Enums/
   Install/         Self-hosted install: env checks + admin/self-monitoring provisioning
-  Metrics/         Consumer parsers, InfluxDB queries, rendering
+  Metrics/         Consumer parsers, InfluxDB queries, rendering (a sparse series sets TimeSerieDto::setMinimumWindow())
   MessageHandler/  Async handlers (MetricsReceived, CheckAlert)
   Notifier/        Notification channels
   Plan/            Edition + PlanResolver (cloud/self-hosted seam), Stripe sessions

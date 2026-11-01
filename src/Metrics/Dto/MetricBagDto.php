@@ -14,21 +14,22 @@ abstract class MetricBagDto extends Bag
     private readonly int $version;
     private readonly \DateTimeImmutable $receivedAt;
     private readonly bool $threw;
+    private readonly bool $skipped;
 
     /**
      * @param mixed[] $metrics
      */
-    public static function create(Project $project, Consumer $consumer, int $version, array $metrics, \DateTimeImmutable $receivedAt, bool $threw): self
+    public static function create(Project $project, Consumer $consumer, int $version, array $metrics, \DateTimeImmutable $receivedAt, bool $threw, bool $skipped = false): self
     {
         $class = $consumer->metricBagClass();
 
-        return new $class($project, $consumer, $version, $metrics, $receivedAt, $threw);
+        return new $class($project, $consumer, $version, $metrics, $receivedAt, $threw, $skipped);
     }
 
     /**
      * @param mixed[] $metrics
      */
-    private function __construct(Project $project, Consumer $consumer, int $version, array $metrics, \DateTimeImmutable $receivedAt, bool $threw)
+    private function __construct(Project $project, Consumer $consumer, int $version, array $metrics, \DateTimeImmutable $receivedAt, bool $threw, bool $skipped)
     {
         parent::__construct($metrics);
 
@@ -37,6 +38,7 @@ abstract class MetricBagDto extends Bag
         $this->consumer = $consumer;
         $this->project = $project;
         $this->threw = $threw;
+        $this->skipped = $skipped;
     }
 
     public function getConsumer(): Consumer
@@ -62,6 +64,14 @@ abstract class MetricBagDto extends Bag
     public function hasThrew(): bool
     {
         return $this->threw;
+    }
+
+    /**
+     * The agent could not boot this collector and sent no metrics.
+     */
+    public function hasSkipped(): bool
+    {
+        return $this->skipped;
     }
 
     /**

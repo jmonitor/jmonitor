@@ -8,6 +8,7 @@ use App\Entity\Enums\Component;
 use App\Entity\Project;
 use App\Metrics\Dto\Bag\Apache\ApacheBag;
 use App\Metrics\Dto\Bag\Caddy\CaddyBag;
+use App\Metrics\Dto\Bag\Cloudflare\CloudflareBag;
 use App\Metrics\Dto\Bag\FrankenPhp\FrankenPhpBag;
 use App\Metrics\Dto\Bag\Mysql\MysqlInfoSchemaBag;
 use App\Metrics\Dto\Bag\Mysql\MysqlQueriesCountBag;
@@ -44,6 +45,7 @@ enum Consumer: string
     case REDIS = 'redis';
     case SYMFONY = 'symfony';
     case FRANKENPHP = 'frankenphp';
+    case CLOUDFLARE = 'cloudflare';
 
     /**
      * Pour validator symfony
@@ -89,6 +91,7 @@ enum Consumer: string
             self::CADDY => Component::Caddy,
             self::SYMFONY => Component::Symfony,
             self::FRANKENPHP => Component::FrankenPHP,
+            self::CLOUDFLARE => Component::Cloudflare,
         };
     }
 
@@ -115,6 +118,7 @@ enum Consumer: string
             self::POSTGRES_SLOW_QUERIES => PostgresSlowQueriesBag::class,
             self::SYMFONY => SymfonyBag::class,
             self::FRANKENPHP => FrankenPhpBag::class,
+            self::CLOUDFLARE => CloudflareBag::class,
         };
     }
 }

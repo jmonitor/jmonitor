@@ -28,21 +28,34 @@ enum TimeRange: string
      */
     public function asWindowPeriod(): string
     {
+        return self::formatPeriod($this->asWindowSeconds());
+    }
+
+    public function asWindowSeconds(): int
+    {
         return match ($this) {
-            self::LAST_5_MIN => '15s',
-            self::LAST_15_MIN => '15s',
-            self::LAST_30_MIN => '30s',
-            self::LAST_1_HOUR => '1m',
-            self::LAST_3_HOURS => '3m',
-            self::LAST_6_HOURS => '6m',
-            self::LAST_12_HOURS => '12m',
-            self::LAST_24_HOURS => '24m',
-            self::LAST_7_DAYS => '168m',
-            self::LAST_48_HOURS => '336m',
-            self::LAST_15_DAYS => '900m',
-            self::TODAY => '24m',
-            self::YESTERDAY => '24m',
+            self::LAST_5_MIN => 15,
+            self::LAST_15_MIN => 15,
+            self::LAST_30_MIN => 30,
+            self::LAST_1_HOUR => 60,
+            self::LAST_3_HOURS => 3 * 60,
+            self::LAST_6_HOURS => 6 * 60,
+            self::LAST_12_HOURS => 12 * 60,
+            self::LAST_24_HOURS => 24 * 60,
+            self::LAST_7_DAYS => 168 * 60,
+            self::LAST_48_HOURS => 336 * 60,
+            self::LAST_15_DAYS => 900 * 60,
+            self::TODAY => 24 * 60,
+            self::YESTERDAY => 24 * 60,
         };
+    }
+
+    /**
+     * A Flux duration: whole minutes as "Nm", anything else as "Ns".
+     */
+    public static function formatPeriod(int $seconds): string
+    {
+        return $seconds % 60 === 0 ? intdiv($seconds, 60) . 'm' : $seconds . 's';
     }
 
     public function label(): string

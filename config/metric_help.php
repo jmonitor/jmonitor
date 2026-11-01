@@ -2804,4 +2804,350 @@ return [
             'The scheduler relies on a "Tick" system. Every time a worker runs, it checks this list to see what is due. If your list looks correct but nothing is actually running, the issue lies with your <b>Messenger Workers</b>, not the schedule definition itself.',
         ],
     ],
+
+    Metric::CloudflareZone->value => [
+        'definitions' => [
+            'The Cloudflare zone the agent reads: its name, status, plan, and whether development mode is on.',
+        ],
+        'why_it_matters' => [
+            'Development mode bypasses the Cloudflare cache for three hours: every request reaches your origin. Left on by mistake, it removes the protection the rest of this page measures.',
+        ],
+        'how_to_read' => [
+            'Status should be <b>active</b>. Development mode shows in red while it is on, with the time left.',
+        ],
+        'good_to_know' => [
+            'The zone block is read once an hour; a change made in the Cloudflare dashboard can take that long to appear here.',
+        ],
+    ],
+
+    Metric::CloudflareCertificate->value => [
+        'definitions' => [
+            'The edge certificate Cloudflare serves for the zone: issuer, covered hosts and days until it expires.',
+        ],
+        'why_it_matters' => [
+            'Visitors talk to Cloudflare, not to your server: if this certificate expires or is not active, the whole site shows a browser security error, whatever the state of your origin.',
+        ],
+        'how_to_read' => [
+            'Green while more than 14 days remain and the status is <b>active</b>; yellow in the last two weeks; red once expired or in any other status.',
+        ],
+        'good_to_know' => [
+            'Universal certificates renew automatically. A pending status that lasts usually means a DNS validation Cloudflare cannot complete.',
+        ],
+    ],
+
+    Metric::CloudflareSettings->value => [
+        'definitions' => [
+            'The security and protocol settings of the zone: SSL mode, minimum TLS version, Always Use HTTPS, HTTP/3, Brotli, Early Hints and 0-RTT.',
+        ],
+        'why_it_matters' => [
+            'These settings decide how visitors connect and how the connection between Cloudflare and your origin is protected. <b>Flexible</b> SSL means Cloudflare talks to your origin in plain HTTP.',
+        ],
+        'how_to_read' => [
+            'SSL mode is green for <b>full</b> or <b>strict</b>, yellow for <b>flexible</b> or <b>off</b>. The other toggles are green when on.',
+        ],
+        'actions' => [
+            [
+                'case' => 'If SSL mode is flexible',
+                'actions' => ['Install a certificate on the origin (a Cloudflare Origin CA certificate is free) and switch to Full (strict).'],
+            ],
+        ],
+    ],
+
+    Metric::CloudflareCacheSettings->value => [
+        'definitions' => [
+            'The caching settings of the zone (cache level, browser TTL, Always Online), its security level and the number of DNS records against the plan allowance.',
+        ],
+        'why_it_matters' => [
+            'The cache level and the browser TTL set how much of your traffic Cloudflare can absorb without asking your origin.',
+        ],
+        'how_to_read' => [
+            'A browser TTL of <b>Respect origin headers</b> means your application decides, through its Cache-Control headers.',
+        ],
+    ],
+
+    Metric::CloudflareRequests->value => [
+        'definitions' => [
+            'The requests Cloudflare handled for the zone over the recent window (15 minutes by default), as a total, a per-minute rate and, on the chart, split between requests served from the edge cache and requests that reached your origin.',
+        ],
+        'why_it_matters' => [
+            'This is the traffic your visitors generate, not what your server sees: the difference between the two is what Cloudflare absorbs.',
+        ],
+        'how_to_read' => [
+            'The <b>Uncached</b> series is the load that actually hits your origin. A growing gap between the two series means the cache is working.',
+            'Cloudflare publishes its analytics with a delay: the series end about three minutes before now.',
+        ],
+        'good_to_know' => [
+            'On busy zones Cloudflare samples its analytics; the card says so when the window was sampled. Counts are then estimates.',
+        ],
+    ],
+
+    Metric::CloudflareCacheHitRatio->value => [
+        'definitions' => [
+            'The share of requests served by the Cloudflare cache over the recent window (15 minutes by default): hits, revalidated and stale answers, divided by all requests.',
+        ],
+        'why_it_matters' => [
+            'Every cached request is one your server never processed. The ratio is the simplest measure of how much Cloudflare helps.',
+        ],
+        'how_to_read' => [
+            'Requests marked <b>dynamic</b> by Cloudflare (HTML, API calls) count against the ratio even when they can never be cached: a dashboard or an API will sit far below a static site, and that is expected.',
+            'The second figure, the share of <b>bytes</b> served from cache, usually reads higher: assets are big and cacheable, pages are small and dynamic.',
+        ],
+        'actions' => [
+            [
+                'case' => 'If the ratio drops suddenly',
+                'actions' => ['Check development mode, a cache purge, or a deployment that changed Cache-Control headers.'],
+            ],
+        ],
+    ],
+
+    Metric::CloudflareBandwidth->value => [
+        'definitions' => [
+            'The bytes Cloudflare sent to visitors per minute, and how many of them came from its cache.',
+        ],
+        'why_it_matters' => [
+            'The gap between the two series is bandwidth your origin did not pay for.',
+        ],
+        'how_to_read' => [
+            'Cloudflare publishes its analytics with a delay: the series end about three minutes before now.',
+        ],
+    ],
+
+    Metric::CloudflareOriginResponseTime->value => [
+        'definitions' => [
+            'How long your origin took to answer the requests Cloudflare forwarded to it, measured at the edge: the median (P50) and the 95th percentile (P95) of the last minute that reached the origin.',
+        ],
+        'why_it_matters' => [
+            'This is your server\'s response time as Cloudflare experiences it, network included. It is the number that decides how fast an uncached page feels.',
+        ],
+        'how_to_read' => [
+            'P50 is the typical request; P95 is the slow tail. A P95 several times the P50 points to a few slow pages or queries rather than a slow server.',
+            'Only uncached requests have a value: a minute served entirely from cache shows nothing.',
+            'Cloudflare publishes its analytics with a delay: the series end about three minutes before now.',
+        ],
+    ],
+
+    Metric::CloudflareOriginRequests->value => [
+        'definitions' => [
+            'The number of requests per minute that Cloudflare forwarded to your origin.',
+        ],
+        'why_it_matters' => [
+            'This is the real load on your server. Compare it with the requests chart to see what the edge absorbs.',
+        ],
+        'how_to_read' => [
+            'Cloudflare publishes its analytics with a delay: the series end about three minutes before now.',
+        ],
+    ],
+
+    Metric::CloudflareErrorRatio->value => [
+        'definitions' => [
+            'The share of requests answered with a 4xx or a 5xx status at the edge, per minute.',
+        ],
+        'why_it_matters' => [
+            'A rise in 5xx is your origin failing, or Cloudflare unable to reach it. A rise in 4xx is often a scan, a broken link after a deployment, or blocked requests.',
+        ],
+        'how_to_read' => [
+            'Values are percentages of all requests in the minute. A few percent of 4xx is normal on a public site; 5xx should stay near zero.',
+            'Cloudflare publishes its analytics with a delay: the series end about three minutes before now.',
+        ],
+    ],
+
+    Metric::CloudflareSecurity->value => [
+        'definitions' => [
+            'The requests Cloudflare mitigated over the recent window (15 minutes by default): blocked, or challenged before reaching your origin.',
+        ],
+        'why_it_matters' => [
+            'These requests never reached your server. They are the attacks, scans and bots your logs do not show.',
+        ],
+        'how_to_read' => [
+            'Actions that let the request through (<b>skip</b>, <b>log</b>, <b>allow</b>) are not counted as mitigations.',
+            'The share is relative to all requests of the window.',
+        ],
+    ],
+
+    Metric::CloudflareSecurityByAction->value => [
+        'definitions' => [
+            'What Cloudflare did with the requests its security features matched, over the recent window (15 minutes by default).',
+        ],
+        'why_it_matters' => [
+            'A block stops the request; a challenge asks the visitor to prove it is a browser; skip and log only record it.',
+        ],
+        'how_to_read' => [
+            'Mostly <b>skip</b> and <b>log</b> means your rules observe more than they act. <b>unknown</b> is Cloudflare\'s label for events without an action.',
+        ],
+    ],
+
+    Metric::CloudflareSecurityBySource->value => [
+        'definitions' => [
+            'Which Cloudflare feature produced the security events of the recent window (15 minutes by default): WAF managed rules, custom firewall rules, rate limiting, bot fight mode and so on.',
+        ],
+        'why_it_matters' => [
+            'It tells you which protection is doing the work, and which rule to look at when legitimate visitors get challenged.',
+        ],
+        'how_to_read' => [
+            'Labels are the raw Cloudflare source names, such as <b>firewallCustom</b> or <b>firewallManaged</b>.',
+        ],
+    ],
+
+    Metric::CloudflareByCacheStatus->value => [
+        'definitions' => [
+            'The requests of the recent window (15 minutes by default) by Cloudflare cache status: hit, miss, expired, revalidated, dynamic.',
+        ],
+        'why_it_matters' => [
+            'It explains the cache hit ratio: <b>dynamic</b> requests are the ones Cloudflare decided not to cache, usually HTML and API responses.',
+        ],
+        'how_to_read' => [
+            'A large <b>miss</b> share with a steady <b>hit</b> share points to a cache that keeps being emptied or to very short TTLs.',
+        ],
+    ],
+
+    Metric::CloudflareByStatus->value => [
+        'definitions' => [
+            'The requests of the recent window (15 minutes by default) grouped by HTTP status class, as answered by the edge.',
+        ],
+        'why_it_matters' => [
+            'A quick check of the health of the site as visitors see it, cache included.',
+        ],
+        'how_to_read' => [
+            '<b>other</b> gathers statuses outside 200–599, which Cloudflare reports for aborted requests.',
+        ],
+    ],
+
+    Metric::CloudflareByCountry->value => [
+        'definitions' => [
+            'Where the requests of the recent window (15 minutes by default) came from, the five largest countries and the rest.',
+        ],
+        'why_it_matters' => [
+            'An unexpected country at the top is the usual first sign of a scan or a scraper.',
+        ],
+        'how_to_read' => [
+            'Counts are requests, not visitors.',
+        ],
+    ],
+
+    Metric::CloudflareByContentType->value => [
+        'definitions' => [
+            'The requests of the recent window (15 minutes by default) by response content type.',
+        ],
+        'why_it_matters' => [
+            'It shows what the traffic is made of: pages, scripts, images, API calls.',
+        ],
+        'how_to_read' => [
+            'Labels are Cloudflare\'s short names, such as <b>html</b>, <b>json</b> or <b>avif</b>.',
+        ],
+    ],
+
+    Metric::CloudflareByProtocol->value => [
+        'definitions' => [
+            'The HTTP protocol version visitors used over the recent window (15 minutes by default).',
+        ],
+        'why_it_matters' => [
+            'HTTP/2 and HTTP/3 load pages faster. A large HTTP/1.1 share usually comes from bots and old clients.',
+        ],
+        'how_to_read' => [
+            'HTTP/3 only appears when it is enabled in the zone settings.',
+        ],
+    ],
+
+    Metric::CloudflareByHost->value => [
+        'definitions' => [
+            'The hostnames of the zone that received requests over the recent window (15 minutes by default).',
+        ],
+        'why_it_matters' => [
+            'A zone often serves several sites or services; this shows which one carries the traffic.',
+        ],
+        'how_to_read' => [
+            'The five busiest hosts are listed, the others are folded into <b>other</b>.',
+        ],
+    ],
+
+    Metric::CloudflareToday->value => [
+        'definitions' => [
+            'Cloudflare\'s totals for the current UTC day: requests, page views, unique visitors, bandwidth and threats.',
+        ],
+        'why_it_matters' => [
+            'Unique visitors and threats only exist as daily totals; this is where to read them.',
+        ],
+        'how_to_read' => [
+            'The day resets at midnight UTC, so the figures are small in the morning. They refresh every five minutes.',
+        ],
+    ],
+
+    Metric::CloudflareWebVitals->value => [
+        'definitions' => [
+            'The Core Web Vitals measured in your visitors\' browsers by Cloudflare Web Analytics over the last 24 hours, at the 75th percentile: Largest Contentful Paint, Interaction to Next Paint, Cumulative Layout Shift and Time To First Byte.',
+        ],
+        'why_it_matters' => [
+            'These are the numbers Google uses to judge the experience of a page. They come from real visits, not from a lab.',
+        ],
+        'how_to_read' => [
+            'Thresholds are Google\'s: LCP good under 2.5 s, poor above 4 s; INP good under 200 ms, poor above 500 ms; CLS good under 0.1, poor above 0.25; TTFB good under 800 ms, poor above 1.8 s.',
+            'A dash means Cloudflare has not received enough samples for that vital.',
+        ],
+        'good_to_know' => [
+            'Web Analytics needs its beacon on your pages (automatic with the proxy, or the script tag). Without it this card stays empty.',
+        ],
+    ],
+
+    Metric::CloudflarePageLoads->value => [
+        'definitions' => [
+            'Page loads and visits recorded by Cloudflare Web Analytics over the last 24 hours, with the median and 75th percentile of the full page load time.',
+        ],
+        'why_it_matters' => [
+            'Page load time is what visitors actually wait for, from the click to a usable page.',
+        ],
+        'how_to_read' => [
+            'A visit is a session of page loads from the same visitor.',
+        ],
+    ],
+
+    Metric::CloudflareWebAnalyticsByHost->value => [
+        'definitions' => [
+            'The page loads of the last 24 hours by hostname.',
+        ],
+        'why_it_matters' => [
+            'It shows which site of the zone your visitors actually browse.',
+        ],
+        'how_to_read' => [
+            'Counts are page loads measured in the browser, not requests seen at the edge.',
+        ],
+    ],
+
+    Metric::CloudflareTimings->value => [
+        'definitions' => [
+            'The steps of a page load as measured in visitors\' browsers over the last 24 hours, at the 75th percentile: DNS lookup, connection, request, response and page rendering.',
+        ],
+        'why_it_matters' => [
+            'It tells where the time goes: the network before your server, your server, or the browser rendering the page.',
+        ],
+        'how_to_read' => [
+            'A long <b>response</b> points to the origin; a long <b>page render</b> points to the front end.',
+        ],
+    ],
+
+    Metric::CloudflareR2->value => [
+        'definitions' => [
+            'The R2 object storage of the account: stored bytes, class A (write and list) and class B (read) operations this month, egress, and each bucket.',
+        ],
+        'why_it_matters' => [
+            'The Free plan includes 10 GB-month of storage, 1 million class A and 10 million class B operations per month; above that, R2 bills.',
+        ],
+        'how_to_read' => [
+            'Bars turn yellow at 80 % of the allowance and red at 100 %. Counters reset on the first day of the month, UTC.',
+        ],
+        'good_to_know' => [
+            'Operation counts are account-wide, buckets of other zones included.',
+        ],
+    ],
+
+    Metric::CloudflareImages->value => [
+        'definitions' => [
+            'Cloudflare Images usage of the account: unique transformations this month against the Free allowance, stored images against their quota, and requests over the last 24 hours.',
+        ],
+        'why_it_matters' => [
+            'The Free plan includes 5,000 unique transformations per month; beyond that, transformations are billed.',
+        ],
+        'how_to_read' => [
+            'A transformation is unique per source image and set of options; serving the same variant again does not count. Bars turn yellow at 80 % and red at 100 %. The month resets on the first day, UTC.',
+        ],
+    ],
 ];

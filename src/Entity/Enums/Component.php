@@ -23,12 +23,14 @@ enum Component: string implements TranslatableInterface
     case Redis = 'redis';
     // case Memcached = 'memcached';
     case Symfony = 'symfony';
+    case Cloudflare = 'cloudflare';
 
     public static function alphaOrderedCases(): array
     {
         return [
             self::Apache,
             self::Caddy,
+            self::Cloudflare,
             self::FrankenPHP,
             self::MySQL,
             self::Nginx,
@@ -53,6 +55,7 @@ enum Component: string implements TranslatableInterface
             self::MySQL,
             self::Postgres,
             self::Redis,
+            self::Cloudflare,
         ];
     }
 
@@ -69,7 +72,24 @@ enum Component: string implements TranslatableInterface
             self::Caddy,
             self::Redis,
             self::FrankenPHP,
+            self::Cloudflare,
         ];
+    }
+
+    /**
+     * The demo project shows every component it can fake; Cloudflare has no synthetic generator.
+     * @return self[]
+     */
+    public static function demoCases(): array
+    {
+        $cases = [];
+        foreach (self::cases() as $component) {
+            if ($component !== self::Cloudflare) {
+                $cases[] = $component;
+            }
+        }
+
+        return $cases;
     }
 
     public function label(): string
@@ -85,6 +105,7 @@ enum Component: string implements TranslatableInterface
             self::Redis => 'Redis',
             self::Symfony => 'Symfony',
             self::FrankenPHP => 'FrankenPHP',
+            self::Cloudflare => 'Cloudflare',
         };
     }
 
@@ -101,6 +122,7 @@ enum Component: string implements TranslatableInterface
             self::Redis => 'devicon-plain:redis',
             self::Symfony => 'mdi:symfony',
             self::FrankenPHP => 'devicon-plain:frankenphp',
+            self::Cloudflare => 'simple-icons:cloudflare',
         };
     }
 
@@ -138,6 +160,7 @@ enum Component: string implements TranslatableInterface
             self::Postgres => [Consumer::POSTGRES_SETTINGS, Consumer::POSTGRES_ACTIVITY, Consumer::POSTGRES_DATABASE, Consumer::POSTGRES_SLOW_QUERIES],
             self::Redis => [Consumer::REDIS],
             self::Symfony => [Consumer::SYMFONY],
+            self::Cloudflare => [Consumer::CLOUDFLARE],
             self::FrankenPHP => [Consumer::FRANKENPHP],
         };
     }

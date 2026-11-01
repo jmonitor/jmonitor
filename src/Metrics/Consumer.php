@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Metrics;
 
 use App\Bridge\InfluxDb\InfluxDb;
+use App\Bridge\InfluxDb\TimestampedPoint;
 use App\Command\Influx\BucketCreationCommand;
 use App\Console\CommandLauncher;
 use App\Entity\Project;
@@ -67,7 +68,7 @@ readonly class Consumer
             // normalization
             $input['metrics'] ??= [];
             $input['threw'] ??= false;
-            // TODO handle $input['skipped']
+            $input['skipped'] ??= false;
             $input['duration'] ??= $input['time'] ?? 0; // older collectors sent 'time' instead of 'duration'
 
             $consumerEnum = ConsumerEnum::from($input['name']);
@@ -116,6 +117,7 @@ readonly class Consumer
                 $input['metrics'],
                 $receivedAt,
                 $input['threw'],
+                $input['skipped'],
             );
 
             // normalization (e.g. computing derived metrics)
@@ -127,7 +129,9 @@ readonly class Consumer
             $this->metricsCacheManager->saveMetricBag($bag->withMetrics($metricsToCache), deferred: true);
 
             foreach ($consumer->getInfluxPoints($bag) as $point) {
-                $point->time($bag->getReceivedAt()->getTimestamp(), WritePrecision::S);
+                if (!$point instanceof TimestampedPoint) {
+                    $point->time($bag->getReceivedAt()->getTimestamp(), WritePrecision::S);
+                }
 
                 // collect the points to send them in one batch instead of one by one, saves API calls
                 $points[] = $point;

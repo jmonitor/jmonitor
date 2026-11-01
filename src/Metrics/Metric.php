@@ -137,6 +137,32 @@ enum Metric: string
     case FrankenPhpWorkerWorkerRestarts = 'frankenphp.worker_worker_restarts';
     case FrankenPhpWorkerRequestPerSec = 'frankenphp.worker_request_per_sec';
     case FrankenPhpWorkerPhpExecTime = 'frankenphp.worker_php_exec_time';
+    case CloudflareZone = 'cloudflare.zone';
+    case CloudflareCertificate = 'cloudflare.certificate';
+    case CloudflareSettings = 'cloudflare.settings';
+    case CloudflareCacheSettings = 'cloudflare.cache_settings';
+    case CloudflareRequests = 'cloudflare.requests';
+    case CloudflareCacheHitRatio = 'cloudflare.cache_hit_ratio';
+    case CloudflareBandwidth = 'cloudflare.bandwidth';
+    case CloudflareOriginResponseTime = 'cloudflare.origin_response_time';
+    case CloudflareOriginRequests = 'cloudflare.origin_requests';
+    case CloudflareErrorRatio = 'cloudflare.error_ratio';
+    case CloudflareSecurity = 'cloudflare.security';
+    case CloudflareSecurityByAction = 'cloudflare.security_by_action';
+    case CloudflareSecurityBySource = 'cloudflare.security_by_source';
+    case CloudflareByCacheStatus = 'cloudflare.by_cache_status';
+    case CloudflareByStatus = 'cloudflare.by_status';
+    case CloudflareByCountry = 'cloudflare.by_country';
+    case CloudflareByContentType = 'cloudflare.by_content_type';
+    case CloudflareByProtocol = 'cloudflare.by_protocol';
+    case CloudflareByHost = 'cloudflare.by_host';
+    case CloudflareToday = 'cloudflare.today';
+    case CloudflareWebVitals = 'cloudflare.web_vitals';
+    case CloudflarePageLoads = 'cloudflare.page_loads';
+    case CloudflareWebAnalyticsByHost = 'cloudflare.web_analytics_by_host';
+    case CloudflareTimings = 'cloudflare.timings';
+    case CloudflareR2 = 'cloudflare.r2';
+    case CloudflareImages = 'cloudflare.images';
 
     public function defaultRenderer(): Renderer
     {
@@ -211,6 +237,10 @@ enum Metric: string
             self::PostgresScansPerSec => Renderer::Line,
             self::PostgresDeadlocksPerSec => Renderer::Line,
             self::PostgresDatabaseSize => Renderer::Line,
+            self::CloudflareCacheHitRatio => Renderer::Gauge,
+            self::CloudflareBandwidth => Renderer::Line,
+            self::CloudflareOriginRequests => Renderer::Line,
+            self::CloudflareErrorRatio => Renderer::Line,
             default => Renderer::Basic,
         };
     }
@@ -229,6 +259,9 @@ enum Metric: string
             self::RedisMemoryUsage => [Renderer::Gauge, Renderer::Line, Renderer::Basic],
             self::NginxActiveConnections => [Renderer::Gauge, Renderer::Line],
             self::FrankenPhpBusyThreadsPercent => [Renderer::Gauge, Renderer::Line],
+            self::CloudflareRequests => [Renderer::Basic, Renderer::Line],
+            self::CloudflareCacheHitRatio => [Renderer::Gauge, Renderer::Line],
+            self::CloudflareOriginResponseTime => [Renderer::Basic, Renderer::Line],
             default => [$this->defaultRenderer()],
         };
     }
@@ -328,6 +361,32 @@ enum Metric: string
             self::RedisMemoryPeak => 'Memory peak',
             self::RedisMaxMemoryPolicy => 'Max memory policy',
             self::RedisPersistence => 'Persistence',
+            self::CloudflareZone => 'Zone',
+            self::CloudflareCertificate => 'Certificate',
+            self::CloudflareSettings => 'Settings',
+            self::CloudflareCacheSettings => 'Cache & DNS',
+            self::CloudflareRequests => 'Requests',
+            self::CloudflareCacheHitRatio => 'Cache hit ratio',
+            self::CloudflareBandwidth => 'Bandwidth',
+            self::CloudflareOriginResponseTime => 'Origin response time',
+            self::CloudflareOriginRequests => 'Origin requests',
+            self::CloudflareErrorRatio => '4xx / 5xx ratio',
+            self::CloudflareSecurity => 'Security',
+            self::CloudflareSecurityByAction => 'By action',
+            self::CloudflareSecurityBySource => 'By source',
+            self::CloudflareByCacheStatus => 'Cache status',
+            self::CloudflareByStatus => 'Status codes',
+            self::CloudflareByCountry => 'Top countries',
+            self::CloudflareByContentType => 'Content types',
+            self::CloudflareByProtocol => 'Protocols',
+            self::CloudflareByHost => 'Hosts',
+            self::CloudflareToday => 'Today',
+            self::CloudflareWebVitals => 'Core Web Vitals',
+            self::CloudflarePageLoads => 'Page loads',
+            self::CloudflareWebAnalyticsByHost => 'Page loads by host',
+            self::CloudflareTimings => 'Timings',
+            self::CloudflareR2 => 'R2',
+            self::CloudflareImages => 'Images',
             self::RedisHitRate => 'Hit rate',
             self::RedisStats => 'Stats',
             self::RedisDbKeys => 'Keys',
@@ -381,6 +440,7 @@ enum Metric: string
             str_starts_with($this->value, 'nginx.') => Component::Nginx,
             str_starts_with($this->value, 'caddy.') => Component::Caddy,
             str_starts_with($this->value, 'frankenphp.') => Component::FrankenPHP,
+            str_starts_with($this->value, 'cloudflare.') => Component::Cloudflare,
             default => throw new \Exception('Unknown component for metric: ' . $this->value),
         };
     }

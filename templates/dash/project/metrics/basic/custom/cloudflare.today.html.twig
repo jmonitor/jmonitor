@@ -1,17 +1,19 @@
 {# @var today \App\Metrics\Dto\Bag\Cloudflare\TodayBag #}
 {% set today = dto.value %}
-{% macro tile(label, value, sub) %} {# value and sub are HTML: escape what comes from the payload #}
+{% macro tile(label, value, sub) %}
     <div class="col-6 col-md-4 col-xl-2">
         <div class="text-muted small text-uppercase">{{ label }}</div>
-        <div class="consumer_value-value">{{ value|raw }}</div>
-        {% if sub %}<div class="text-muted small">{{ sub|raw }}</div>{% endif %}
+        <div class="consumer_value-value">{{ value }}</div>
+        {% if sub %}<div class="text-muted small">{{ sub }}</div>{% endif %}
     </div>
 {% endmacro %}
+{% set bandwidth %}{{ today.bytes|format_bytes }}{% endset %}
+{% set bandwidthFromCache %}{{ today.cachedBytes|format_bytes }} from cache{% endset %}
 <div class="row g-3">
     {{ _self.tile('Requests', today.requests|number_format(0, '.', ' '), today.cachedRatio is not null ? (today.cachedRatio * 100)|number_format(1) ~ ' % cached' : null) }}
     {{ _self.tile('Page views', today.pageViews|number_format(0, '.', ' '), null) }}
     {{ _self.tile('Unique visitors', today.uniques|number_format(0, '.', ' '), null) }}
-    {{ _self.tile('Bandwidth', today.bytes|format_bytes, today.cachedBytes|format_bytes ~ ' from cache') }}
+    {{ _self.tile('Bandwidth', bandwidth, bandwidthFromCache) }}
     {{ _self.tile('Threats', today.threats|number_format(0, '.', ' '), today.requests > 0 ? (today.threats / today.requests * 100)|number_format(2) ~ ' % of requests' : null) }}
-    {{ _self.tile('Day (UTC)', (today.date ?? '')|e, null) }}
+    {{ _self.tile('Day (UTC)', today.date ?? '', null) }}
 </div>

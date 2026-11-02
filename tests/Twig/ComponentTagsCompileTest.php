@@ -9,10 +9,6 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Finder\Finder;
 use Twig\Environment;
 
-/**
- * A `<twig:...>` tag nested in a `{% block %}` of an HTML component is left as raw HTML by the
- * TwigComponent pre-lexer: such blocks must be written `<twig:block name="...">`.
- */
 final class ComponentTagsCompileTest extends KernelTestCase
 {
     #[DataProvider('templates')]
@@ -22,7 +18,7 @@ final class ComponentTagsCompileTest extends KernelTestCase
 
         $compiled = $twig->compileSource($twig->getLoader()->getSourceContext($template));
 
-        $this->assertStringNotContainsString('<twig:', $compiled);
+        $this->assertStringNotContainsString('<twig:', $compiled, 'Write the blocks of an HTML component as <twig:block name="...">, not {% block %}.');
     }
 
     /**

@@ -105,6 +105,14 @@ final class CloudflareWindowCardsTest extends CloudflareCardTestCase
         $this->assertStringContainsString('2026-10-31', $html);
     }
 
+    public function testTodayBandwidthUnitIsMarkupNotText(): void
+    {
+        $html = $this->render(Metric::CloudflareToday, self::fixture());
+
+        $this->assertStringContainsString('<span class="unit">MiB</span>', $html);
+        $this->assertStringNotContainsString('&lt;span', $html);
+    }
+
     public function testTheLineVariantsDeclareTheirSeries(): void
     {
         $dto = $this->dto(Metric::CloudflareRequests, Renderer::Line, self::fixture());

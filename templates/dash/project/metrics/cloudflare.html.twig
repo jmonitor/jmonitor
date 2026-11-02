@@ -42,7 +42,7 @@
         </div>
 
         <twig:Cards :titles="['Traffic', 'Security', 'Web Analytics', 'Storage']" memory="true" class="mt-4">
-            {% block block_1 %}
+            <twig:block name="block_1">
                 <twig:Html:Metrics:H2 :bag="bag" :showRange="true">Traffic</twig:Html:Metrics:H2>
                 <div class="row g-4">
                     <div class="col-xl-8">
@@ -76,9 +76,9 @@
                         <twig:Metric:Card metric="cloudflare.origin_requests" class="h-100"/>
                     </div>
                 </div>
-            {% endblock %}
+            </twig:block>
 
-            {% block block_2 %}
+            <twig:block name="block_2">
                 <twig:Html:Metrics:H2 :bag="bag">Security{% if bag.traffic %} <small class="text-muted fw-light fs-6">last {{ bag.traffic.window.spanMinutes }} minutes</small>{% endif %}</twig:Html:Metrics:H2>
                 <div class="row g-4">
                     <div class="col-xl-6">
@@ -95,9 +95,9 @@
                         <twig:Metric:Card metric="cloudflare.error_ratio"/>
                     </div>
                 </div>
-            {% endblock %}
+            </twig:block>
 
-            {% block block_3 %}
+            <twig:block name="block_3">
                 <twig:Html:Metrics:H2 :bag="bag">Web Analytics <small class="text-muted fw-light fs-6">real visitors, last 24 hours</small></twig:Html:Metrics:H2>
                 <div class="row g-4">
                     <div class="col-xl-8">
@@ -115,9 +115,9 @@
                         <twig:Metric:Card metric="cloudflare.timings" class="h-100"/>
                     </div>
                 </div>
-            {% endblock %}
+            </twig:block>
 
-            {% block block_4 %}
+            <twig:block name="block_4">
                 <twig:Html:Metrics:H2 :bag="bag">Storage <small class="text-muted fw-light fs-6">account level, Free plan quotas</small></twig:Html:Metrics:H2>
                 <div class="row g-4">
                     <div class="col-xl-6">
@@ -127,7 +127,7 @@
                         <twig:Metric:Card metric="cloudflare.images" class="h-100"/>
                     </div>
                 </div>
-            {% endblock %}
+            </twig:block>
         </twig:Cards>
     {% endif %}
 {% endblock %}

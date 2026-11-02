@@ -2,10 +2,10 @@
 {% set analytics = dto.value %}
 <twig:Metric:Metric:List>
     {% for label, ms in {
-        'DNS': analytics.dnsP75Ms,
-        'Connection': analytics.connectionP75Ms,
-        'Request': analytics.requestP75Ms,
-        'Response': analytics.responseP75Ms,
+        DNS: analytics.dnsP75Ms,
+        Connection: analytics.connectionP75Ms,
+        Request: analytics.requestP75Ms,
+        Response: analytics.responseP75Ms,
         'Page render': analytics.pageRenderP75Ms,
     } %}
         <twig:InfoLine label="{{ label }}">{% if ms is not null %}{{ ms|format_ms }}{% endif %}</twig:InfoLine>

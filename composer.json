@@ -84,7 +84,7 @@
         "twig/string-extra": "^3.24.0",
         "twig/twig": "^2.12|^3.28.0",
         "zenstruck/bytes": "^1.1",
-        "zenstruck/messenger-monitor-bundle": "^0.6.0"
+        "zenstruck/messenger-monitor-bundle": "^0.7.0"
     },
     "config": {
         "allow-plugins": {

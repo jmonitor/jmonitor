@@ -1582,6 +1582,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  * }
  * @psalm-type ZenstruckMessengerMonitorConfig = array{
  *     storage?: array{
+ *         auto_stamp?: bool|Param, // Whether to add a MonitorStamp when dispatching messages to a transport. // Default: true
  *         exclude?: list<scalar|Param|null>,
  *         orm?: array{
  *             entity_class?: scalar|Param|null, // Your Doctrine entity class that extends "Zenstruck\Messenger\Monitor\History\Model\ProcessedMessage"

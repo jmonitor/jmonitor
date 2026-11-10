@@ -2,9 +2,3 @@ zenstruck_messenger_monitor:
     storage:
         orm:
             entity_class: App\Entity\ProcessedMessage
-        # Emails are excluded from monitoring: their description (subject + recipient,
-        # stamped on send and serialised into the envelope) can exceed the VARCHAR(255)
-        # of messenger_processed_messages — the INSERT would fail (SQLSTATE 22001) and
-        # kill the worker on every redelivery of the same message.
-        exclude:
-            - Symfony\Component\Mailer\Messenger\SendEmailMessage

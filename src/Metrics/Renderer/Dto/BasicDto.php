@@ -12,7 +12,7 @@ class BasicDto extends AbstractDto
     public private(set) mixed $value = null;
 
     /**
-     * If there is no custom template, this can be used instead; it is displayed as-is.
+     * Our own markup, printed unescaped when there is no custom template: never a pushed string.
      * @var ?scalar $formattedValue
      */
     public private(set) mixed $formattedValue = null;

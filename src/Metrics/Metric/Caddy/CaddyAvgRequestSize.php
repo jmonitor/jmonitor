@@ -31,7 +31,7 @@ class CaddyAvgRequestSize implements BasicMetricInterface, OptionsAwareMetricInt
         $value = $value !== null ? Bytes::parse($value) : null;
 
         $dto
-            ->setValue($value?->format())
+            ->setFormattedValue($value?->format())
         ;
     }
 

@@ -31,7 +31,7 @@ class CaddyAvgResponseSize implements BasicMetricInterface, OptionsAwareMetricIn
         $value = $value !== null ? Bytes::parse($value) : null;
 
         $dto
-            ->setValue($value?->format())
+            ->setFormattedValue($value?->format())
         ;
     }
 

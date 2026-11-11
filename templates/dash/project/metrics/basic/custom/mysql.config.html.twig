@@ -5,11 +5,11 @@
     <twig:block name="block_1">
         <twig:Card class="h-100">
             <twig:Metric:Metric:List class="mh-15 overflow-y-auto pe-2">
-                <twig:InfoLine label="innodb_buffer_pool_size" value="{{ variables.innodbBufferPoolSize|format_bytes }}" />
-                <twig:InfoLine label="tmp_table_size" value="{{ variables.tmpTableSize|format_bytes }}" />
-                <twig:InfoLine label="max_heap_table_size" value="{{ variables.maxHeapTableSize|format_bytes }}" />
-                <twig:InfoLine label="join_buffer_size" value="{{ variables.joinBufferSize|format_bytes }}" />
-                <twig:InfoLine label="sort_buffer_size" value="{{ variables.sortBufferSize|format_bytes }}" />
+                <twig:InfoLine label="innodb_buffer_pool_size">{{ variables.innodbBufferPoolSize|format_bytes }}</twig:InfoLine>
+                <twig:InfoLine label="tmp_table_size">{{ variables.tmpTableSize|format_bytes }}</twig:InfoLine>
+                <twig:InfoLine label="max_heap_table_size">{{ variables.maxHeapTableSize|format_bytes }}</twig:InfoLine>
+                <twig:InfoLine label="join_buffer_size">{{ variables.joinBufferSize|format_bytes }}</twig:InfoLine>
+                <twig:InfoLine label="sort_buffer_size">{{ variables.sortBufferSize|format_bytes }}</twig:InfoLine>
                 <twig:InfoLine label="table_open_cache" value="{{ variables.tableOpenCache }}" />
             </twig:Metric:Metric:List>
         </twig:Card>

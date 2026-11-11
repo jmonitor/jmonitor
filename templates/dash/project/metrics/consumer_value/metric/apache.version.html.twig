@@ -2,7 +2,7 @@
 {% if value !== null %}
     {% set bag = dto.bag %}
     <div class="text-end">
-        <div class="consumer_value-value">{{ value|raw }}</div>
+        <div class="consumer_value-value">{{ value }}</div>
         <small class="text-muted">{{ bag.serverVersion }}</small>
     </div>
 {% endif %}

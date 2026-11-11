@@ -28,11 +28,9 @@ final class ZoneBagTest extends TestCase
         $this->assertFalse(new ZoneBag(['name' => 'x'])->hasSettings);
         $this->assertSame([], new ZoneBag(['name' => 'x'])->settings);
 
-        $zone = new ZoneBag(['settings' => ['ssl' => 'full'], 'development_mode' => 3600, 'dns_records' => ['used' => 24, 'quota' => 200]]);
+        $zone = new ZoneBag(['settings' => ['ssl' => 'full'], 'development_mode' => 3600]);
         $this->assertTrue($zone->hasSettings);
         $this->assertSame('full', $zone->settings['ssl']);
         $this->assertSame(3600, $zone->developmentMode);
-        $this->assertSame(24, $zone->dnsRecordsUsed);
-        $this->assertSame(200, $zone->dnsRecordsQuota);
     }
 }

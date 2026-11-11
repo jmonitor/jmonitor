@@ -32,8 +32,14 @@ class CloudflareByStatus extends AbstractCloudflareBreakdown
         return true;
     }
 
-    protected function styles(): array
+    protected function barClass(string $raw): string
     {
-        return ['2xx' => 'bg-success', '3xx' => 'bg-info', '4xx' => 'bg-warning', '5xx' => 'bg-danger'];
+        return match ($raw) {
+            '2xx' => 'bg-success',
+            '3xx' => 'bg-info',
+            '4xx' => 'bg-warning',
+            '5xx' => 'bg-danger',
+            default => '',
+        };
     }
 }

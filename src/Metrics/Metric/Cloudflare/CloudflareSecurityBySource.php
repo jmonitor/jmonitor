@@ -21,13 +21,13 @@ class CloudflareSecurityBySource extends AbstractCloudflareBreakdown
         return $window->securityBySource;
     }
 
-    protected function labels(array $counts): array
+    protected function label(string $raw): string
     {
-        return array_map(SecurityLabel::source(...), array_combine(array_keys($counts), array_keys($counts)));
+        return SecurityLabel::source($raw);
     }
 
     protected function emptyMessage(): string
     {
-        return 'No security events over the window.';
+        return SecurityLabel::NO_EVENTS;
     }
 }

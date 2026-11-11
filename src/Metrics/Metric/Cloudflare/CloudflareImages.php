@@ -28,7 +28,7 @@ class CloudflareImages implements BasicMetricInterface
             $quotas = [Quota::count('Unique transformations', $images->uniqueTransformations, ImagesBag::FREE_UNIQUE_TRANSFORMATIONS)];
 
             if ($images->storedQuota !== null && $images->storedQuota > 0) {
-                $quotas[] = Quota::count('Stored images', $images->stored, $images->storedQuota);
+                $quotas[] = Quota::limit('Stored images', $images->stored, $images->storedQuota);
             }
 
             $dto

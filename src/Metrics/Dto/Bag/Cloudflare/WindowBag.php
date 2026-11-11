@@ -10,11 +10,6 @@ class WindowBag extends Bag
 {
     private const array CACHED_STATUSES = ['hit', 'revalidated', 'stale', 'updating'];
 
-    /**
-     * Actions that let the request through: not mitigations.
-     */
-    private const array PASSIVE_ACTIONS = ['skip', 'log', 'allow'];
-
     public int $from {
         get => $this->getInt('from', 0) ?? 0;
     }
@@ -104,7 +99,12 @@ class WindowBag extends Bag
      */
     public function mitigations(): array
     {
-        return array_filter($this->securityByAction, fn(string $action): bool => !in_array($action, self::PASSIVE_ACTIONS, true), ARRAY_FILTER_USE_KEY);
+        return array_filter($this->securityByAction, fn(string $action): bool => SecurityActionKind::of($action)->isMitigation(), ARRAY_FILTER_USE_KEY);
+    }
+
+    public function securityEvents(SecurityActionKind $kind): int
+    {
+        return array_sum(array_filter($this->securityByAction, fn(string $action): bool => SecurityActionKind::of($action) === $kind, ARRAY_FILTER_USE_KEY));
     }
 
     public function requestsPerMinute(): ?float

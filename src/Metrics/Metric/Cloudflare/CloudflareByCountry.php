@@ -22,19 +22,13 @@ class CloudflareByCountry extends AbstractCloudflareBreakdown
         return $window->byCountry;
     }
 
-    protected function labels(array $counts): array
+    protected function label(string $raw): string
     {
-        $labels = [];
-
-        foreach (array_keys($counts) as $code) {
-            if (!preg_match('/^[A-Z]{2}$/', $code) || !Countries::exists($code)) {
-                continue;
-            }
-
-            $labels[$code] = self::flag($code) . ' ' . Countries::getName($code, 'en');
+        if (!preg_match('/^[A-Z]{2}$/', $raw) || !Countries::exists($raw)) {
+            return $raw;
         }
 
-        return $labels;
+        return self::flag($raw) . ' ' . Countries::getName($raw, 'en');
     }
 
     private static function flag(string $code): string

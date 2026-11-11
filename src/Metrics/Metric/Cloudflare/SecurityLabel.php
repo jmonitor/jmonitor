@@ -4,19 +4,29 @@ declare(strict_types=1);
 
 namespace App\Metrics\Metric\Cloudflare;
 
+use App\Metrics\Dto\Bag\Cloudflare\SecurityActionKind;
+
 /**
  * Display names of the raw action and source identifiers of Cloudflare security events.
  */
 final class SecurityLabel
 {
+    public const string NO_EVENTS = 'No security events over the window.';
+
     private const array ACTIONS = [
         'block' => 'Block',
-        'managed_challenge' => 'Managed challenge',
-        'js_challenge' => 'JS challenge',
+        'managedchallenge' => 'Managed challenge',
+        'jschallenge' => 'JS challenge',
         'challenge' => 'Interactive challenge',
-        'skip' => 'Skip',
-        'log' => 'Log',
-        'allow' => 'Allow',
+        'connectionclose' => 'Connection close',
+        'forceconnectionclose' => 'Force connection close',
+        'challengesolved' => 'Challenge solved',
+        'challengebypassed' => 'Challenge bypassed',
+        'jschallengesolved' => 'JS challenge solved',
+        'jschallengebypassed' => 'JS challenge bypassed',
+        'managedchallengenoninteractivesolved' => 'Managed challenge solved',
+        'managedchallengeinteractivesolved' => 'Managed challenge solved (interactive)',
+        'managedchallengebypassed' => 'Managed challenge bypassed',
     ];
 
     private const array SOURCES = [
@@ -43,11 +53,12 @@ final class SecurityLabel
 
     public static function action(string $action): string
     {
-        return self::ACTIONS[strtolower($action)] ?? ucfirst(str_replace('_', ' ', $action));
+        return self::ACTIONS[SecurityActionKind::normalize($action)]
+            ?? ucfirst(strtolower((string) preg_replace('/(?<=[a-z])(?=[A-Z])|_/', ' ', $action)));
     }
 
     public static function source(string $source): string
     {
-        return self::SOURCES[strtolower($source)] ?? $source;
+        return self::SOURCES[SecurityActionKind::normalize($source)] ?? $source;
     }
 }

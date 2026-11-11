@@ -21,13 +21,18 @@ class CloudflareByCacheStatus extends AbstractCloudflareBreakdown
         return $window->byCacheStatus;
     }
 
-    protected function labels(array $counts): array
+    protected function label(string $raw): string
     {
-        return array_map(ucfirst(...), array_combine(array_keys($counts), array_keys($counts)));
+        return ucfirst($raw);
     }
 
-    protected function styles(): array
+    protected function barClass(string $raw): string
     {
-        return ['hit' => 'bg-success', 'revalidated' => 'bg-success', 'stale' => 'bg-success', 'updating' => 'bg-success', 'miss' => 'bg-warning', 'expired' => 'bg-warning', 'dynamic' => 'bg-info'];
+        return match ($raw) {
+            'hit', 'revalidated', 'stale', 'updating' => 'bg-success',
+            'miss', 'expired' => 'bg-warning',
+            'dynamic' => 'bg-info',
+            default => '',
+        };
     }
 }

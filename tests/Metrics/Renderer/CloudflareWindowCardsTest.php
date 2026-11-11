@@ -90,7 +90,30 @@ final class CloudflareWindowCardsTest extends CloudflareCardTestCase
         $sources = self::lines($this->render(Metric::CloudflareSecurityBySource, $payload));
         $this->assertSame(['Custom rules', 'Managed rules', 'brandNewSource'], array_keys($sources));
 
-        $this->assertSame('Custom rules', self::lines($this->render(Metric::CloudflareSecurity, $payload))['Top source']);
+        $security = $this->render(Metric::CloudflareSecurity, $payload);
+        $this->assertStringContainsString('31 blocked', $security);
+        $this->assertStringContainsString('7 challenged', $security);
+    }
+
+    public function testSecurityActionsAreReadWhateverTheirSpelling(): void
+    {
+        $payload = self::fixture();
+        $payload['traffic']['window']['security']['by_action'] = ['jschallenge' => 4, 'managedChallenge' => 3, 'challenge_solved' => 90];
+
+        $html = $this->render(Metric::CloudflareSecurityByAction, $payload);
+        $this->assertSame(['JS challenge', 'Managed challenge', 'Challenge solved'], array_keys(self::lines($html)));
+        $this->assertSame(2, new Crawler($html)->filter('.progress-bar.bg-warning')->count());
+        $this->assertSame(1, new Crawler($html)->filter('.progress-bar.bg-secondary')->count());
+
+        $this->assertStringContainsString('7 challenged', $this->render(Metric::CloudflareSecurity, $payload));
+    }
+
+    public function testAnOriginThatWasNotReachedSaysSo(): void
+    {
+        $payload = self::fixture();
+        $payload['traffic']['minutes'][0]['origin_response_ms_p50'] = null;
+
+        $this->assertStringContainsString('No recent request reached the origin', $this->render(Metric::CloudflareOriginResponseTime, $payload));
     }
 
     public function testAQuietSecurityWindowSaysSo(): void

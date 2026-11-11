@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Metrics\Metric\Cloudflare;
 
+use App\Metrics\Dto\Bag\Cloudflare\SecurityActionKind;
 use App\Metrics\Dto\Bag\Cloudflare\WindowBag;
 use App\Metrics\Metric;
 use Symfony\Component\DependencyInjection\Attribute\AsTaggedItem;
@@ -31,26 +32,18 @@ class CloudflareSecurityByAction extends AbstractCloudflareBreakdown
         return true;
     }
 
-    protected function labels(array $counts): array
+    protected function label(string $raw): string
     {
-        return array_map(SecurityLabel::action(...), array_combine(array_keys($counts), array_keys($counts)));
+        return SecurityLabel::action($raw);
     }
 
-    protected function styles(): array
+    protected function barClass(string $raw): string
     {
-        return [
-            'block' => 'bg-danger',
-            'managed_challenge' => 'bg-warning',
-            'challenge' => 'bg-warning',
-            'js_challenge' => 'bg-warning',
-            'skip' => 'bg-secondary',
-            'log' => 'bg-secondary',
-            'allow' => 'bg-secondary',
-        ];
+        return SecurityActionKind::of($raw)->barClass();
     }
 
     protected function emptyMessage(): string
     {
-        return 'No security events over the window.';
+        return SecurityLabel::NO_EVENTS;
     }
 }

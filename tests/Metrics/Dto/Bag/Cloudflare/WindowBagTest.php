@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Metrics\Dto\Bag\Cloudflare;
 
+use App\Metrics\Dto\Bag\Cloudflare\SecurityActionKind;
 use App\Metrics\Dto\Bag\Cloudflare\WindowBag;
 use PHPUnit\Framework\TestCase;
 
@@ -35,6 +36,18 @@ final class WindowBagTest extends TestCase
 
         $this->assertSame(38, $window->mitigated());
         $this->assertSame(['block' => 31, 'managed_challenge' => 7], $window->mitigations());
+    }
+
+    public function testASolvedOrBypassedChallengeIsNotAMitigation(): void
+    {
+        $window = new WindowBag(['security' => ['by_action' => [
+            'block' => 3, 'jschallenge' => 2, 'managedChallenge' => 4, 'connection_close' => 1,
+            'challenge_solved' => 50, 'managed_challenge_bypassed' => 60, 'managedChallengeNonInteractiveSolved' => 70, 'rewrite' => 5,
+        ]]]);
+
+        $this->assertSame(10, $window->mitigated());
+        $this->assertSame(4, $window->securityEvents(SecurityActionKind::Block));
+        $this->assertSame(6, $window->securityEvents(SecurityActionKind::Challenge));
     }
 
     public function testRequestsWithoutASecurityEventAreDropped(): void

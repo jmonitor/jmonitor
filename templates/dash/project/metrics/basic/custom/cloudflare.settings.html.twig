@@ -19,9 +19,9 @@
             <twig:Html:Badge:Neutral>{{ https }}</twig:Html:Badge:Neutral>
         {% endif %}
     </twig:InfoLine>
-    <twig:InfoLine label="Minimum TLS" value="{{ settings.min_tls_version|default('') }}" />
-    <twig:InfoLine label="Security level" value="{{ settings.security_level|default('')|replace({_: ' '})|capitalize }}" />
-    <twig:InfoLine label="Cache level" value="{{ settings.cache_level|default('')|capitalize }}" />
+    <twig:InfoLine label="Minimum TLS">{{ settings.min_tls_version|default('') }}</twig:InfoLine>
+    <twig:InfoLine label="Security level">{{ settings.security_level|default('')|replace({_: ' '})|capitalize }}</twig:InfoLine>
+    <twig:InfoLine label="Cache level">{{ settings.cache_level|default('')|capitalize }}</twig:InfoLine>
     <twig:InfoLine label="Browser TTL">
         {% set ttl = settings.browser_cache_ttl|default(null) %}
         {% if ttl === 0 %}

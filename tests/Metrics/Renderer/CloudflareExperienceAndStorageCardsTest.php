@@ -95,6 +95,14 @@ final class CloudflareExperienceAndStorageCardsTest extends CloudflareCardTestCa
         $this->assertStringNotContainsString('bg-danger', $overTheFreeTier);
     }
 
+    public function testFullImageStorageTurnsRed(): void
+    {
+        $payload = self::fixture();
+        $payload['images']['stored'] = 100000;
+
+        $this->assertStringContainsString('bg-danger', $this->render(Metric::CloudflareImages, $payload));
+    }
+
     public function testNotConfiguredStorageSaysSo(): void
     {
         $payload = self::fixture();

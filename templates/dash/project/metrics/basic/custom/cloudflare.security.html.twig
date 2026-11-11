@@ -11,7 +11,4 @@
 </div>
 <twig:Metric:Metric:List class="mt-3">
     <twig:InfoLine label="Share of requests">{% if c.share is not null %}{{ c.share }} %{% endif %}</twig:InfoLine>
-    {% if c.topSource %}
-        <twig:InfoLine label="Top source" value="{{ c.topSource }}" />
-    {% endif %}
 </twig:Metric:Metric:List>

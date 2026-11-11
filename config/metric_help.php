@@ -2923,7 +2923,7 @@ return [
             'These requests never reached your server. They are the attacks, scans and bots your logs do not show.',
         ],
         'how_to_read' => [
-            'Actions that let the request through (<b>skip</b>, <b>log</b>, <b>allow</b>) are not counted as mitigations.',
+            'Actions that let the request through (<b>skip</b>, <b>log</b>, <b>allow</b>, a challenge the visitor solved) are not counted as mitigations.',
             'The share is relative to all requests of the window.',
         ],
     ],
@@ -2936,7 +2936,7 @@ return [
             'A block stops the request; a challenge asks the visitor to prove it is a browser; skip and log only record it.',
         ],
         'how_to_read' => [
-            'Blocks and challenges come first. <b>Skip</b>, <b>log</b> and <b>allow</b> let the request through: mostly those means your rules observe more than they act.',
+            'Blocks and challenges come first. The other actions let the request through, such as <b>skip</b>, <b>log</b> or a challenge the visitor <b>solved</b>: mostly those means your rules observe more than they act.',
             'Requests no security feature acted on are not listed.',
         ],
     ],
@@ -2949,7 +2949,7 @@ return [
             'It tells you which protection is doing the work, and which rule to look at when legitimate visitors get challenged.',
         ],
         'how_to_read' => [
-            'A source Cloudflare added recently shows under its raw name, such as <b>firewallCustom</b>.',
+            'A source this page does not know yet shows under the raw name Cloudflare gives it.',
         ],
     ],
 
@@ -3088,7 +3088,7 @@ return [
             'The free tier includes 5,000 unique transformations per month; beyond that, transformations are billed.',
         ],
         'how_to_read' => [
-            'A transformation is unique per source image and set of options; serving the same variant again does not count. Bars turn yellow from 80 %. The month resets on the first day, UTC.',
+            'A transformation is unique per source image and set of options; serving the same variant again does not count. Bars turn yellow from 80 %; stored images turn red once the quota is full, since uploads are then refused. The month resets on the first day, UTC.',
         ],
     ],
 ];

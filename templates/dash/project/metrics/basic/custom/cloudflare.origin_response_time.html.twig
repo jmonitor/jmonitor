@@ -3,9 +3,9 @@
 <div class="d-flex align-items-baseline gap-2">
     {% if latest %}
         <div class="consumer_value-value">{{ latest.originResponseMsP50|round }}</div>
-        <span class="text-muted">ms, P50 of the latest minute</span>
+        <span class="text-muted">ms, P50 of the latest minute that reached the origin</span>
     {% else %}
-        <span class="text-muted">Only cache hits over the window.</span>
+        <span class="text-muted">No recent request reached the origin.</span>
     {% endif %}
 </div>
 <twig:Metric:Metric:List class="mt-3">

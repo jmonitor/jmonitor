@@ -30,8 +30,9 @@ abstract class AbstractCloudflareBreakdown implements BasicMetricInterface
             ->setValue($this->keepsOrder() ? $counts : WindowBag::top($counts))
             ->setContext([
                 'total' => array_sum($counts),
-                'labels' => $this->labels($counts),
+                'labels' => ['other' => 'Other'] + $this->labels($counts),
                 'styles' => $this->styles(),
+                'empty' => $this->emptyMessage(),
             ])
         ;
     }
@@ -56,6 +57,11 @@ abstract class AbstractCloudflareBreakdown implements BasicMetricInterface
     protected function labels(array $counts): array
     {
         return [];
+    }
+
+    protected function emptyMessage(): string
+    {
+        return 'No requests over the window.';
     }
 
     /**

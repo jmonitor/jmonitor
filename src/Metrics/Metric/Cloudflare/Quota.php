@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Metrics\Metric\Cloudflare;
 
 /**
- * A month-to-date counter against its Free plan allowance, ready for the quota bar.
+ * A month-to-date counter against what the free tier includes, ready for the quota bar.
  */
 final readonly class Quota
 {
@@ -31,11 +31,7 @@ final readonly class Quota
 
     public function barClass(): string
     {
-        return match (true) {
-            $this->percent >= 100 => 'bg-danger',
-            $this->percent >= self::WARNING_PERCENT => 'bg-warning',
-            default => '',
-        };
+        return $this->percent >= self::WARNING_PERCENT ? 'bg-warning' : '';
     }
 
     private static function percent(int $used, int $allowed): float

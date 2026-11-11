@@ -90,7 +90,9 @@ final class CloudflareExperienceAndStorageCardsTest extends CloudflareCardTestCa
         $this->assertStringContainsString('bg-warning', $this->render(Metric::CloudflareImages, $payload));
 
         $payload['images']['unique_transformations'] = 5100;
-        $this->assertStringContainsString('bg-danger', $this->render(Metric::CloudflareImages, $payload));
+        $overTheFreeTier = $this->render(Metric::CloudflareImages, $payload);
+        $this->assertStringContainsString('bg-warning', $overTheFreeTier);
+        $this->assertStringNotContainsString('bg-danger', $overTheFreeTier);
     }
 
     public function testNotConfiguredStorageSaysSo(): void

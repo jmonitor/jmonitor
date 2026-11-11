@@ -28,7 +28,7 @@ class CloudflareWebAnalyticsByHost implements BasicMetricInterface
         if ($analytics instanceof WebAnalyticsBag) {
             $dto
                 ->setValue(WindowBag::top($analytics->byHost))
-                ->setContext(['total' => array_sum($analytics->byHost), 'labels' => [], 'styles' => []])
+                ->setContext(['total' => array_sum($analytics->byHost), 'labels' => ['other' => 'Other'], 'styles' => []])
             ;
         }
     }

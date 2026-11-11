@@ -17,8 +17,7 @@ final class CloudflareTimeSeriesTest extends CloudflareCardTestCase
      */
     public static function series(): iterable
     {
-        yield 'bandwidth' => [Metric::CloudflareBandwidth, ['bytes', 'cached_bytes'], 25778];
-        yield 'origin requests' => [Metric::CloudflareOriginRequests, ['origin_requests'], 13];
+        yield 'cache hit ratio' => [Metric::CloudflareCacheHitRatio, ['cache_hit_percent'], 9.2];
         yield 'error ratio' => [Metric::CloudflareErrorRatio, ['status_4xx_percent', 'status_5xx_percent'], null];
     }
 

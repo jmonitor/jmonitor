@@ -31,12 +31,12 @@ final class CloudflareConsumerTest extends TestCase
         $this->assertStringContainsString('status_4xx_percent=0', $line);
     }
 
-    public function testNullOriginValuesAreNotWritten(): void
+    public function testAMinuteThatNeverReachedTheOriginWritesNoLatency(): void
     {
         $line = new CloudflareConsumer()->getInfluxPoints($this->bag($this->withMinute(4, 0.25)))[0]->toLineProtocol();
 
         $this->assertStringNotContainsString('origin_response_ms_p50', $line);
-        $this->assertStringNotContainsString('origin_requests', $line);
+        $this->assertStringContainsString('origin_requests=0i', $line);
         $this->assertStringContainsString('status_4xx_percent=25', $line);
     }
 

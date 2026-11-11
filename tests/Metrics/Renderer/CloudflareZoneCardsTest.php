@@ -41,7 +41,6 @@ final class CloudflareZoneCardsTest extends CloudflareCardTestCase
         unset($payload['zone']['settings']);
 
         $this->assertStringContainsString('lacks the permission', $this->render(Metric::CloudflareSettings, $payload));
-        $this->assertStringContainsString('lacks the permission', $this->render(Metric::CloudflareCacheSettings, $payload));
     }
 
     public function testTheZoneCardFlagsDevelopmentMode(): void

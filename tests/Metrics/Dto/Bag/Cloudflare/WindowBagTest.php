@@ -34,7 +34,18 @@ final class WindowBagTest extends TestCase
         $window = new WindowBag(['security' => ['by_action' => ['skip' => 171, 'unknown' => 67, 'block' => 31, 'managed_challenge' => 7, 'log' => 2, 'allow' => 4]]]);
 
         $this->assertSame(38, $window->mitigated());
-        $this->assertSame(['skip' => 171, 'unknown' => 67, 'block' => 31, 'managed_challenge' => 7, 'log' => 2, 'allow' => 4], $window->securityByAction);
+        $this->assertSame(['block' => 31, 'managed_challenge' => 7], $window->mitigations());
+    }
+
+    public function testRequestsWithoutASecurityEventAreDropped(): void
+    {
+        $window = new WindowBag(['security' => [
+            'by_action' => ['skip' => 171, 'unknown' => 67],
+            'by_source' => ['firewallCustom' => 171, 'unknown' => 67],
+        ]]);
+
+        $this->assertSame(['skip' => 171], $window->securityByAction);
+        $this->assertSame(['firewallCustom' => 171], $window->securityBySource);
     }
 
     public function testTopKeepsFiveAndFoldsTheRest(): void

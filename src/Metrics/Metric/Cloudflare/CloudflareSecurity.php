@@ -48,7 +48,7 @@ class CloudflareSecurity implements BasicMetricInterface
                 'blocked' => $actions['block'] ?? 0,
                 'challenged' => $challenged,
                 'share' => $window->requests === 0 ? null : round($mitigated / $window->requests * 100, 1),
-                'topSource' => array_key_first($sources),
+                'topSource' => $mitigated > 0 && $sources !== [] ? SecurityLabel::source((string) array_key_first($sources)) : null,
             ])
         ;
     }

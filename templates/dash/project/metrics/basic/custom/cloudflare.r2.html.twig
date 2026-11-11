@@ -4,15 +4,14 @@
     {% for quota in dto.context.quotas %}
         {{ include('dash/project/metrics/basic/custom/_cloudflare_quota.html.twig', {quota: quota}) }}
     {% endfor %}
-    <twig:InfoLine label="Egress this month" value="{{ r2.downloadBytes|format_bytes }}" />
-    <twig:InfoLine label="Quotas reset on">
+    <twig:InfoLine label="Operations reset on">
         {% if r2.resetsAt() %}{{ r2.resetsAt()|date('Y-m-d') }}{% endif %}
     </twig:InfoLine>
     {% if r2.buckets %}
         <hr class="my-1">
         <h6 class="mb-0">Buckets</h6>
         {% for bucket in r2.buckets %}
-            <twig:InfoLine label="{{ bucket.name }}" truncate="true">
+            <twig:InfoLine label="{{ bucket.name }}" class="dl-verbatim" truncate="true">
                 {{ (bucket.payloadBytes + bucket.metadataBytes)|format_bytes }}
                 <span class="text-muted">· {{ bucket.objectCount|number_format(0, '.', ' ') }} object{{ bucket.objectCount == 1 ? '' : 's' }}{% if bucket.storageClass %} · {{ bucket.storageClass }}{% endif %}</span>
             </twig:InfoLine>

@@ -8,10 +8,6 @@ use App\Metrics\Dto\Bag;
 
 class TodayBag extends Bag
 {
-    public ?string $date {
-        get => $this->get('date');
-    }
-
     public int $requests {
         get => $this->getInt('requests', 0) ?? 0;
     }

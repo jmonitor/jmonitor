@@ -8,7 +8,6 @@
     <twig:InfoLine label="Per minute">
         {% if window.requestsPerMinute is not null %}{{ window.requestsPerMinute|number_format(1) }}{% endif %}
     </twig:InfoLine>
-    <twig:InfoLine label="Page views, last {{ dto.value.spanMinutes }} min">{{ dto.value.minutes|reduce((sum, m) => sum + m.pageViews, 0)|number_format(0, '.', ' ') }}</twig:InfoLine>
     {% if window.sampled %}
         <twig:InfoLine label="Accuracy"><twig:Html:Badge:Neutral>sampled by Cloudflare</twig:Html:Badge:Neutral></twig:InfoLine>
     {% endif %}

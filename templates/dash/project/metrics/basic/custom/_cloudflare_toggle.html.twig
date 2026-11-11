@@ -1,8 +1,0 @@
-{# A Cloudflare on/off setting as a badge; `value` is the raw setting #}
-{% if value === 'on' %}
-    <twig:Html:Badge:Green>on</twig:Html:Badge:Green>
-{% elseif value === 'off' %}
-    <twig:Html:Badge:Neutral>off</twig:Html:Badge:Neutral>
-{% elseif value is not null %}
-    <twig:Html:Badge:Neutral>{{ value }}</twig:Html:Badge:Neutral>
-{% endif %}

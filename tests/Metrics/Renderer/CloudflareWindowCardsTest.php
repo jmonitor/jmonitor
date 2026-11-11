@@ -21,7 +21,7 @@ final class CloudflareWindowCardsTest extends CloudflareCardTestCase
         $this->assertStringContainsString('15.9', $requests);
         $this->assertStringNotContainsString('sampled', $requests);
         $this->assertStringContainsString('over 15 min', $requests);
-        $this->assertStringContainsString('Page views, last 5 min', $requests);
+        $this->assertStringNotContainsString('last 5 min', $requests);
 
         $gauge = $this->dto(Metric::CloudflareCacheHitRatio, Renderer::Gauge, $payload);
         $this->assertInstanceOf(GaugeDto::class, $gauge);
@@ -29,12 +29,12 @@ final class CloudflareWindowCardsTest extends CloudflareCardTestCase
 
         $origin = self::lines($this->render(Metric::CloudflareOriginResponseTime, $payload));
         $this->assertSame('56 ms', $origin['P95']);
-        $this->assertSame('13', $origin['Origin requests, last 5 min']);
+        $this->assertSame(['P95'], array_keys($origin));
         $this->assertStringContainsString('>30<', preg_replace('/\s+/', '', $this->render(Metric::CloudflareOriginResponseTime, $payload)) ?? '');
 
         $security = $this->render(Metric::CloudflareSecurity, $payload);
         $this->assertStringContainsString('>0<', preg_replace('/\s+/', '', $security) ?? '');
-        $this->assertStringContainsString('firewallCustom', $security);
+        $this->assertStringNotContainsString('Top source', $security);
     }
 
     public function testASampledWindowSaysSo(): void
@@ -52,7 +52,7 @@ final class CloudflareWindowCardsTest extends CloudflareCardTestCase
 
         $lines = self::lines($this->render(Metric::CloudflareByStatus, $payload));
 
-        $this->assertSame(['2xx', '3xx', '4xx', '5xx', 'other'], array_keys($lines));
+        $this->assertSame(['2xx', '3xx', '4xx', '5xx', 'Other'], array_keys($lines));
         $this->assertStringStartsWith('223', $lines['2xx']);
     }
 
@@ -64,8 +64,8 @@ final class CloudflareWindowCardsTest extends CloudflareCardTestCase
         $lines = self::lines($this->render(Metric::CloudflareByHost, $payload));
 
         $this->assertCount(6, $lines);
-        $this->assertSame('other', array_key_last($lines));
-        $this->assertStringStartsWith('30', $lines['other']);
+        $this->assertSame('Other', array_key_last($lines));
+        $this->assertStringStartsWith('30', $lines['Other']);
     }
 
     public function testCountriesAreNamed(): void
@@ -76,9 +76,35 @@ final class CloudflareWindowCardsTest extends CloudflareCardTestCase
         $this->assertStringStartsWith('192', $lines['🇫🇷 France']);
     }
 
+    public function testSecurityBreakdownsIgnoreRequestsWithoutAnEvent(): void
+    {
+        $payload = self::fixture();
+        $payload['traffic']['window']['security'] = [
+            'by_action' => ['unknown' => 900, 'skip' => 171, 'managed_challenge' => 7, 'block' => 31],
+            'by_source' => ['unknown' => 900, 'firewallCustom' => 178, 'firewallManaged' => 31, 'brandNewSource' => 2],
+        ];
+
+        $actions = self::lines($this->render(Metric::CloudflareSecurityByAction, $payload));
+        $this->assertSame(['Block', 'Managed challenge', 'Skip'], array_keys($actions));
+
+        $sources = self::lines($this->render(Metric::CloudflareSecurityBySource, $payload));
+        $this->assertSame(['Custom rules', 'Managed rules', 'brandNewSource'], array_keys($sources));
+
+        $this->assertSame('Custom rules', self::lines($this->render(Metric::CloudflareSecurity, $payload))['Top source']);
+    }
+
+    public function testAQuietSecurityWindowSaysSo(): void
+    {
+        $payload = self::fixture();
+        $payload['traffic']['window']['security'] = ['by_action' => ['unknown' => 238], 'by_source' => ['unknown' => 238]];
+
+        $this->assertStringContainsString('No security events', $this->render(Metric::CloudflareSecurityByAction, $payload));
+        $this->assertStringContainsString('No security events', $this->render(Metric::CloudflareSecurityBySource, $payload));
+    }
+
     public function testEveryBreakdownRendersBars(): void
     {
-        foreach ([Metric::CloudflareByCacheStatus, Metric::CloudflareByContentType, Metric::CloudflareByProtocol, Metric::CloudflareSecurityByAction, Metric::CloudflareSecurityBySource] as $metric) {
+        foreach ([Metric::CloudflareByCacheStatus, Metric::CloudflareByHost, Metric::CloudflareSecurityByAction, Metric::CloudflareSecurityBySource] as $metric) {
             $html = $this->render($metric, self::fixture());
             $this->assertGreaterThan(0, new Crawler($html)->filter('.progress-bar')->count(), $metric->value);
         }
@@ -102,7 +128,6 @@ final class CloudflareWindowCardsTest extends CloudflareCardTestCase
         $this->assertStringContainsString('12 994', $html);
         $this->assertStringContainsString('1.5 %', $html);
         $this->assertStringContainsString('197', $html);
-        $this->assertStringContainsString('2026-10-31', $html);
     }
 
     public function testTodayBandwidthUnitIsMarkupNotText(): void
@@ -118,7 +143,7 @@ final class CloudflareWindowCardsTest extends CloudflareCardTestCase
         $dto = $this->dto(Metric::CloudflareRequests, Renderer::Line, self::fixture());
         $this->assertInstanceOf(TimeSerieDto::class, $dto);
         $this->assertSame('cloudflare', $dto->measurement);
-        $this->assertSame(['cached_requests', 'uncached_requests', 'page_views'], array_keys($dto->fields));
+        $this->assertSame(['requests', 'origin_requests'], array_keys($dto->fields));
         $this->assertSame(60, $dto->minimumWindow);
 
         $dto = $this->dto(Metric::CloudflareCacheHitRatio, Renderer::Line, self::fixture());

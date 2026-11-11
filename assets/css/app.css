@@ -137,6 +137,10 @@ h1 > svg {
     font-size: var(--app-14-px);
 }
 
+.dl-verbatim, .dl-verbatim .dl {
+    text-transform: none;
+}
+
 .dldt {
     display: flex;
     gap: 0.5rem;

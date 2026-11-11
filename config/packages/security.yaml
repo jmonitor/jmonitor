@@ -13,7 +13,7 @@ security:
     firewalls:
         dev:
             # Ensure dev tools and static assets are always allowed
-            pattern: ^/(_profiler|_wdt|assets|build|site.webmanifest)/
+            pattern: ^/(_profiler(/|$)|(_wdt|assets|build|site.webmanifest)/)
             security: false
         collector:
             host: 'collector.%app.domain%'

@@ -17,6 +17,7 @@ use App\Metrics\MetricsBagProvider;
 use App\Metrics\Renderer;
 use App\Project\ProjectContext;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\DependencyInjection\Attribute\AsTaggedItem;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -24,8 +25,8 @@ use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
- * Renders a card from what an agent pushed, the way a push reaches it: the payload has to pass the
- * consumer's constraints, and the card reads the bag the consumer cached.
+ * Renders a card from a pushed payload: the payload has to pass the consumer's constraints, and the
+ * card reads the bag the consumer cached, not the raw payload.
  */
 abstract class PayloadCardTestCase extends KernelTestCase
 {
@@ -49,13 +50,15 @@ abstract class PayloadCardTestCase extends KernelTestCase
      * @param class-string<ConsumerInterface> $consumerClass
      * @param array<string, mixed>            $payload
      */
-    protected function push(Consumer $consumer, string $consumerClass, array $payload, string $receivedAt = 'now'): void
+    protected function push(string $consumerClass, array $payload, string $receivedAt = 'now', bool $skipped = false): void
     {
+        $consumer = Consumer::from(new \ReflectionClass($consumerClass)->getAttributes(AsTaggedItem::class)[0]->newInstance()->index);
         $service = self::getContainer()->get($consumerClass);
+
         $violations = self::getContainer()->get(ValidatorInterface::class)->validate($payload, $service->getConstraints($consumer->latestVersion()));
         $this->assertCount(0, $violations, 'The payload is rejected before it reaches a card: ' . $violations);
 
-        $bag = $service->normalizeBag(MetricBagDto::create($this->project, $consumer, $consumer->latestVersion(), $payload, new \DateTimeImmutable($receivedAt), false));
+        $bag = $service->normalizeBag(MetricBagDto::create($this->project, $consumer, $consumer->latestVersion(), $payload, new \DateTimeImmutable($receivedAt), false, $skipped));
         $cached = array_filter($service->getMetricsToCache($bag), static fn(mixed $value): bool => $value !== null);
 
         self::getContainer()->get(MetricsBagProvider::class)->saveMetricBag($bag->withMetrics($cached));
@@ -67,7 +70,7 @@ abstract class PayloadCardTestCase extends KernelTestCase
     /**
      * @param array<string, mixed> $options
      */
-    protected function render(Metric $metric, ?Renderer $renderer = null, array $options = []): string
+    protected function renderCard(Metric $metric, ?Renderer $renderer = null, array $options = []): string
     {
         return self::getContainer()->get(MetricRenderer::class)->render($metric, $renderer, dtoOptions: $options);
     }

@@ -1,5 +1,5 @@
 {% if dto.formattedValue !== null %}
-    <div class="consumer_value-value">{{ dto.formattedValue|raw }}</div>
+    <div class="consumer_value-value">{{ dto.formattedValue }}</div>
 {% elseif dto.value is scalar %}
     <div class="consumer_value-value">{{ dto.value }}</div>
 {% endif %}

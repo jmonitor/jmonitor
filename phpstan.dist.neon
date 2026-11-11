@@ -6,6 +6,11 @@ parameters:
     ignoreErrors:
         - identifier: doctrine.columnType
         - identifier: doctrine.associationType
+        # Called by Symfony's KernelTrait, which PHPStan does not see.
+        -
+            identifier: method.unused
+            message: '#^Method App\\Kernel::getAllowedEnvs\(\) is unused\.$#'
+            path: src/Kernel.php
 
     symfony:
             containerXmlPath: var/cache/dev/App_KernelDevDebugContainer.xml

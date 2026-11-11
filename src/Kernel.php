@@ -19,4 +19,12 @@ class Kernel extends BaseKernel
         $container->addCompilerPass(new CloudOnlyScheduledTasksPass(), PassConfig::TYPE_BEFORE_OPTIMIZATION, 100);
         $container->addCompilerPass(new OptionalCloudflareCollectorPass());
     }
+
+    /**
+     * @return list<string>
+     */
+    private function getAllowedEnvs(): array
+    {
+        return ['prod', 'dev', 'test'];
+    }
 }

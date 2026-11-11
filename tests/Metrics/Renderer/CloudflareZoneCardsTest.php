@@ -41,7 +41,19 @@ final class CloudflareZoneCardsTest extends CloudflareCardTestCase
         unset($payload['zone']['settings']);
 
         $this->assertStringContainsString('lacks the permission', $this->render(Metric::CloudflareSettings, $payload));
-        $this->assertStringContainsString('lacks the permission', $this->render(Metric::CloudflareCacheSettings, $payload));
+    }
+
+    public function testSettingsFromThePayloadAreEscaped(): void
+    {
+        $payload = self::fixture();
+        $payload['zone']['settings']['security_level'] = 'under_attack';
+        $this->assertSame('Under attack', self::lines($this->render(Metric::CloudflareSettings, $payload))['Security level']);
+
+        $payload['zone']['settings']['security_level'] = '<img src=x>';
+        $payload['zone']['settings']['cache_level'] = '<img src=y>';
+        $html = $this->render(Metric::CloudflareSettings, $payload);
+        $this->assertStringNotContainsString('<img', $html);
+        $this->assertStringContainsString('&lt;img', $html);
     }
 
     public function testTheZoneCardFlagsDevelopmentMode(): void

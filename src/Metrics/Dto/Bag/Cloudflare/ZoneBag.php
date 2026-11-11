@@ -46,14 +46,6 @@ class ZoneBag extends Bag
         get => $this->certificate ??= is_array($this->get('certificate')) ? new CertificateBag($this->all('certificate')) : null;
     }
 
-    public ?int $dnsRecordsUsed {
-        get => is_array($this->get('dns_records')) ? new Bag($this->all('dns_records'))->getInt('used') : null;
-    }
-
-    public ?int $dnsRecordsQuota {
-        get => is_array($this->get('dns_records')) ? new Bag($this->all('dns_records'))->getInt('quota') : null;
-    }
-
     public ?\DateTimeImmutable $fetchedAt {
         get => ($t = $this->getInt('fetched_at')) === null ? null : new \DateTimeImmutable('@' . $t);
     }

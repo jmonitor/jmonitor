@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Metrics\Metric\Cloudflare;
 
+use App\Chart\ChartColor;
 use App\Chart\Dto\TimeSeriesChartConfiguration;
 use App\Metrics\Consumer\Cloudflare\CloudflareConsumer;
 use App\Metrics\Metric;
@@ -36,7 +37,8 @@ class CloudflareErrorRatio implements TimeSeriesMetricInterface
     {
         $config
             ->setYMin(0)
-            ->setYMax(100)
+            ->setColor('status_4xx_percent', ChartColor::ORANGE)
+            ->setColor('status_5xx_percent', ChartColor::RED)
         ;
     }
 }

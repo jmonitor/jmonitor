@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Metrics\Metric\Cloudflare;
 
+use App\Metrics\Dto\Bag\Cloudflare\SecurityActionKind;
 use App\Metrics\Dto\Bag\Cloudflare\WindowBag;
 use App\Metrics\Metric;
 use Symfony\Component\DependencyInjection\Attribute\AsTaggedItem;
@@ -18,11 +19,31 @@ class CloudflareSecurityByAction extends AbstractCloudflareBreakdown
 
     protected function counts(WindowBag $window): array
     {
-        return $window->securityByAction;
+        $mitigations = $window->mitigations();
+        $passive = array_diff_key($window->securityByAction, $mitigations);
+        arsort($mitigations);
+        arsort($passive);
+
+        return $mitigations + $passive;
     }
 
-    protected function styles(): array
+    protected function keepsOrder(): bool
     {
-        return ['block' => 'bg-danger', 'managed_challenge' => 'bg-warning', 'challenge' => 'bg-warning', 'js_challenge' => 'bg-warning'];
+        return true;
+    }
+
+    protected function label(string $raw): string
+    {
+        return SecurityLabel::action($raw);
+    }
+
+    protected function barClass(string $raw): string
+    {
+        return SecurityActionKind::of($raw)->barClass();
+    }
+
+    protected function emptyMessage(): string
+    {
+        return SecurityLabel::NO_EVENTS;
     }
 }

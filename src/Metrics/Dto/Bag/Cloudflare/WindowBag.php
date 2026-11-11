@@ -10,11 +10,6 @@ class WindowBag extends Bag
 {
     private const array CACHED_STATUSES = ['hit', 'revalidated', 'stale', 'updating'];
 
-    /**
-     * Actions that let the request through: not mitigations.
-     */
-    private const array PASSIVE_ACTIONS = ['skip', 'log', 'unknown', 'allow'];
-
     public int $from {
         get => $this->getInt('from', 0) ?? 0;
     }
@@ -46,11 +41,6 @@ class WindowBag extends Bag
     }
 
     /** @var array<string, int> */
-    public array $byContentType {
-        get => $this->counts('by_content_type');
-    }
-
-    /** @var array<string, int> */
     public array $byCountry {
         get => $this->counts('by_country');
     }
@@ -58,11 +48,6 @@ class WindowBag extends Bag
     /** @var array<string, int> */
     public array $byHost {
         get => $this->counts('by_host');
-    }
-
-    /** @var array<string, int> */
-    public array $byProtocol {
-        get => $this->counts('by_protocol');
     }
 
     /** @var array<string, int> */
@@ -106,14 +91,20 @@ class WindowBag extends Bag
 
     public function mitigated(): int
     {
-        $mitigated = 0;
-        foreach ($this->securityByAction as $action => $count) {
-            if (!in_array($action, self::PASSIVE_ACTIONS, true)) {
-                $mitigated += $count;
-            }
-        }
+        return array_sum($this->mitigations());
+    }
 
-        return $mitigated;
+    /**
+     * @return array<string, int> the actions that stopped or challenged the request
+     */
+    public function mitigations(): array
+    {
+        return array_filter($this->securityByAction, fn(string $action): bool => SecurityActionKind::of($action)->isMitigation(), ARRAY_FILTER_USE_KEY);
+    }
+
+    public function securityEvents(SecurityActionKind $kind): int
+    {
+        return array_sum(array_filter($this->securityByAction, fn(string $action): bool => SecurityActionKind::of($action) === $kind, ARRAY_FILTER_USE_KEY));
     }
 
     public function requestsPerMinute(): ?float
@@ -151,13 +142,17 @@ class WindowBag extends Bag
     }
 
     /**
+     * Cloudflare files the requests no security feature acted on under "unknown": they are not events.
+     *
      * @return array<string, int>
      */
     private function securityCounts(string $key): array
     {
         $security = is_array($this->get('security')) ? $this->all('security') : [];
+        $counts = is_array($security[$key] ?? null) ? self::toCounts($security[$key]) : [];
+        unset($counts['unknown']);
 
-        return is_array($security[$key] ?? null) ? self::toCounts($security[$key]) : [];
+        return $counts;
     }
 
     /**

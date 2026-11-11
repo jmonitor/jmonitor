@@ -5,7 +5,7 @@
         {{ include('dash/project/metrics/basic/custom/_cloudflare_quota.html.twig', {quota: quota}) }}
     {% endfor %}
     <twig:InfoLine label="Requests, last 24 h" value="{{ images.requestsLast24h|number_format(0, '.', ' ') }}" />
-    <twig:InfoLine label="Quotas reset on">
+    <twig:InfoLine label="Transformations reset on">
         {% if images.resetsAt() %}{{ images.resetsAt()|date('Y-m-d') }}{% endif %}
     </twig:InfoLine>
 </twig:Metric:Metric:List>

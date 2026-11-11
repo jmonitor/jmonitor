@@ -1,9 +1,9 @@
 {# @var today \App\Metrics\Dto\Bag\Cloudflare\TodayBag #}
 {% set today = dto.value %}
 {% macro tile(label, value, sub) %}
-    <div class="col-6 col-md-4 col-xl-2">
+    <div class="col-6 col-md-4 col-xl">
         <div class="text-muted small text-uppercase">{{ label }}</div>
-        <div class="consumer_value-value">{{ value }}</div>
+        <div class="consumer_value-value text-start text-nowrap">{{ value }}</div>
         {% if sub %}<div class="text-muted small">{{ sub }}</div>{% endif %}
     </div>
 {% endmacro %}
@@ -15,5 +15,4 @@
     {{ _self.tile('Unique visitors', today.uniques|number_format(0, '.', ' '), null) }}
     {{ _self.tile('Bandwidth', bandwidth, bandwidthFromCache) }}
     {{ _self.tile('Threats', today.threats|number_format(0, '.', ' '), today.requests > 0 ? (today.threats / today.requests * 100)|number_format(2) ~ ' % of requests' : null) }}
-    {{ _self.tile('Day (UTC)', today.date ?? '', null) }}
 </div>

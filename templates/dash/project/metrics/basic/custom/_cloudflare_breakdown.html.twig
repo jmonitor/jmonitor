@@ -1,4 +1,4 @@
-{# dto.value: label => count ; dto.context: total, labels (raw => display), styles (raw => bar class) #}
+{# dto.value: label => count ; dto.context: total, labels (raw => display), styles (raw => bar class), empty #}
 {% set total = dto.context.total %}
 {% set labels = dto.context.labels|default({}) %}
 {% set styles = dto.context.styles|default({}) %}
@@ -6,8 +6,8 @@
     {% for label, count in dto.value %}
         {% set percent = total > 0 ? (count / total * 100) : 0 %}
         <div>
-            <div class="dldt">
-                <div class="dl text-truncate">{{ labels[label]|default(label) }}</div>
+            <div class="dldt flex-nowrap">
+                <div class="dl dl-verbatim d-block text-truncate" title="{{ labels[label]|default(label) }}">{{ labels[label]|default(label) }}</div>
                 <div class="dt text-end text-nowrap">{{ count|number_format(0, '.', ' ') }} <span class="text-muted">· {{ percent|number_format(1) }} %</span></div>
             </div>
             <div class="progress mt-1" role="progressbar" aria-label="{{ labels[label]|default(label) }}" aria-valuenow="{{ percent|round }}" aria-valuemin="0" aria-valuemax="100" style="height: 6px">
@@ -15,6 +15,6 @@
             </div>
         </div>
     {% else %}
-        <span class="text-muted">No requests over the window.</span>
+        <span class="text-muted">{{ dto.context.empty|default('No requests over the window.') }}</span>
     {% endfor %}
 </twig:Metric:Metric:List>

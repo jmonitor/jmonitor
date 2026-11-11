@@ -22,18 +22,6 @@ final class TrafficBagTest extends TestCase
         $this->assertSame(1761917460, $traffic->minutes[0]->time);
     }
 
-    public function testCachedBytesRatioAndOriginTotals(): void
-    {
-        $traffic = new TrafficBag(['minutes' => [
-            ['time' => 1, 'bytes' => 100, 'cached_bytes' => 50, 'origin_requests' => 13],
-            ['time' => 2, 'bytes' => 300, 'cached_bytes' => 150, 'origin_requests' => null],
-        ]]);
-
-        $this->assertSame(0.5, $traffic->cachedBytesRatio());
-        $this->assertSame(13, $traffic->originRequests());
-        $this->assertNull(new TrafficBag(['minutes' => []])->cachedBytesRatio());
-    }
-
     public function testLatestOriginSkipsCacheOnlyMinutes(): void
     {
         $traffic = new TrafficBag(['minutes' => [

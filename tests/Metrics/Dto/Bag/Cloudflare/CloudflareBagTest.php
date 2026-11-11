@@ -65,6 +65,13 @@ final class CloudflareBagTest extends TestCase
         $this->assertFalse($this->bag(['unavailable' => ['zone' => 'rate_limited']])->isCollectorDown());
     }
 
+    public function testStorageIsHiddenOnlyWhenNeitherProductIsConfigured(): void
+    {
+        $this->assertTrue($this->bag(self::fixture())->hasStorage());
+        $this->assertTrue($this->bag(['unavailable' => ['r2' => 'not_configured', 'images' => 'forbidden']])->hasStorage());
+        $this->assertFalse($this->bag(['unavailable' => ['r2' => 'not_configured', 'images' => 'not_configured']])->hasStorage());
+    }
+
     /**
      * @return array<string, mixed>
      */

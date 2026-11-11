@@ -26,10 +26,6 @@ class R2Bag extends Bag
         get => $this->getInt('upload_bytes', 0) ?? 0;
     }
 
-    public int $downloadBytes {
-        get => $this->getInt('download_bytes', 0) ?? 0;
-    }
-
     /**
      * @var R2BucketBag[]
      */

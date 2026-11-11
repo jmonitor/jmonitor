@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Metrics\Metric\Cloudflare;
 
+use App\Metrics\Dto\Bag\Cloudflare\SecurityActionKind;
 use App\Metrics\Dto\Bag\Cloudflare\TrafficBag;
 use App\Metrics\Metric;
 use App\Metrics\Metric\BasicMetricInterface;
@@ -14,8 +15,6 @@ use Symfony\Component\DependencyInjection\Attribute\AsTaggedItem;
 class CloudflareSecurity implements BasicMetricInterface
 {
     use CloudflareBlockTrait;
-
-    private const array CHALLENGES = ['managed_challenge', 'challenge', 'js_challenge'];
 
     public function getMetric(): Metric
     {
@@ -31,24 +30,15 @@ class CloudflareSecurity implements BasicMetricInterface
         }
 
         $window = $traffic->window;
-        $actions = $window->securityByAction;
         $mitigated = $window->mitigated();
-        $challenged = 0;
-        foreach (self::CHALLENGES as $challenge) {
-            $challenged += $actions[$challenge] ?? 0;
-        }
-
-        $sources = $window->securityBySource;
-        arsort($sources);
 
         $dto
             ->setValue($window)
             ->setContext([
                 'mitigated' => $mitigated,
-                'blocked' => $actions['block'] ?? 0,
-                'challenged' => $challenged,
+                'blocked' => $window->securityEvents(SecurityActionKind::Block),
+                'challenged' => $window->securityEvents(SecurityActionKind::Challenge),
                 'share' => $window->requests === 0 ? null : round($mitigated / $window->requests * 100, 1),
-                'topSource' => array_key_first($sources),
             ])
         ;
     }

@@ -25,13 +25,16 @@ abstract class AbstractCloudflareBreakdown implements BasicMetricInterface
         }
 
         $counts = $this->counts($traffic->window);
+        $rows = $this->keepsOrder() ? $counts : WindowBag::top($counts);
+        $keys = array_map(strval(...), array_keys($rows));
 
         $dto
-            ->setValue($this->keepsOrder() ? $counts : WindowBag::top($counts))
+            ->setValue($rows)
             ->setContext([
                 'total' => array_sum($counts),
-                'labels' => $this->labels($counts),
-                'styles' => $this->styles(),
+                'labels' => array_combine($keys, array_map(fn(string $raw): string => $raw === 'other' ? 'Other' : $this->label($raw), $keys)),
+                'styles' => array_combine($keys, array_map($this->barClass(...), $keys)),
+                'empty' => $this->emptyMessage(),
             ])
         ;
     }
@@ -49,20 +52,21 @@ abstract class AbstractCloudflareBreakdown implements BasicMetricInterface
         return false;
     }
 
-    /**
-     * @param array<string, int> $counts
-     * @return array<string, string> raw label => display label
-     */
-    protected function labels(array $counts): array
+    protected function label(string $raw): string
     {
-        return [];
+        return $raw;
+    }
+
+    protected function emptyMessage(): string
+    {
+        return 'No requests over the window.';
     }
 
     /**
-     * @return array<string, string> raw label => Bootstrap background class of its bar
+     * Bootstrap background class of the bar, empty for the default colour.
      */
-    protected function styles(): array
+    protected function barClass(string $raw): string
     {
-        return [];
+        return '';
     }
 }

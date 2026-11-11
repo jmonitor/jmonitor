@@ -55,6 +55,14 @@ class CloudflareBag extends MetricBagDto
     }
 
     /**
+     * False when the account uses neither R2 nor Images.
+     */
+    public function hasStorage(): bool
+    {
+        return $this->unavailableReason('r2') !== 'not_configured' || $this->unavailableReason('images') !== 'not_configured';
+    }
+
+    /**
      * @template T of object
      * @param class-string<T> $class
      * @return T|null

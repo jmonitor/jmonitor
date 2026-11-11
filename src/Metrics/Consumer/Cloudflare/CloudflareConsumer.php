@@ -77,7 +77,7 @@ class CloudflareConsumer implements ConsumerInterface
             'visits' => $minute->visits,
             'status_4xx_percent' => $served ? $minute->status4xxRatio * 100 : null,
             'status_5xx_percent' => $served ? $minute->status5xxRatio * 100 : null,
-            'origin_requests' => $minute->originRequests,
+            'origin_requests' => $minute->originRequests ?? 0,
             'origin_response_ms_avg' => $minute->originResponseMsAvg,
             'origin_response_ms_p50' => $minute->originResponseMsP50,
             'origin_response_ms_p95' => $minute->originResponseMsP95,

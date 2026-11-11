@@ -11,10 +11,23 @@
             <twig:Html:Badge:Neutral>{{ ssl }}</twig:Html:Badge:Neutral>
         {% endif %}
     </twig:InfoLine>
-    <twig:InfoLine label="Minimum TLS" value="{{ settings.min_tls_version|default('') }}" />
-    <twig:InfoLine label="Always use HTTPS">{{ include('dash/project/metrics/basic/custom/_cloudflare_toggle.html.twig', {value: settings.always_use_https|default(null)}) }}</twig:InfoLine>
-    <twig:InfoLine label="HTTP/3">{{ include('dash/project/metrics/basic/custom/_cloudflare_toggle.html.twig', {value: settings.http3|default(null)}) }}</twig:InfoLine>
-    <twig:InfoLine label="Brotli">{{ include('dash/project/metrics/basic/custom/_cloudflare_toggle.html.twig', {value: settings.brotli|default(null)}) }}</twig:InfoLine>
-    <twig:InfoLine label="Early hints">{{ include('dash/project/metrics/basic/custom/_cloudflare_toggle.html.twig', {value: settings.early_hints|default(null)}) }}</twig:InfoLine>
-    <twig:InfoLine label="0-RTT">{{ include('dash/project/metrics/basic/custom/_cloudflare_toggle.html.twig', {value: settings['0rtt']|default(null)}) }}</twig:InfoLine>
+    <twig:InfoLine label="Always use HTTPS">
+        {% set https = settings.always_use_https|default(null) %}
+        {% if https === 'on' %}
+            <twig:Html:Badge:Green>on</twig:Html:Badge:Green>
+        {% elseif https is not null %}
+            <twig:Html:Badge:Neutral>{{ https }}</twig:Html:Badge:Neutral>
+        {% endif %}
+    </twig:InfoLine>
+    <twig:InfoLine label="Minimum TLS">{{ settings.min_tls_version|default('') }}</twig:InfoLine>
+    <twig:InfoLine label="Security level">{{ settings.security_level|default('')|replace({_: ' '})|capitalize }}</twig:InfoLine>
+    <twig:InfoLine label="Cache level">{{ settings.cache_level|default('')|capitalize }}</twig:InfoLine>
+    <twig:InfoLine label="Browser TTL">
+        {% set ttl = settings.browser_cache_ttl|default(null) %}
+        {% if ttl === 0 %}
+            Respect origin headers
+        {% elseif ttl is not null %}
+            <span {{ stimulus_controller('duration', {seconds: ttl}) }}></span>
+        {% endif %}
+    </twig:InfoLine>
 </twig:Metric:Metric:List>

@@ -3,14 +3,13 @@
 <div class="d-flex align-items-baseline gap-2">
     {% if latest %}
         <div class="consumer_value-value">{{ latest.originResponseMsP50|round }}</div>
-        <span class="text-muted">ms, P50 of the last minute reaching the origin</span>
+        <span class="text-muted">ms, P50 of the latest minute that reached the origin</span>
     {% else %}
-        <span class="text-muted">Only cache hits over the window.</span>
+        <span class="text-muted">No recent request reached the origin.</span>
     {% endif %}
 </div>
 <twig:Metric:Metric:List class="mt-3">
     <twig:InfoLine label="P95">
         {% if latest and latest.originResponseMsP95 is not null %}{{ latest.originResponseMsP95|round }} ms{% endif %}
     </twig:InfoLine>
-    <twig:InfoLine label="Origin requests, last {{ dto.value.spanMinutes }} min" value="{{ dto.value.originRequests|number_format(0, '.', ' ') }}" />
 </twig:Metric:Metric:List>

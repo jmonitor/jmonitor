@@ -32,12 +32,7 @@ class CloudflareCacheHitRatio implements GaugeMetricInterface, TimeSeriesMetricI
             return;
         }
 
-        $bytesRatio = $traffic->cachedBytesRatio();
-
-        $gauge
-            ->setValue($this->percent($traffic), 1)
-            ->setContext(['bytesPercent' => $bytesRatio === null ? null : round($bytesRatio * 100), 'bytesMinutes' => $traffic->spanMinutes])
-        ;
+        $gauge->setValue($this->percent($traffic), 1);
     }
 
     public function configureTimeSerie(TimeSerieDto $lineDto, array $options = []): void

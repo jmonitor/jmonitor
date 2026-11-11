@@ -4,29 +4,14 @@ declare(strict_types=1);
 
 namespace App\Tests\Metrics\Renderer;
 
-use App\Entity\Project;
 use App\Metrics\Consumer\Cloudflare\CloudflareConsumer;
-use App\Metrics\Consumer\Consumer;
-use App\Metrics\Dto\MetricBagDto;
 use App\Metrics\Metric;
 use App\Metrics\MetricDtoProvider;
-use App\Metrics\MetricRenderer;
-use App\Metrics\MetricsBagProvider;
 use App\Metrics\Renderer;
 use App\Metrics\Renderer\Dto\AbstractDto;
-use App\Project\ProjectContext;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DomCrawler\Crawler;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 
-/**
- * Renders one Cloudflare card against a payload, through the real metric pipeline: the bag the card
- * reads is the one the consumer would have cached, not the raw payload.
- */
-abstract class CloudflareCardTestCase extends KernelTestCase
+abstract class CloudflareCardTestCase extends PayloadCardTestCase
 {
     /**
      * @return array<string, mixed>
@@ -41,9 +26,9 @@ abstract class CloudflareCardTestCase extends KernelTestCase
      */
     protected function render(Metric $metric, array $payload, bool $skipped = false, ?Renderer $renderer = null): string
     {
-        $this->cache($payload, $skipped);
+        $this->push(CloudflareConsumer::class, $payload, skipped: $skipped);
 
-        return self::getContainer()->get(MetricRenderer::class)->render($metric, $renderer);
+        return $this->renderCard($metric, $renderer);
     }
 
     /**
@@ -51,7 +36,7 @@ abstract class CloudflareCardTestCase extends KernelTestCase
      */
     protected function dto(Metric $metric, Renderer $renderer, array $payload): ?AbstractDto
     {
-        $this->cache($payload);
+        $this->push(CloudflareConsumer::class, $payload);
 
         return self::getContainer()->get(MetricDtoProvider::class)->getDto($metric, $renderer);
     }
@@ -67,29 +52,5 @@ abstract class CloudflareCardTestCase extends KernelTestCase
         });
 
         return $lines;
-    }
-
-    /**
-     * @param array<string, mixed> $payload
-     */
-    private function cache(array $payload, bool $skipped = false): void
-    {
-        self::bootKernel();
-
-        $project = new Project();
-        self::getContainer()->get(ProjectContext::class)->setCurrentProject($project);
-
-        $received = MetricBagDto::create($project, Consumer::CLOUDFLARE, 1, $payload, new \DateTimeImmutable(), false, $skipped);
-        $cached = array_filter(new CloudflareConsumer()->getMetricsToCache($received), fn($value): bool => $value !== null);
-        $bag = $received->withMetrics($cached);
-
-        $bagProvider = $this->createMock(MetricsBagProvider::class);
-        $bagProvider->method('getLastBag')->willReturn($bag);
-        $bagProvider->method('getComponentBags')->willReturn(['cloudflare' => $bag]);
-        self::getContainer()->set(MetricsBagProvider::class, $bagProvider);
-
-        $request = new Request();
-        $request->setSession(new Session(new MockArraySessionStorage()));
-        self::getContainer()->get(RequestStack::class)->push($request);
     }
 }

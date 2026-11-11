@@ -49,7 +49,7 @@
         <twig:InfoLine label="Last rewrite duration">
             <span {{ stimulus_controller('duration', {seconds: bag.persistence.aofLastRewriteTimeSec}) }}></span>
         </twig:InfoLine>
-        <twig:InfoLine label="AOF file size" value="{{ bag.persistence.aofCurrentSize|format_bytes }}" />
+        <twig:InfoLine label="AOF file size">{{ bag.persistence.aofCurrentSize|format_bytes }}</twig:InfoLine>
         <twig:InfoLine label="Growth since last rewrite" value="{{ bag.persistence.aofGrowthPercent }}" />
     {% endif %}
 </twig:Metric:Metric:List>

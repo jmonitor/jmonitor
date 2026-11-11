@@ -12,6 +12,7 @@ use App\Metrics\Metric\OptionsAwareMetricInterface;
 use App\Metrics\Renderer\Dto\BasicDto;
 use Symfony\Component\DependencyInjection\Attribute\AsTaggedItem;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Twig\Markup;
 
 #[AsTaggedItem(Metric::CaddyAvgResponseSize->value)]
 class CaddyAvgResponseSize implements BasicMetricInterface, OptionsAwareMetricInterface
@@ -28,11 +29,8 @@ class CaddyAvgResponseSize implements BasicMetricInterface, OptionsAwareMetricIn
         $handler = $options['handler'];
 
         $value = $this->getCaddyBag()?->avgResponseSizeBytes->getInt($handler);
-        $value = $value !== null ? Bytes::parse($value) : null;
 
-        $dto
-            ->setValue($value?->format())
-        ;
+        $dto->setFormattedValue($value !== null ? new Markup(Bytes::parse($value)->format(), 'UTF-8') : null);
     }
 
     public function configureOptions(OptionsResolver $optionsResolver): void

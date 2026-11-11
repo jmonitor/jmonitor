@@ -17,6 +17,7 @@ use App\Metrics\Renderer\Dto\GaugeDto;
 use App\Metrics\Renderer\Dto\TimeSerieDto;
 use App\Metrics\Renderer\Options\TimeSeriesRendererOptions;
 use Symfony\Component\DependencyInjection\Attribute\AsTaggedItem;
+use Twig\Markup;
 
 #[AsTaggedItem(Metric::RedisMemoryUsage->value)]
 class RedisMemoryUsage implements GaugeMetricInterface, TimeSeriesMetricInterface, BasicMetricInterface
@@ -52,7 +53,7 @@ class RedisMemoryUsage implements GaugeMetricInterface, TimeSeriesMetricInterfac
     {
         $dto->setFormattedValue(
             $this->getRedisBag()?->memory->used
-            ? ((string) \Zenstruck\Bytes::parse($this->getRedisBag()->memory->used)->asBinary()) : null,
+            ? new Markup((string) \Zenstruck\Bytes::parse($this->getRedisBag()->memory->used)->asBinary(), 'UTF-8') : null,
         );
     }
 

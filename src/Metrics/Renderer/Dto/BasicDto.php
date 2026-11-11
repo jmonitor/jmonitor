@@ -3,6 +3,7 @@
 namespace App\Metrics\Renderer\Dto;
 
 use App\Metrics\Metric;
+use Twig\Markup;
 
 class BasicDto extends AbstractDto
 {
@@ -11,11 +12,7 @@ class BasicDto extends AbstractDto
      */
     public private(set) mixed $value = null;
 
-    /**
-     * If there is no custom template, this can be used instead; it is displayed as-is.
-     * @var ?scalar $formattedValue
-     */
-    public private(set) mixed $formattedValue = null;
+    public private(set) ?Markup $formattedValue = null;
 
     public function __construct(Metric $metric)
     {
@@ -29,7 +26,7 @@ class BasicDto extends AbstractDto
         return $this;
     }
 
-    public function setFormattedValue(mixed $value): static
+    public function setFormattedValue(?Markup $value): static
     {
         $this->formattedValue = $value;
 
